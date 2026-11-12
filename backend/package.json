@@ -21,8 +21,8 @@
     "profiles:seed": "npm run build:app && node dist/scripts/seed-damage-profiles.js",
     "cc:seed": "npm run build && node dist/scripts/seed-cc-config.js"
   },
-  "engines":{
-    "node"?: "24.x"
+  "engines": {
+    "node": "24.x"
   },
   "dependencies": {
     "@nestjs/common": "^12.3.2",
