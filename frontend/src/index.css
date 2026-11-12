@@ -50,6 +50,14 @@
     @apply font-mono tabular-nums whitespace-nowrap;
   }
 
+  .asset-thumb {
+    @apply border border-stone-300 bg-stone-200 object-cover;
+  }
+
+  .asset-icon {
+    @apply bg-stone-200 object-contain;
+  }
+
   .button {
     @apply inline-flex items-center justify-center border border-stone-400 bg-white px-3 py-1.5 text-sm text-ink rounded-sm hover:border-ink disabled:cursor-not-allowed disabled:opacity-50;
   }

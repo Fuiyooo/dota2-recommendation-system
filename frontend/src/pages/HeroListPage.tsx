@@ -3,9 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { apiGet } from "../api/client";
 import type { HeroSummary } from "../api/types";
+import { GameImage } from "../components/GameImage";
 import { EmptyPanel, ErrorPanel, LoadingPanel } from "../components/StatePanel";
 import { ScrollHint } from "../components/ScrollHint";
 import { formatDecimal } from "../utils/format";
+import { heroIconUrl } from "../utils/dotaAssets";
 
 export function HeroListPage() {
   const [search, setSearch] = useState("");
@@ -94,10 +96,17 @@ export function HeroListPage() {
                   <tr key={hero.id}>
                     <th scope="row">
                       <Link
-                        className="text-accent underline decoration-stone-400 underline-offset-2"
+                        className="flex items-center gap-2 text-accent"
                         to={`/heroes/${hero.id}`}
                       >
-                        {hero.localizedName}
+                        <GameImage
+                          src={heroIconUrl(hero.name)}
+                          width={40}
+                          height={24}
+                        />
+                        <span className="underline decoration-stone-400 underline-offset-2">
+                          {hero.localizedName}
+                        </span>
                       </Link>
                     </th>
                     <td>{hero.primaryAttr}</td>

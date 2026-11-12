@@ -3,6 +3,7 @@ import { Link, useParams } from "react-router-dom";
 import { apiGet } from "../api/client";
 import type { Ability, HeroDetail } from "../api/types";
 import { Badge } from "../components/Badge";
+import { GameImage } from "../components/GameImage";
 import { EmptyPanel, ErrorPanel, LoadingPanel } from "../components/StatePanel";
 import { ScrollHint } from "../components/ScrollHint";
 import {
@@ -10,6 +11,11 @@ import {
   isPercentValue,
   trackedDamageValues,
 } from "../utils/format";
+import {
+  abilityIconUrl,
+  attributeIconUrl,
+  heroPortraitUrl,
+} from "../utils/dotaAssets";
 
 function abilityTone(ability: Ability) {
   if (ability.abilityType === "Innate") return "accent" as const;
@@ -63,13 +69,21 @@ export function HeroDetailPage() {
         Back to hero list
       </Link>
 
-      <div className="mt-3">
-        <h1 className="text-xl font-semibold">{hero.localizedName}</h1>
-        <p className="muted mt-1 text-sm">
-          {hero.primaryAttr} {hero.attackType} · Complexity{" "}
-          {hero.complexity ?? "-"}
-        </p>
-        <p className="muted text-sm">{hero.roles.join(", ") || "No roles"}</p>
+      <div className="mt-3 flex items-start gap-4">
+        <GameImage
+          src={heroPortraitUrl(hero.name)}
+          width={96}
+          height={54}
+          eager
+        />
+        <div>
+          <h1 className="text-xl font-semibold">{hero.localizedName}</h1>
+          <p className="muted mt-1 text-sm">
+            {hero.primaryAttr} {hero.attackType} · Complexity{" "}
+            {hero.complexity ?? "-"}
+          </p>
+          <p className="muted text-sm">{hero.roles.join(", ") || "No roles"}</p>
+        </div>
       </div>
       <ScrollHint />
 
@@ -89,7 +103,17 @@ export function HeroDetailPage() {
             </thead>
             <tbody>
               <tr>
-                <th scope="row">Strength</th>
+                <th scope="row">
+                  <span className="flex items-center gap-2">
+                    <GameImage
+                      src={attributeIconUrl("STR")}
+                      width={18}
+                      height={18}
+                      variant="icon"
+                    />
+                    Strength
+                  </span>
+                </th>
                 <td className="num">{formatDecimal(hero.baseStr)}</td>
                 <td className="num">+{formatDecimal(hero.strGain)}</td>
                 <td className="num">
@@ -97,7 +121,17 @@ export function HeroDetailPage() {
                 </td>
               </tr>
               <tr>
-                <th scope="row">Agility</th>
+                <th scope="row">
+                  <span className="flex items-center gap-2">
+                    <GameImage
+                      src={attributeIconUrl("AGI")}
+                      width={18}
+                      height={18}
+                      variant="icon"
+                    />
+                    Agility
+                  </span>
+                </th>
                 <td className="num">{formatDecimal(hero.baseAgi)}</td>
                 <td className="num">+{formatDecimal(hero.agiGain)}</td>
                 <td className="num">
@@ -105,7 +139,17 @@ export function HeroDetailPage() {
                 </td>
               </tr>
               <tr>
-                <th scope="row">Intelligence</th>
+                <th scope="row">
+                  <span className="flex items-center gap-2">
+                    <GameImage
+                      src={attributeIconUrl("INT")}
+                      width={18}
+                      height={18}
+                      variant="icon"
+                    />
+                    Intelligence
+                  </span>
+                </th>
                 <td className="num">{formatDecimal(hero.baseInt)}</td>
                 <td className="num">+{formatDecimal(hero.intGain)}</td>
                 <td className="num">
@@ -142,20 +186,32 @@ export function HeroDetailPage() {
                   return (
                     <tr key={ability.id}>
                       <th scope="row">
-                        <span className="font-medium">{ability.displayName}</span>
-                        <span className="muted num block text-xs">
-                          {ability.abilityKey}
-                        </span>
-                        {damageValues.map((value) => (
-                          <span
-                            key={value.name}
-                            className="muted num mt-1 block text-xs"
-                          >
-                            {value.heading || `${value.name}:`}{" "}
-                            {value.values.join(" / ")}
-                            {isPercentValue(value) ? "%" : ""}
+                        <span className="flex items-start gap-3">
+                          <GameImage
+                            src={abilityIconUrl(ability.abilityKey)}
+                            width={48}
+                            height={36}
+                            variant="icon"
+                          />
+                          <span className="min-w-0">
+                            <span className="font-medium">
+                              {ability.displayName}
+                            </span>
+                            <span className="muted num block text-xs">
+                              {ability.abilityKey}
+                            </span>
+                            {damageValues.map((value) => (
+                              <span
+                                key={value.name}
+                                className="muted num mt-1 block text-xs"
+                              >
+                                {value.heading || `${value.name}:`}{" "}
+                                {value.values.join(" / ")}
+                                {isPercentValue(value) ? "%" : ""}
+                              </span>
+                            ))}
                           </span>
-                        ))}
+                        </span>
                       </th>
                       <td>
                         <Badge tone={abilityTone(ability)}>
