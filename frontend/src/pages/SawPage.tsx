@@ -311,7 +311,7 @@ export function SawPage() {
               {filtered.map((result, index) => (
                 <tr key={result.heroId}>
                   <td className="num">{index + 1}</td>
-                  <th scope="row" className="w-full">
+                  <th scope="row">
                     <div className="flex min-w-0 items-center gap-2">
                       <HeroThumb hero={heroIndex.get(result.heroId)} />
                       <div className="flex min-w-0 flex-wrap items-baseline gap-x-2">
