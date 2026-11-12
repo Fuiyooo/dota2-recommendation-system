@@ -4,13 +4,11 @@
     "backend": {
       "root": "backend/",
       "framework": "nestjs",
-      "installCommand": "npm install --workspaces=false --include=dev",
       "buildCommand": "npx prisma generate && npm run build"
     },
     "frontend": {
       "root": "frontend/",
       "framework": "vite",
-      "installCommand": "npm install --workspaces=false --include=dev",
       "buildCommand": "npm run build",
       "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
     }
