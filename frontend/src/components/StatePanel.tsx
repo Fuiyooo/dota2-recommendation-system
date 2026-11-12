@@ -3,7 +3,7 @@ import type { ReactNode } from "react";
 export function LoadingPanel({ label }: { label: string }) {
   return (
     <div className="panel p-4" role="status">
-      <p className="text-sm">Memuat {label}...</p>
+      <p className="text-sm">Loading {label}...</p>
     </div>
   );
 }
@@ -17,11 +17,11 @@ export function ErrorPanel({
 }) {
   return (
     <div className="panel border-red-800 p-4" role="alert">
-      <p className="text-sm font-medium text-red-800">Gagal memuat data</p>
+      <p className="text-sm font-medium text-red-800">Failed to load data</p>
       <p className="muted mt-1 text-sm">{message}</p>
       {onRetry ? (
         <button type="button" className="button mt-3" onClick={onRetry}>
-          Coba lagi
+          Try again
         </button>
       ) : null}
     </div>

@@ -3,24 +3,18 @@ import { Link } from "react-router-dom";
 const CARDS = [
   {
     to: "/heroes",
-    title: "Data hero",
-    description:
-      "127 hero pada patch 7.41f, lengkap dengan atribut, ability, talent, role, dan complexity.",
-    cta: "Buka daftar hero",
+    title: "Hero data",
+    description: "127 heroes on patch 7.41f with attributes, abilities, and talents.",
   },
   {
     to: "/characteristics",
-    title: "Karakteristik",
-    description:
-      "Damage, durability, crowd control, dan mobility/escape dihitung dari data hero level 30.",
-    cta: "Lihat karakteristik",
+    title: "Characteristics",
+    description: "Damage, durability, crowd control, and mobility scores.",
   },
   {
     to: "/saw",
-    title: "Ranking SAW",
-    description:
-      "Ranking hero dengan bobot kriteria yang bisa diatur dan skor yang dapat ditelusuri.",
-    cta: "Lihat ranking",
+    title: "Recommendation",
+    description: "Ranked heroes with adjustable criteria weights.",
   },
 ];
 
@@ -28,23 +22,19 @@ export function HomePage() {
   return (
     <div>
       <section className="panel p-5 sm:p-7">
-        <p className="text-xs font-medium uppercase tracking-wide text-accent">
-          Patch 7.41f
-        </p>
-        <h1 className="mt-2 max-w-3xl text-2xl font-semibold sm:text-3xl">
-          Pilih hero Dota 2 dengan alasan yang bisa ditelusuri.
+        <h1 className="max-w-3xl text-2xl font-semibold sm:text-3xl">
+          Pick a Dota 2 hero with traceable reasoning.
         </h1>
         <p className="muted mt-3 max-w-2xl text-sm">
-          Dota 2 Data Lab menghitung karakteristik hero dari data Valve dan
-          peringkat meta rank tinggi, lalu menyusun rekomendasi dengan Simple
+          Hero characteristics calculated from Valve data and ranked with Simple
           Additive Weighting.
         </p>
         <div className="mt-5 flex flex-wrap gap-2">
           <Link className="button button-primary" to="/heroes">
-            Jelajahi hero
+            Browse heroes
           </Link>
           <Link className="button" to="/saw">
-            Lihat ranking SAW
+            View recommendation
           </Link>
         </div>
       </section>
@@ -58,39 +48,10 @@ export function HomePage() {
               className="mt-4 text-sm text-accent underline underline-offset-2"
               to={card.to}
             >
-              {card.cta}
+              Open
             </Link>
           </article>
         ))}
-      </section>
-
-      <section className="panel mt-4 p-5">
-        <h2 className="text-base font-semibold">Alur kerja</h2>
-        <ol className="mt-3 grid gap-3 text-sm md:grid-cols-3">
-          <li>
-            <span className="num text-accent">01</span>
-            <p className="mt-1">Pilih hero dari daftar 127 hero.</p>
-          </li>
-          <li>
-            <span className="num text-accent">02</span>
-            <p className="mt-1">
-              Baca rincian karakteristik dan asal nilai setiap indikator.
-            </p>
-          </li>
-          <li>
-            <span className="num text-accent">03</span>
-            <p className="mt-1">
-              Bandingkan ranking SAW sesuai bobot kriteria yang dipilih.
-            </p>
-          </li>
-        </ol>
-      </section>
-
-      <section className="panel mt-4 p-4 text-sm">
-        <p className="muted">
-          Data utama dari Valve Datafeed. Meta dari STRATZ. Perhitungan tidak
-          memakai item, Aghanim&apos;s Scepter, atau Aghanim&apos;s Shard.
-        </p>
       </section>
     </div>
   );

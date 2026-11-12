@@ -1,6 +1,6 @@
 # Rumus Perhitungan Sistem Rekomendasi
 
-Dokumen ini menjelaskan rumus yang dipakai untuk menghitung atribut, damage, durability, crowd control, mobility, skor indikator, skor karakteristik, dan SAW. Versi konfigurasi: `m2-v23` dan `cc-lab-v2`.
+Dokumen ini menjelaskan rumus yang dipakai untuk menghitung atribut, damage, durability, crowd control, mobility, skor indikator, skor karakteristik, dan SAW. Versi konfigurasi: `m2-v24` dan `cc-lab-v2`.
 
 ## 1. Simbol
 
@@ -326,10 +326,14 @@ EHP = maxHP + maxMana × damage_per_mana
 Persentase absorpsi 98% tidak mengubah total effective HP. Ability shield lain
 dan durability temporer tidak dihitung. Leviathan's Catch memakai asumsi 10
 stack untuk +30 HP. Berserker's Blood menambah magic resistance maksimum 30%.
-Amphibian Rhapsody memberi 20 armor dari 5 stack, Wukong's Command memberi 25
-armor, Eelskin memakai 12% evasion dari 3 illusion, dan Immaterial memakai 75%
-evasion. Windrun, Scurry, dan Phantom Rush dihitung sebagai mobility, bukan
+Amphibian Rhapsody memberi 20 armor dari 5 stack, dan Wukong's Command memberi
+25 armor. Windrun, Scurry, dan Phantom Rush dihitung sebagai mobility, bukan
 durability.
+
+Evasion tidak menambah effective HP. Immaterial (75% termasuk talent) dan
+Eelskin (12% dari 3 illusion) hanya mengurangi peluang terkena basic attack,
+bukan damage dari spell atau magic, sehingga keduanya dicatat sebagai informasi
+dan tidak masuk skor durability.
 
 ## 8. Crowd control
 
@@ -721,5 +725,5 @@ Skor karakteristik Damage:
 
 ## 17. Catatan versi
 
-- `m2-v23` memakai seluruh 8 talent level 30, bobot profil damage 70/30 atau 100 untuk satu tipe, skor indikator 1 sampai 10, bonus attack speed ability, daftar putih mobility, handler attack modifier, hard CC saja, multiplier dispel dan pierce di SAW, pengaturan CC dari admin, bonus talent durasi CC, pemisahan blind, attack slow, dan disarm dari daftar CC, bobot durability 50/25/25, mobility/escape dengan bobot 40/60 dan gabungan dash/blink, magic resistance dari INT, bonus armor dan HP regen dari ability pasif, handler damage baru, Medusa Mana Shield sebagai effective HP, Leviathan 10 stack, Tiny Grow, Windrun, Scurry, Berserker's Blood, Amphibian Rhapsody, Wukong's Command, Eelskin, serta handler Night Stalker, Lich, Kez, Nyx, Largo, dan Bounty Hunter.
+- `m2-v24` memakai seluruh 8 talent level 30, bobot profil damage 70/30 atau 100 untuk satu tipe, skor indikator 1 sampai 10, bonus attack speed ability, daftar putih mobility, handler attack modifier, hard CC saja, multiplier dispel dan pierce di SAW, pengaturan CC dari admin, bonus talent durasi CC, pemisahan blind, attack slow, dan disarm dari daftar CC, bobot durability 50/25/25, mobility/escape dengan bobot 40/60 dan gabungan dash/blink, magic resistance dari INT, bonus armor dan HP regen dari ability pasif, handler damage baru, Medusa Mana Shield sebagai effective HP, Leviathan 10 stack, Tiny Grow, Windrun, Scurry, Berserker's Blood, Amphibian Rhapsody, Wukong's Command, serta handler Night Stalker, Lich, Kez, Nyx, Largo, dan Bounty Hunter.
 - `cc-lab-v2` memakai efek `BASE` saja dan tidak menghitung Aghanim's Scepter atau Shard.

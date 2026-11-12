@@ -282,6 +282,10 @@ dari skor, kecuali Medusa Mana Shield. Leviathan's Catch memakai asumsi 10
 stack, Tiny Grow menambah +15 armor dan +30 movement speed, dan Berserker's
 Blood menambah magic resistance maksimum 30%.
 
+Evasion tidak menambah effective HP karena hanya berlaku untuk basic attack,
+bukan damage spell. Immaterial dan Eelskin dicatat sebagai informasi dan tidak
+masuk skor durability.
+
 ### Crowd control
 
 Hanya hard CC yang masuk perhitungan SAW: stun, hex, fear, taunt, sleep,
@@ -488,7 +492,7 @@ posisi teratas. Ranking berubah ketika bobot atau filter diubah.
 - Vendetta: 550 bonus damage.
 - Amphibian Rhapsody: 20 armor dari 5 stack.
 - Wukong's Command: 25 armor.
-- Eelskin: 12% evasion dari 3 illusion.
+- Eelskin: 12% evasion dari 3 illusion, informasi saja tanpa EHP.
 - Crippling Fear dan Void: memakai durasi malam.
 - Sinister Gaze: memakai channel time.
 - Shodo Sai: stun 0,8 detik.
@@ -496,7 +500,7 @@ posisi teratas. Ranking berubah ketika bobot atau filter diubah.
 - Reaper's Scythe: 50% missing HP × 1,2.
 - Purification: 300 + 160 = 460 pure.
 - Spiked Carapace: stun saat menerima hit.
-- Immaterial: 75% evasion dikonversi ke effective HP.
+- Immaterial: 75% evasion, informasi saja tanpa EHP.
 - Phantom Rush: masuk mobility.
 - Colossal dan Puckish: dikeluarkan dari durability.
 - Escape Act: box temporer dan untargetable, detail saja.
@@ -738,7 +742,7 @@ dimasukkan ke Git.
 
 ## Testing
 
-- 152 unit test backend: normalisasi, patch notes, atribut, basic attack,
+- 153 unit test backend: normalisasi, patch notes, atribut, basic attack,
   Universal damage, Mana Break, durability, CC, mobility, percentile, main
   position, SAW, formula CC Lab, registry BASE, Enigma multi-instance, overlap,
   conditional, data unknown, durasi fixed, bobot profil damage, basic attack

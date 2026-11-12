@@ -35,10 +35,10 @@ export default function App() {
           path="*"
           element={
             <div className="panel p-4">
-              <h1 className="text-lg font-semibold">Halaman tidak ditemukan</h1>
+              <h1 className="text-lg font-semibold">Page not found</h1>
               <p className="muted mt-1 text-sm">
-                Alamat ini tidak ada di aplikasi. Kembali ke beranda lewat
-                navigasi di samping.
+                This address does not exist in the app. Go back to the home page
+                using the navigation.
               </p>
             </div>
           }

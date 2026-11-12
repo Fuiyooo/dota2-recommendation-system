@@ -8,11 +8,11 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { to: "/", label: "Beranda", end: true },
+  { to: "/", label: "Home", end: true },
   { to: "/heroes", label: "Heroes" },
   { to: "/meta", label: "Meta" },
-  { to: "/characteristics", label: "Karakteristik" },
-  { to: "/saw", label: "SAW" },
+  { to: "/characteristics", label: "Characteristics" },
+  { to: "/saw", label: "Recommendation" },
 ];
 
 function linkClass({ isActive }: { isActive: boolean }): string {
@@ -50,24 +50,24 @@ export function Layout() {
           type="button"
           className="button small"
           aria-expanded={menuOpen}
-          aria-controls="navigasi-samping"
+          aria-controls="sidebar-nav"
           onClick={() => setMenuOpen((open) => !open)}
         >
-          {menuOpen ? "Tutup" : "Menu"}
+          {menuOpen ? "Close" : "Menu"}
         </button>
       </header>
 
       {menuOpen ? (
         <button
           type="button"
-          aria-label="Tutup navigasi"
+          aria-label="Close navigation"
           className="fixed inset-0 z-30 bg-stone-900/30 lg:hidden"
           onClick={() => setMenuOpen(false)}
         />
       ) : null}
 
       <aside
-        id="navigasi-samping"
+        id="sidebar-nav"
         className={`${
           menuOpen ? "block" : "hidden"
         } fixed inset-y-0 left-0 z-40 w-64 overflow-y-auto border-r border-stone-300 bg-white px-3 py-4 lg:sticky lg:top-0 lg:block lg:h-screen lg:w-60 lg:shrink-0`}
@@ -76,22 +76,19 @@ export function Layout() {
           <NavLink to="/" className="block px-3 text-lg font-semibold">
             Dota 2 Data Lab
           </NavLink>
-          <p className="muted mt-1 px-3 text-xs">
-            Milestone 2: constants, snapshot meta, dan scoring karakteristik
-          </p>
         </div>
         <div className="mb-4 flex items-center justify-between px-3 lg:hidden">
-          <span className="text-sm font-semibold">Navigasi</span>
+          <span className="text-sm font-semibold">Navigation</span>
           <button
             type="button"
             className="button small"
             onClick={() => setMenuOpen(false)}
           >
-            Tutup
+            Close
           </button>
         </div>
 
-        <nav aria-label="Navigasi utama" className="mt-2">
+        <nav aria-label="Main navigation" className="mt-2">
           <ul className="space-y-1">
             {NAV_ITEMS.map((item) => (
               <li key={item.to}>
@@ -102,28 +99,12 @@ export function Layout() {
             ))}
           </ul>
         </nav>
-
-        <p className="muted mt-6 px-3 text-xs">
-          Sumber utama: Valve Datafeed. Pelengkap: OpenDota dotaconstants. Meta:
-          STRATZ, satu snapshot tetap.
-        </p>
       </aside>
 
       <div className="min-w-0 flex-1">
         <main className="mx-auto max-w-6xl px-4 py-6">
           <Outlet />
         </main>
-
-        <footer className="mx-auto max-w-6xl px-4 pb-10 text-xs text-stone-600">
-          <p>
-            Sumber utama: Valve Datafeed. Pelengkap: OpenDota dotaconstants.
-            Meta: STRATZ, satu snapshot tetap.
-          </p>
-          <p className="mt-1">
-            Perhitungan memakai hero level 30, tanpa item dan Aghanim&apos;s
-            Scepter atau Shard.
-          </p>
-        </footer>
       </div>
     </div>
   );

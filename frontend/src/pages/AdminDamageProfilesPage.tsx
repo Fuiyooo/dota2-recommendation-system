@@ -32,7 +32,7 @@ const SECONDARY_TYPES: DamageSecondary[] = [
 ];
 
 function typeLabel(type: DamageType | DamageSecondary): string {
-  if (type === "NONE") return "Tidak ada";
+  if (type === "NONE") return "None";
   if (type === "PHYSICAL") return "Physical";
   if (type === "MAGICAL") return "Magical";
   return "Pure";
@@ -135,12 +135,12 @@ export function AdminDamageProfilesPage() {
         return next;
       });
       await queryClient.invalidateQueries({ queryKey: ["admin-profiles"] });
-      setStatus({ kind: "ok", text: `Profil ${row.heroName} disimpan.` });
+      setStatus({ kind: "ok", text: `${row.heroName} profile saved.` });
     },
     onError: (error) => {
       setStatus({
         kind: "error",
-        text: error instanceof Error ? error.message : "Gagal menyimpan.",
+        text: error instanceof Error ? error.message : "Failed to save.",
       });
     },
   });
@@ -163,13 +163,13 @@ export function AdminDamageProfilesPage() {
       await queryClient.invalidateQueries({ queryKey: ["admin-profiles"] });
       setStatus({
         kind: "ok",
-        text: `${formatNumber(result.updated)} profil disimpan.`,
+        text: `${formatNumber(result.updated)} profiles saved.`,
       });
     },
     onError: (error) => {
       setStatus({
         kind: "error",
-        text: error instanceof Error ? error.message : "Gagal menyimpan.",
+        text: error instanceof Error ? error.message : "Failed to save.",
       });
     },
   });
@@ -189,7 +189,7 @@ export function AdminDamageProfilesPage() {
       ]);
       setStatus({
         kind: "ok",
-        text: "Karakteristik dan SAW sudah dihitung ulang.",
+        text: "Characteristics and recommendation recalculated.",
       });
     },
     onError: (error) => {
@@ -199,21 +199,21 @@ export function AdminDamageProfilesPage() {
         text:
           error instanceof Error
             ? error.message
-            : "Gagal menghitung ulang.",
+            : "Failed to recalculate.",
       });
     },
   });
 
-  if (session.isPending) return <LoadingPanel label="sesi admin" />;
+  if (session.isPending) return <LoadingPanel label="admin session" />;
   if (session.isError) {
     return (
       <div className="panel p-4">
-        <p className="text-sm">Sesi admin tidak aktif.</p>
+        <p className="text-sm">Admin session is not active.</p>
         <Link
           className="mt-2 inline-block text-sm text-accent underline underline-offset-2"
           to="/admin/login"
         >
-          Masuk ke halaman login
+          Go to login page
         </Link>
       </div>
     );
@@ -224,17 +224,10 @@ export function AdminDamageProfilesPage() {
   return (
     <div>
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold">Profil damage hero</h1>
-          <p className="muted mt-1 text-sm">
-            Tentukan main dan secondary damage. Basic attack hanya dihitung
-            kalau PHYSICAL menjadi main atau secondary. Bobot main 70% dan
-            secondary 30%.
-          </p>
-        </div>
+        <h1 className="text-xl font-semibold">Hero damage profiles</h1>
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <span className="muted">
-            Login: <span className="font-medium">{session.data?.username}</span>
+            Signed in: <span className="font-medium">{session.data?.username}</span>
           </span>
           <button
             type="button"
@@ -254,30 +247,30 @@ export function AdminDamageProfilesPage() {
 
       <div className="panel mt-3 grid gap-3 p-3 text-sm sm:grid-cols-3">
         <div>
-          <p className="text-xs text-stone-600">Hero</p>
+          <p className="text-xs text-stone-600">Heroes</p>
           <p className="num font-medium">{formatNumber(rows.length)}</p>
         </div>
         <div>
-          <p className="text-xs text-stone-600">Belum diatur</p>
+          <p className="text-xs text-stone-600">Unset</p>
           <p className="num font-medium">
             {formatNumber(emptyCount)}
           </p>
         </div>
         <div>
-          <p className="text-xs text-stone-600">Perubahan belum disimpan</p>
+          <p className="text-xs text-stone-600">Unsaved changes</p>
           <p className="num font-medium">{formatNumber(dirtyRows.length)}</p>
         </div>
       </div>
 
       <div className="mt-3 flex flex-wrap items-end gap-3">
         <label className="block">
-          <span className="text-xs text-stone-600">Cari hero</span>
+          <span className="text-xs text-stone-600">Search hero</span>
           <input
             className="field mt-1 block min-w-56"
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Contoh: Techies"
+            placeholder="Example: Techies"
           />
         </label>
         <label className="flex items-center gap-2 text-sm">
@@ -286,7 +279,7 @@ export function AdminDamageProfilesPage() {
             checked={onlyEmpty}
             onChange={(event) => setOnlyEmpty(event.target.checked)}
           />
-          Hanya yang belum diatur
+          Only unset
         </label>
         <button
           type="button"
@@ -295,8 +288,8 @@ export function AdminDamageProfilesPage() {
           onClick={() => saveAll.mutate()}
         >
           {saveAll.isPending
-            ? "Menyimpan..."
-            : `Simpan semua (${formatNumber(dirtyRows.length)})`}
+            ? "Saving..."
+            : `Save all (${formatNumber(dirtyRows.length)})`}
         </button>
         <button
           type="button"
@@ -305,8 +298,8 @@ export function AdminDamageProfilesPage() {
           onClick={() => recalculation.mutate()}
         >
           {recalcState === "running"
-            ? "Menghitung..."
-            : "Hitung ulang karakteristik dan SAW"}
+            ? "Calculating..."
+            : "Recalculate characteristics and recommendation"}
         </button>
       </div>
 
@@ -321,13 +314,13 @@ export function AdminDamageProfilesPage() {
         </p>
       ) : null}
 
-      {profiles.isPending ? <LoadingPanel label="profil damage" /> : null}
+      {profiles.isPending ? <LoadingPanel label="damage profiles" /> : null}
       {profiles.isError ? (
         <ErrorPanel
           message={
             profiles.error instanceof Error
               ? profiles.error.message
-              : "Gagal memuat profil."
+              : "Failed to load profiles."
           }
           onRetry={() => void profiles.refetch()}
         />
@@ -335,22 +328,14 @@ export function AdminDamageProfilesPage() {
 
       {profiles.data ? (
         <>
-          <p className="muted mt-3 text-xs">
-            Menampilkan {formatNumber(filtered.length)} dari{" "}
-            {formatNumber(rows.length)} hero.
-            {profiles.data.runId
-              ? ` Nilai damage dari run #${profiles.data.runId}.`
-              : " Belum ada run kalkulasi."}
-          </p>
-
           {filtered.length === 0 ? (
-            <div className="mt-2">
-              <EmptyPanel title="Tidak ada hero untuk filter ini">
-                Ubah kata kunci atau matikan filter.
+            <div className="mt-3">
+              <EmptyPanel title="No heroes for this filter">
+                Change the keyword or turn off the filter.
               </EmptyPanel>
             </div>
           ) : (
-            <div className="scroll-x panel mt-2">
+            <div className="scroll-x panel mt-3">
               <table className="data-table">
                 <thead>
                   <tr>
@@ -360,8 +345,8 @@ export function AdminDamageProfilesPage() {
                     <th scope="col">Pure</th>
                     <th scope="col">Main</th>
                     <th scope="col">Secondary</th>
-                    <th scope="col">Catatan</th>
-                    <th scope="col">Aksi</th>
+                    <th scope="col">Notes</th>
+                    <th scope="col">Actions</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -375,7 +360,7 @@ export function AdminDamageProfilesPage() {
                           <span className="muted mt-1 block text-xs">
                             <Badge tone="neutral">{row.attackType}</Badge>
                             {dirty ? (
-                              <Badge tone="warn">Belum disimpan</Badge>
+                              <Badge tone="warn">Unsaved</Badge>
                             ) : null}
                           </span>
                         </th>
@@ -437,12 +422,12 @@ export function AdminDamageProfilesPage() {
                             className="field min-w-48"
                             type="text"
                             maxLength={500}
-                            aria-label={`Catatan ${row.heroName}`}
+                            aria-label={`Notes for ${row.heroName}`}
                             value={draft.notes}
                             onChange={(event) =>
                               updateDraft(row, { notes: event.target.value })
                             }
-                            placeholder="Opsional"
+                            placeholder="Optional"
                           />
                         </td>
                         <td>
@@ -459,7 +444,7 @@ export function AdminDamageProfilesPage() {
                             {saveOne.isPending &&
                             saveOne.variables?.heroId === row.heroId
                               ? "..."
-                              : "Simpan"}
+                              : "Save"}
                           </button>
                         </td>
                       </tr>
@@ -469,12 +454,6 @@ export function AdminDamageProfilesPage() {
               </table>
             </div>
           )}
-
-          <p className="muted mt-2 text-xs">
-            Profil saat ini:{" "}
-            {rows.filter((row) => row.main !== null).length} hero sudah diatur.
-            Perubahan baru berlaku setelah tombol hitung ulang ditekan.
-          </p>
         </>
       ) : null}
     </div>

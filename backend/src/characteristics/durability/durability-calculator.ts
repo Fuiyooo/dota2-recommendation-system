@@ -78,11 +78,12 @@ export function calculateDurability(
     );
   }
 
+  // Evasion hanya mengurangi peluang terkena basic attack, bukan damage
+  // spell. Nilainya dicatat sebagai informasi, tidak menambah HP efektif.
   const immaterial = hero.abilities.find(
     (ability) => ability.abilityKey === "phantom_assassin_immaterial",
   );
   let immaterialEvasion = 0;
-  let immaterialEhp = 0;
   if (immaterial) {
     const value = findValue(immaterial, ["evasion"]);
     if (value) {
@@ -94,8 +95,6 @@ export function calculateDurability(
         0.75,
         (maxValue(value) + talentBonus) / 100,
       );
-      immaterialEhp =
-        attributes.maxHp / (1 - immaterialEvasion) - attributes.maxHp;
     }
   }
 
@@ -103,14 +102,22 @@ export function calculateDurability(
     (ability) => ability.abilityKey === "naga_siren_eelskin",
   );
   let eelskinEvasion = 0;
-  let evasionEhp = 0;
   if (eelskin) {
     const perNaga = findValue(eelskin, ["evasion_per_naga"]);
     if (perNaga) {
       eelskinEvasion = Math.min(0.75, (maxValue(perNaga) / 100) * 3);
-      evasionEhp =
-        attributes.maxHp / (1 - eelskinEvasion) - attributes.maxHp;
     }
+  }
+
+  if (immaterialEvasion > 0) {
+    detailOnly.push(
+      "Immaterial: evasion hanya berlaku untuk basic attack, tidak masuk skor durability.",
+    );
+  }
+  if (eelskinEvasion > 0) {
+    detailOnly.push(
+      "Eelskin: evasion hanya berlaku untuk basic attack, tidak masuk skor durability.",
+    );
   }
 
   const manaShield = hero.abilities.find(
@@ -125,8 +132,7 @@ export function calculateDurability(
   }
 
   return {
-    maxHp:
-      attributes.maxHp + manaShieldEhp + evasionEhp + immaterialEhp,
+    maxHp: attributes.maxHp + manaShieldEhp,
     healthRegen: attributes.healthRegen,
     armor: attributes.armor,
     magicResistance: Math.min(100, attributes.magicResistance),
@@ -142,9 +148,7 @@ export function calculateDurability(
       healthRegen: attributes.healthRegen,
       manaShieldEhp,
       eelskinEvasion,
-      evasionEhp,
       immaterialEvasion,
-      immaterialEhp,
       detailOnly,
       bonusMagicResistance: attributes.bonusMagicResistance,
       selectedTalents: talents.map((talent) => talent.displayName),

@@ -26,19 +26,19 @@ export function AdminLoginPage() {
     },
   });
 
-  if (session.isPending) return <LoadingPanel label="sesi admin" />;
+  if (session.isPending) return <LoadingPanel label="admin session" />;
 
   if (session.data?.username) {
     return (
       <div className="panel p-4">
         <p className="text-sm">
-          Sudah login sebagai <span className="font-medium">{session.data.username}</span>.
+          Signed in as <span className="font-medium">{session.data.username}</span>.
         </p>
         <Link
           className="mt-2 inline-block text-sm text-accent underline underline-offset-2"
           to="/admin/damage-profiles"
         >
-          Buka halaman admin
+          Open admin page
         </Link>
       </div>
     );
@@ -47,19 +47,15 @@ export function AdminLoginPage() {
   const errorMessage =
     mutation.error instanceof ApiError
       ? mutation.error.status === 429
-        ? "Terlalu banyak percobaan. Coba lagi setelah 15 menit."
-        : "Username atau password salah."
+        ? "Too many attempts. Try again in 15 minutes."
+        : "Incorrect username or password."
       : mutation.error instanceof Error
         ? mutation.error.message
         : null;
 
   return (
     <div className="mx-auto max-w-md">
-      <h1 className="text-xl font-semibold">Login admin</h1>
-      <p className="muted mt-1 text-sm">
-        Halaman ini untuk mengubah profil damage dan pengaturan CC ability.
-        Data publik tetap bisa dibaca tanpa login.
-      </p>
+      <h1 className="text-xl font-semibold">Admin login</h1>
 
       <form
         className="panel mt-4 grid gap-3 p-4"
@@ -100,7 +96,7 @@ export function AdminLoginPage() {
           type="submit"
           disabled={mutation.isPending}
         >
-          {mutation.isPending ? "Memeriksa..." : "Masuk"}
+          {mutation.isPending ? "Checking..." : "Sign in"}
         </button>
       </form>
     </div>

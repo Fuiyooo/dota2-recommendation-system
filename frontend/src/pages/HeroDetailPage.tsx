@@ -2,13 +2,12 @@ import { useQuery } from "@tanstack/react-query";
 import { Link, useParams } from "react-router-dom";
 import { apiGet } from "../api/client";
 import type { Ability, HeroDetail } from "../api/types";
-import { Badge, validationTone } from "../components/Badge";
+import { Badge } from "../components/Badge";
 import { EmptyPanel, ErrorPanel, LoadingPanel } from "../components/StatePanel";
 import { ScrollHint } from "../components/ScrollHint";
 import {
   formatDecimal,
   isPercentValue,
-  talentValues,
   trackedDamageValues,
 } from "../utils/format";
 
@@ -31,15 +30,15 @@ export function HeroDetailPage() {
   });
 
   if (!validId) {
-    return <ErrorPanel message="ID hero tidak valid." />;
+    return <ErrorPanel message="Invalid hero ID." />;
   }
 
-  if (query.isPending) return <LoadingPanel label="detail hero" />;
+  if (query.isPending) return <LoadingPanel label="hero detail" />;
   if (query.isError) {
     return (
       <ErrorPanel
         message={
-          query.error instanceof Error ? query.error.message : "Error tidak dikenal"
+          query.error instanceof Error ? query.error.message : "Unknown error"
         }
         onRetry={() => void query.refetch()}
       />
@@ -53,6 +52,7 @@ export function HeroDetailPage() {
   const skills = hero.abilities.filter(
     (ability) => ability.abilityType !== "Talent",
   );
+
   const abilityByKey = new Map(
     hero.abilities.map((ability) => [ability.abilityKey, ability]),
   );
@@ -60,33 +60,28 @@ export function HeroDetailPage() {
   return (
     <div>
       <Link className="text-sm text-accent underline underline-offset-2" to="/heroes">
-        Kembali ke daftar hero
+        Back to hero list
       </Link>
 
-      <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold">{hero.localizedName}</h1>
-          <p className="muted mt-1 text-sm">
-            {hero.primaryAttr} {hero.attackType} · Complexity{" "}
-            {hero.complexity ?? "-"}
-          </p>
-          <p className="muted text-sm">{hero.roles.join(", ") || "Role belum ada"}</p>
-        </div>
-        <p className="text-sm muted">
-          {hero.abilities.length} baris ability dan talent
+      <div className="mt-3">
+        <h1 className="text-xl font-semibold">{hero.localizedName}</h1>
+        <p className="muted mt-1 text-sm">
+          {hero.primaryAttr} {hero.attackType} · Complexity{" "}
+          {hero.complexity ?? "-"}
         </p>
+        <p className="muted text-sm">{hero.roles.join(", ") || "No roles"}</p>
       </div>
       <ScrollHint />
 
       <section className="mt-5" aria-labelledby="attributes-title">
         <h2 id="attributes-title" className="text-base font-semibold">
-          Atribut
+          Attributes
         </h2>
         <div className="scroll-x panel mt-2">
           <table className="data-table">
             <thead>
               <tr>
-                <th scope="col">Atribut</th>
+                <th scope="col">Attribute</th>
                 <th scope="col">Base</th>
                 <th scope="col">Growth</th>
                 <th scope="col">Level 30</th>
@@ -120,19 +115,15 @@ export function HeroDetailPage() {
             </tbody>
           </table>
         </div>
-        <p className="muted mt-2 text-xs">
-          Level 30 dihitung sebagai base + growth × 29. Angka ini hanya bantuan
-          baca, bukan bagian dari skor karakteristik.
-        </p>
       </section>
 
       <section className="mt-6" aria-labelledby="abilities-title">
         <h2 id="abilities-title" className="text-base font-semibold">
-          Ability dan innate
+          Abilities and innate
         </h2>
         {skills.length === 0 ? (
-          <EmptyPanel title="Tidak ada ability">
-            Data ability untuk hero ini belum tersimpan.
+          <EmptyPanel title="No abilities">
+            Ability data for this hero has not been stored.
           </EmptyPanel>
         ) : (
           <div className="scroll-x panel mt-2">
@@ -140,10 +131,9 @@ export function HeroDetailPage() {
               <thead>
                 <tr>
                   <th scope="col">Ability</th>
-                  <th scope="col">Tipe</th>
+                  <th scope="col">Type</th>
                   <th scope="col">Damage</th>
                   <th scope="col">Max level</th>
-                  <th scope="col">Validasi</th>
                 </tr>
               </thead>
               <tbody>
@@ -174,11 +164,6 @@ export function HeroDetailPage() {
                       </td>
                       <td className="num">{ability.damageType ?? "-"}</td>
                       <td className="num">{ability.maxLevel}</td>
-                      <td>
-                        <Badge tone={validationTone(ability.validationStatus)}>
-                          {ability.validationStatus}
-                        </Badge>
-                      </td>
                     </tr>
                   );
                 })}
@@ -190,11 +175,11 @@ export function HeroDetailPage() {
 
       <section className="mt-6" aria-labelledby="talents-title">
         <h2 id="talents-title" className="text-base font-semibold">
-          Talent
+          Talents
         </h2>
         {talents.length === 0 ? (
-          <EmptyPanel title="Tidak ada talent">
-            Data talent untuk hero ini belum tersimpan.
+          <EmptyPanel title="No talents">
+            Talent data for this hero has not been stored.
           </EmptyPanel>
         ) : (
           <div className="scroll-x panel mt-2">
@@ -203,14 +188,11 @@ export function HeroDetailPage() {
                 <tr>
                   <th scope="col">Level</th>
                   <th scope="col">Talent</th>
-                  <th scope="col">Ability terkait</th>
-                  <th scope="col">Nilai bonus</th>
-                  <th scope="col">Validasi</th>
+                  <th scope="col">Linked ability</th>
                 </tr>
               </thead>
               <tbody>
                 {talents.map((talent) => {
-                  const refs = talentValues(talent).bonusRefs ?? [];
                   const linked = talent.linkedAbilityKey
                     ? abilityByKey.get(talent.linkedAbilityKey)
                     : undefined;
@@ -225,21 +207,6 @@ export function HeroDetailPage() {
                       </th>
                       <td className="muted">
                         {linked?.displayName ?? talent.linkedAbilityKey ?? "-"}
-                      </td>
-                      <td className="text-xs whitespace-normal break-words">
-                        {refs.length === 0
-                          ? "-"
-                          : refs
-                              .map(
-                                (ref) =>
-                                  `${ref.abilityKey ?? "hero"}.${ref.specialValue} ${formatDecimal(ref.value)}`,
-                              )
-                              .join("; ")}
-                      </td>
-                      <td>
-                        <Badge tone={validationTone(talent.validationStatus)}>
-                          {talent.validationStatus}
-                        </Badge>
                       </td>
                     </tr>
                   );

@@ -13,7 +13,7 @@ import {
 } from "../utils/format";
 
 const POSITIONS = [
-  { value: null, label: "Semua" },
+  { value: null, label: "All" },
   { value: 1, label: "Pos 1" },
   { value: 2, label: "Pos 2" },
   { value: 3, label: "Pos 3" },
@@ -46,20 +46,14 @@ export function MetaPage() {
 
   return (
     <div>
-      <div>
-        <h1 className="text-xl font-semibold">Meta Immortal</h1>
-        <p className="muted mt-1 text-sm">
-          Snapshot statistik posisi dari STRATZ. Data tidak diperbarui otomatis,
-          jadi angka tetap sama sampai snapshot baru dibuat secara manual.
-        </p>
-      </div>
+      <h1 className="text-xl font-semibold">Immortal Meta</h1>
       <ScrollHint />
 
-      {query.isPending ? <LoadingPanel label="snapshot meta" /> : null}
+      {query.isPending ? <LoadingPanel label="meta snapshot" /> : null}
       {query.isError ? (
         <ErrorPanel
           message={
-            query.error instanceof Error ? query.error.message : "Error tidak dikenal"
+            query.error instanceof Error ? query.error.message : "Unknown error"
           }
           onRetry={() => void query.refetch()}
         />
@@ -67,9 +61,9 @@ export function MetaPage() {
 
       {query.isSuccess && !snapshot ? (
         <div className="mt-4">
-          <EmptyPanel title="Snapshot meta belum ada">
-            Jalankan <span className="num">npm run sync:meta</span> dari root
-            project. Statistik posisi diambil untuk bracket Immortal.
+          <EmptyPanel title="No meta snapshot yet">
+            Run <span className="num">npm run sync:meta</span> from the project
+            root. Position statistics are collected for the Immortal bracket.
           </EmptyPanel>
         </div>
       ) : null}
@@ -90,19 +84,13 @@ export function MetaPage() {
               <p className="num font-medium">{snapshot.week}</p>
             </div>
             <div>
-              <p className="text-xs text-stone-600">Snapshot dibuat</p>
+              <p className="text-xs text-stone-600">Captured</p>
               <p className="num font-medium">{formatDate(snapshot.capturedAt)}</p>
-            </div>
-            <div className="sm:col-span-2 lg:col-span-4">
-              <p className="text-xs text-stone-600">Sumber</p>
-              <p className="font-medium">
-                {snapshot.source} · {snapshot.timeWindow}
-              </p>
             </div>
           </div>
 
           <div className="mt-4 flex flex-wrap items-center gap-2">
-            <span className="text-sm text-stone-600">Posisi</span>
+            <span className="text-sm text-stone-600">Position</span>
             {POSITIONS.map((item) => (
               <button
                 key={item.label}
@@ -117,20 +105,20 @@ export function MetaPage() {
           </div>
 
           <label className="mt-3 block max-w-sm">
-            <span className="text-xs text-stone-600">Cari hero</span>
+            <span className="text-xs text-stone-600">Search hero</span>
             <input
               className="field mt-1 w-full"
               type="search"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Nama hero"
+              placeholder="Hero name"
             />
           </label>
 
           {stats.length === 0 ? (
             <div className="mt-4">
-              <EmptyPanel title="Tidak ada baris untuk filter ini">
-                Ubah posisi atau hapus kata kunci pencarian.
+              <EmptyPanel title="No rows for this filter">
+                Change the position or clear the search keyword.
               </EmptyPanel>
             </div>
           ) : (
@@ -140,11 +128,10 @@ export function MetaPage() {
                   <tr>
                     <th scope="col">Rank</th>
                     <th scope="col">Hero</th>
-                    <th scope="col">Posisi</th>
+                    <th scope="col">Position</th>
                     <th scope="col">Pick rate</th>
                     <th scope="col">Win rate</th>
-                    <th scope="col">Match</th>
-                    <th scope="col">Sumber</th>
+                    <th scope="col">Matches</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -175,7 +162,6 @@ export function MetaPage() {
                         <td className="num">{formatPercent(row.pickRate)}</td>
                         <td className="num">{formatPercent(row.winRate)}</td>
                         <td className="num">{formatNumber(row.matchCount)}</td>
-                        <td className="muted text-xs">{row.source}</td>
                       </tr>
                     );
                   })}
@@ -183,12 +169,6 @@ export function MetaPage() {
               </table>
             </div>
           )}
-
-          <p className="muted mt-2 text-xs">
-            Rank dihitung per posisi. Pick rate dihitung dari match hero dibagi
-            total match semua hero pada posisi dan snapshot yang sama. Win rate
-            dihitung dari win count dibagi match count.
-          </p>
         </>
       ) : null}
     </div>

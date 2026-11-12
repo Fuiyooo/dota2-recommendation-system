@@ -30,55 +30,49 @@ export function HeroListPage() {
   return (
     <div>
       <div className="flex flex-wrap items-end justify-between gap-3">
-        <div>
-          <h1 className="text-xl font-semibold">Hero</h1>
-          <p className="muted mt-1 text-sm">
-            Data hero dari Valve Datafeed. Atribut dan growth adalah nilai dasar,
-            bukan hasil perhitungan karakteristik.
-          </p>
-        </div>
-        <p className="text-sm muted">
-          {query.data ? `${query.data.length} hero` : "Menunggu data"}
+        <h1 className="text-xl font-semibold">Heroes</h1>
+        <p className="muted text-sm">
+          {query.data ? `${query.data.length} heroes` : "Waiting for data"}
         </p>
       </div>
 
       <label className="mt-4 block max-w-sm">
-        <span className="text-xs text-stone-600">Cari hero, atribut, atau role</span>
+        <span className="text-xs text-stone-600">Search</span>
         <input
           className="field mt-1 w-full"
           type="search"
           value={search}
           onChange={(event) => setSearch(event.target.value)}
-          placeholder="Contoh: Lina, INT, Support"
+          placeholder="Example: Lina, INT, Support"
         />
       </label>
       <ScrollHint />
 
       <div className="mt-4">
-        {query.isPending ? <LoadingPanel label="daftar hero" /> : null}
+        {query.isPending ? <LoadingPanel label="hero list" /> : null}
         {query.isError ? (
           <ErrorPanel
             message={
-              query.error instanceof Error ? query.error.message : "Error tidak dikenal"
+              query.error instanceof Error ? query.error.message : "Unknown error"
             }
             onRetry={() => void query.refetch()}
           />
         ) : null}
         {query.isSuccess && query.data.length === 0 ? (
-          <EmptyPanel title="Belum ada data hero">
-            Jalankan <span className="num">npm run sync:constants</span> dari root
-            project, lalu muat ulang halaman ini.
+          <EmptyPanel title="No hero data yet">
+            Run <span className="num">npm run sync:constants</span> from the
+            project root, then reload this page.
           </EmptyPanel>
         ) : null}
         {query.isSuccess && query.data.length > 0 && heroes.length === 0 ? (
-          <EmptyPanel title="Tidak ada hero yang cocok">
-            Hapus kata kunci atau coba atribut lain.
+          <EmptyPanel title="No matching heroes">
+            Clear the keyword or try another attribute.
             <button
               type="button"
               className="button mt-3 block"
               onClick={() => setSearch("")}
             >
-              Reset pencarian
+              Reset search
             </button>
           </EmptyPanel>
         ) : null}
@@ -88,7 +82,7 @@ export function HeroListPage() {
               <thead>
                 <tr>
                   <th scope="col">Hero</th>
-                  <th scope="col">Atribut</th>
+                  <th scope="col">Attribute</th>
                   <th scope="col">Attack</th>
                   <th scope="col">Role</th>
                   <th scope="col">Complexity</th>

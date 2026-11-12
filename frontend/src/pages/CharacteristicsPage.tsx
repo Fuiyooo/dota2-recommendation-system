@@ -6,10 +6,9 @@ import type {
   CharacteristicName,
   CharacteristicsResponse,
 } from "../api/types";
-import { Badge, calculationTone } from "../components/Badge";
 import { EmptyPanel, ErrorPanel, LoadingPanel } from "../components/StatePanel";
 import { ScrollHint } from "../components/ScrollHint";
-import { formatDate, formatDecimal } from "../utils/format";
+import { formatDecimal } from "../utils/format";
 
 const CHARACTERISTICS: Array<{
   key: CharacteristicName;
@@ -21,22 +20,9 @@ const CHARACTERISTICS: Array<{
   { key: "mobility", label: "Mobility / Escape" },
 ];
 
-function ScoreCell({
-  value,
-  status,
-}: {
-  value: number | null;
-  status: string;
-}) {
-  if (value === null) {
-    return <Badge tone={calculationTone(status)}>{status}</Badge>;
-  }
-  return (
-    <span className="whitespace-nowrap">
-      <span className="num font-medium">{formatDecimal(value)}</span>{" "}
-      <Badge tone={calculationTone(status)}>{status}</Badge>
-    </span>
-  );
+function ScoreCell({ value }: { value: number | null }) {
+  if (value === null) return <span className="muted">-</span>;
+  return <span className="num font-medium">{formatDecimal(value)}</span>;
 }
 
 export function CharacteristicsPage() {
@@ -57,20 +43,14 @@ export function CharacteristicsPage() {
 
   return (
     <div>
-      <div>
-        <h1 className="text-xl font-semibold">Skor karakteristik</h1>
-        <p className="muted mt-1 text-sm">
-          Skor 1 sampai 10 dari percentile seluruh hero. Nilai mentah, percentile,
-          dan status coverage dapat dibuka pada detail hero.
-        </p>
-      </div>
+      <h1 className="text-xl font-semibold">Characteristics</h1>
       <ScrollHint />
 
-      {query.isPending ? <LoadingPanel label="skor karakteristik" /> : null}
+      {query.isPending ? <LoadingPanel label="characteristic scores" /> : null}
       {query.isError ? (
         <ErrorPanel
           message={
-            query.error instanceof Error ? query.error.message : "Error tidak dikenal"
+            query.error instanceof Error ? query.error.message : "Unknown error"
           }
           onRetry={() => void query.refetch()}
         />
@@ -78,55 +58,30 @@ export function CharacteristicsPage() {
 
       {query.isSuccess && !query.data.run ? (
         <div className="mt-4">
-          <EmptyPanel title="Belum ada hasil kalkulasi">
-            Jalankan <span className="num">npm run calculate</span> dari root
-            project untuk menghitung seluruh hero.
+          <EmptyPanel title="No calculation results yet">
+            Run <span className="num">npm run calculate</span> from the project
+            root to score every hero.
           </EmptyPanel>
         </div>
       ) : null}
 
       {query.data?.run ? (
         <>
-          <div className="panel mt-4 grid gap-3 p-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
-            <div>
-              <p className="text-xs text-stone-600">Run</p>
-              <p className="num font-medium">#{query.data.run.id}</p>
-            </div>
-            <div>
-              <p className="text-xs text-stone-600">Patch dan config</p>
-              <p className="num font-medium">
-                {query.data.run.patch} · {query.data.run.configVersion}
-              </p>
-            </div>
-            <div>
-              <p className="text-xs text-stone-600">Status</p>
-              <Badge tone={query.data.run.status === "SUCCESS" ? "ok" : "warn"}>
-                {query.data.run.status}
-              </Badge>
-            </div>
-            <div>
-              <p className="text-xs text-stone-600">Dihitung</p>
-              <p className="num font-medium">
-                {formatDate(query.data.run.finishedAt)}
-              </p>
-            </div>
-          </div>
-
-          <label className="mt-3 block max-w-sm">
-            <span className="text-xs text-stone-600">Cari hero</span>
+          <label className="mt-4 block max-w-sm">
+            <span className="text-xs text-stone-600">Search hero</span>
             <input
               className="field mt-1 w-full"
               type="search"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Nama hero"
+              placeholder="Hero name"
             />
           </label>
 
           {heroes.length === 0 ? (
             <div className="mt-3">
-              <EmptyPanel title="Tidak ada hero yang cocok">
-                Hapus kata kunci pencarian.
+              <EmptyPanel title="No matching heroes">
+                Clear the search keyword.
               </EmptyPanel>
             </div>
           ) : (
@@ -161,10 +116,7 @@ export function CharacteristicsPage() {
                         return (
                           <td key={characteristic.key}>
                             {score ? (
-                              <ScoreCell
-                                value={score.score}
-                                status={score.status}
-                              />
+                              <ScoreCell value={score.score} />
                             ) : (
                               <span className="muted">-</span>
                             )}

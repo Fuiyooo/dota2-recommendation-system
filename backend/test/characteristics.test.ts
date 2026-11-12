@@ -277,6 +277,68 @@ describe("durability, CC, dan mobility", () => {
     expect(durability.armor).toBeCloseTo(26, 5);
   });
 
+  it("tidak menambah EHP dari evasion Immaterial", () => {
+    const immaterial: AbilityData = {
+      id: 3,
+      abilityKey: "phantom_assassin_immaterial",
+      displayName: "Immaterial",
+      abilityType: "Passive",
+      isInnate: false,
+      maxLevel: 4,
+      damageType: null,
+      talentLevel: null,
+      linkedAbilityKey: null,
+      specialValues: [
+        {
+          name: "evasion",
+          heading: "EVASION:",
+          values: [55],
+          isPercentage: true,
+          bonuses: [
+            {
+              name: "special_bonus_unique_phantom_assassin_2",
+              value: 20,
+              operation: 0,
+            },
+          ],
+          scepterValues: [],
+          shardValues: [],
+        },
+      ],
+      rawData: { desc_loc: "Phantom Assassin evades incoming attacks." },
+      sortOrder: 0,
+    };
+    const hero: HeroData = {
+      id: 2,
+      localizedName: "Phantom Assassin",
+      primaryAttr: "AGI",
+      attackType: "Melee",
+      baseStr: 19,
+      baseAgi: 23,
+      baseInt: 15,
+      strGain: 2.2,
+      agiGain: 3.4,
+      intGain: 1.4,
+      attackRange: 150,
+      moveSpeed: 310,
+      armor: 1,
+      damageMin: 50,
+      damageMax: 56,
+      attackRate: 1.7,
+      attackPoint: 0.3,
+      baseHealth: 582,
+      healthRegen: 1.5,
+      baseMana: 291,
+      baseMagicResistance: 25,
+      abilities: [immaterial],
+    };
+    const attributes = calculateAttributes(hero, []);
+    const durability = calculateDurability(hero, attributes, []);
+    expect(durability.maxHp).toBeCloseTo(attributes.maxHp, 6);
+    expect(durability.detail.immaterialEvasion).toBeCloseTo(0.75, 6);
+    expect(durability.detail.immaterialEhp).toBeUndefined();
+  });
+
   it("mendeteksi CC Lina", () => {
     const cc = calculateCrowdControl(lina, selectTalents(lina).talents);
     expect(cc.disableDuration).toBeGreaterThan(0);

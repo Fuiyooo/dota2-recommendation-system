@@ -10,7 +10,6 @@ import { Badge } from "../components/Badge";
 import { EmptyPanel, ErrorPanel, LoadingPanel } from "../components/StatePanel";
 import { ScrollHint } from "../components/ScrollHint";
 import {
-  formatDate,
   formatDecimal,
   formatNumber,
   formatPercent,
@@ -110,7 +109,6 @@ export function SawPage() {
 
   const data = mutation.data ?? query.data;
   const results = data?.results ?? [];
-  const currentWeights = data?.sawRun?.weights ?? weights;
 
   const filtered = useMemo(
     () =>
@@ -131,27 +129,16 @@ export function SawPage() {
     [results, position, complexity, attackType],
   );
 
-  const rawTotal = Math.round(
-    CHARACTERISTICS.reduce((sum, item) => sum + weights[item.key], 0) * 100,
-  );
-
   return (
     <div>
-      <div>
-        <h1 className="text-xl font-semibold">SAW</h1>
-        <p className="muted mt-1 text-sm">
-          Simple Additive Weighting dari empat skor karakteristik. Bobot
-          dinormalisasi ke total 1, lalu skor karakteristik dinormalisasi
-          terhadap nilai tertinggi pada setiap kriteria.
-        </p>
-      </div>
+      <h1 className="text-xl font-semibold">Recommendation</h1>
       <ScrollHint />
 
-      {query.isPending ? <LoadingPanel label="ranking SAW" /> : null}
+      {query.isPending ? <LoadingPanel label="recommendation ranking" /> : null}
       {query.isError ? (
         <ErrorPanel
           message={
-            query.error instanceof Error ? query.error.message : "Error tidak dikenal"
+            query.error instanceof Error ? query.error.message : "Unknown error"
           }
           onRetry={() => void query.refetch()}
         />
@@ -160,7 +147,7 @@ export function SawPage() {
       <section className="mt-4" aria-labelledby="weights-title">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <h2 id="weights-title" className="text-base font-semibold">
-            Bobot kriteria
+            Criteria weights
           </h2>
           <button
             type="button"
@@ -198,52 +185,34 @@ export function SawPage() {
             </label>
           ))}
         </div>
-        <p className="muted mt-2 text-xs">
-          Menggeser satu bobot menyesuaikan bobot lain agar total tetap 100.
-        </p>
 
-        <div className="mt-2 flex flex-wrap items-center gap-3">
+        <div className="mt-2">
           <button
             type="button"
             className="button button-primary"
             disabled={mutation.isPending}
             onClick={() => mutation.mutate(weights)}
           >
-            {mutation.isPending ? "Menghitung..." : "Hitung ranking"}
+            {mutation.isPending ? "Calculating..." : "Calculate ranking"}
           </button>
-          <span className="muted text-sm">
-            Total mentah {rawTotal}. Bobot aktif:{" "}
-            {CHARACTERISTICS.map(
-              (characteristic) =>
-                `${characteristic.label} ${formatDecimal(
-                  currentWeights[characteristic.key],
-                )}`,
-            ).join(" · ")}
-          </span>
         </div>
-
-        {rawTotal !== 100 && rawTotal > 0 ? (
-          <p className="muted mt-1 text-xs">
-            Total tidak 100. Server menormalisasi bobot ke total 1.
-          </p>
-        ) : null}
 
         {mutation.isError ? (
           <p className="status error mt-3" role="alert">
             {mutation.error instanceof Error
               ? mutation.error.message
-              : "Gagal menghitung SAW."}
+              : "Failed to calculate the ranking."}
           </p>
         ) : null}
       </section>
 
       <section className="mt-5" aria-labelledby="filter-title">
         <h2 id="filter-title" className="text-base font-semibold">
-          Filter hasil
+          Filters
         </h2>
         <div className="mt-2 flex flex-wrap gap-3">
           <label className="block">
-            <span className="text-xs text-stone-600">Posisi</span>
+            <span className="text-xs text-stone-600">Position</span>
             <select
               className="field mt-1 block min-w-40"
               value={position}
@@ -252,7 +221,7 @@ export function SawPage() {
                 setPosition(value === "all" ? "all" : Number(value));
               }}
             >
-              <option value="all">Semua posisi</option>
+              <option value="all">All positions</option>
               {[1, 2, 3, 4, 5].map((item) => (
                 <option key={item} value={item}>
                   Pos {item}
@@ -271,7 +240,7 @@ export function SawPage() {
                 setComplexity(value === "all" ? "all" : Number(value));
               }}
             >
-              <option value="all">Semua complexity</option>
+              <option value="all">All complexity</option>
               {[1, 2, 3].map((item) => (
                 <option key={item} value={item}>
                   {item} ({COMPLEXITY_LABEL[item]})
@@ -281,7 +250,7 @@ export function SawPage() {
           </label>
 
           <label className="block">
-            <span className="text-xs text-stone-600">Tipe serangan</span>
+            <span className="text-xs text-stone-600">Attack type</span>
             <select
               className="field mt-1 block min-w-40"
               value={attackType}
@@ -291,121 +260,103 @@ export function SawPage() {
                 )
               }
             >
-              <option value="all">Semua tipe</option>
+              <option value="all">All types</option>
               <option value="Melee">Melee</option>
               <option value="Ranged">Ranged</option>
             </select>
           </label>
         </div>
-        <p className="muted mt-2 text-xs">
-          {filtered.length} dari {results.length} hero setelah filter. Rank
-          dihitung ulang pada hasil filter. Urutan memakai final score, lalu
-          pick rate posisi utama yang lebih tinggi. Skor tetap memakai SAW
-          penuh.
-        </p>
       </section>
 
       {!query.isPending && results.length === 0 ? (
         <div className="mt-4">
-          <EmptyPanel title="Belum ada ranking SAW">
-            Jalankan <span className="num">npm run calculate</span> lalu tekan
-            Hitung ranking. Ranking hanya memuat hero dengan empat skor
-            karakteristik valid.
+          <EmptyPanel title="No recommendation ranking yet">
+            Run <span className="num">npm run calculate</span>, then press
+            Calculate ranking.
           </EmptyPanel>
         </div>
       ) : null}
 
       {results.length > 0 && filtered.length === 0 ? (
         <div className="mt-4">
-          <EmptyPanel title="Tidak ada hero untuk filter ini">
-            Ubah posisi, complexity, atau tipe serangan.
+          <EmptyPanel title="No heroes match these filters">
+            Change the position, complexity, or attack type.
           </EmptyPanel>
         </div>
       ) : null}
 
       {filtered.length > 0 ? (
-        <>
-          <div className="scroll-x panel mt-4">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th scope="col">Rank</th>
-                  <th scope="col">Hero</th>
-                  <th scope="col">Final score</th>
-                  <th scope="col">Pick rate</th>
-                  {CHARACTERISTICS.map((characteristic) => (
-                    <th key={characteristic.key} scope="col">
-                      {characteristic.label}
-                    </th>
-                  ))}
-                  <th scope="col">Posisi</th>
-                  <th scope="col">Complexity</th>
-                  <th scope="col">Serangan</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filtered.map((result, index) => (
-                  <tr key={result.heroId}>
-                    <td className="num">{index + 1}</td>
-                    <th scope="row">
-                      <Link
-                        className="font-medium text-accent underline underline-offset-2"
-                        to={`/characteristics/${result.heroId}`}
-                      >
-                        {result.heroName}
-                      </Link>
-                      <span className="muted block text-xs">
-                        Global #{result.rank}
-                      </span>
-                    </th>
-                    <td className="num font-medium">
-                      {formatDecimal(result.finalScore)}
-                    </td>
-                    <td className="num">
-                      {formatPercent(result.pickRate)}
-                      <span className="muted block text-xs">
-                        {formatNumber(result.pickCount)} match
-                      </span>
-                    </td>
-                    {CHARACTERISTICS.map((characteristic) => (
-                      <td key={characteristic.key} className="num">
-                        {formatDecimal(
-                          result.normalizedScores[characteristic.key] ?? 0,
-                        )}
-                      </td>
-                    ))}
-                    <td>
-                      <Badge tone="neutral">
-                        {result.mainPosition === null
-                          ? "-"
-                          : `Pos ${result.mainPosition}`}
-                      </Badge>
-                    </td>
-                    <td>
-                      <Badge tone="neutral">
-                        {result.complexity === null
-                          ? "-"
-                          : `${result.complexity} (${COMPLEXITY_LABEL[result.complexity] ?? "-"})`}
-                      </Badge>
-                    </td>
-                    <td>
-                      <Badge tone="neutral">{result.attackType}</Badge>
-                    </td>
-                  </tr>
+        <div className="scroll-x panel mt-4">
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th scope="col">Rank</th>
+                <th scope="col">Hero</th>
+                <th scope="col">Final score</th>
+                <th scope="col">Pick rate</th>
+                {CHARACTERISTICS.map((characteristic) => (
+                  <th key={characteristic.key} scope="col">
+                    {characteristic.label}
+                  </th>
                 ))}
-              </tbody>
-            </table>
-          </div>
-          <p className="muted mt-2 text-xs">
-            {data?.sawRun
-              ? `Ranking dari run SAW #${data.sawRun.id}, dibuat ${formatDate(
-                  data.sawRun.createdAt,
-                )}.`
-              : "Ranking terbaru."}{" "}
-            Nilai kolom karakteristik adalah skor ternormalisasi, bukan skor
-            mentah 1 sampai 10.
-          </p>
-        </>
+                <th scope="col">Position</th>
+                <th scope="col">Complexity</th>
+                <th scope="col">Attack</th>
+              </tr>
+            </thead>
+            <tbody>
+              {filtered.map((result, index) => (
+                <tr key={result.heroId}>
+                  <td className="num">{index + 1}</td>
+                  <th scope="row">
+                    <Link
+                      className="font-medium text-accent underline underline-offset-2"
+                      to={`/characteristics/${result.heroId}`}
+                    >
+                      {result.heroName}
+                    </Link>
+                    <span className="muted block text-xs">
+                      Global #{result.rank}
+                    </span>
+                  </th>
+                  <td className="num font-medium">
+                    {formatDecimal(result.finalScore)}
+                  </td>
+                  <td className="num">
+                    {formatPercent(result.pickRate)}
+                    <span className="muted block text-xs">
+                      {formatNumber(result.pickCount)} matches
+                    </span>
+                  </td>
+                  {CHARACTERISTICS.map((characteristic) => (
+                    <td key={characteristic.key} className="num">
+                      {formatDecimal(
+                        result.normalizedScores[characteristic.key] ?? 0,
+                      )}
+                    </td>
+                  ))}
+                  <td>
+                    <Badge tone="neutral">
+                      {result.mainPosition === null
+                        ? "-"
+                        : `Pos ${result.mainPosition}`}
+                    </Badge>
+                  </td>
+                  <td>
+                    <Badge tone="neutral">
+                      {result.complexity === null
+                        ? "-"
+                        : `${result.complexity} (${COMPLEXITY_LABEL[result.complexity] ?? "-"})`}
+                    </Badge>
+                  </td>
+                  <td>
+                    <Badge tone="neutral">{result.attackType}</Badge>
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        </div>
       ) : null}
     </div>
   );

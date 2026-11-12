@@ -7,7 +7,6 @@ import type {
   HeroCharacteristicsResponse,
   IndicatorScore,
 } from "../api/types";
-import { Badge, calculationTone } from "../components/Badge";
 import { EmptyPanel, ErrorPanel, LoadingPanel } from "../components/StatePanel";
 import { ScrollHint } from "../components/ScrollHint";
 import { formatDecimal } from "../utils/format";
@@ -53,15 +52,15 @@ export function CharacteristicDetailPage() {
     enabled: validId,
   });
 
-  if (!validId) return <ErrorPanel message="ID hero tidak valid." />;
+  if (!validId) return <ErrorPanel message="Invalid hero ID." />;
   if (heroQuery.isPending || breakdownQuery.isPending) {
-    return <LoadingPanel label="rincian karakteristik" />;
+    return <LoadingPanel label="characteristic details" />;
   }
   if (heroQuery.isError || breakdownQuery.isError) {
     const error = heroQuery.error ?? breakdownQuery.error;
     return (
       <ErrorPanel
-        message={error instanceof Error ? error.message : "Error tidak dikenal"}
+        message={error instanceof Error ? error.message : "Unknown error"}
         onRetry={() => {
           void heroQuery.refetch();
           void breakdownQuery.refetch();
@@ -77,8 +76,8 @@ export function CharacteristicDetailPage() {
 
   if (!run || !hero) {
     return (
-      <EmptyPanel title="Belum ada hasil kalkulasi">
-        Jalankan <span className="num">npm run calculate</span> terlebih dahulu.
+      <EmptyPanel title="No calculation results yet">
+        Run <span className="num">npm run calculate</span> first.
       </EmptyPanel>
     );
   }
@@ -105,19 +104,18 @@ export function CharacteristicDetailPage() {
   return (
     <div>
       <Link className="text-sm text-accent underline underline-offset-2" to="/characteristics">
-        Kembali ke skor karakteristik
+        Back to characteristics
       </Link>
 
       <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
         <div>
           <h1 className="text-xl font-semibold">{hero.localizedName}</h1>
           <p className="muted mt-1 text-sm">
-            {hero.primaryAttr} · {hero.attackType} · Run #{run.id} ·{" "}
-            {run.configVersion}
+            {hero.primaryAttr} · {hero.attackType}
           </p>
         </div>
         <Link className="text-sm text-accent underline underline-offset-2" to={`/heroes/${hero.id}`}>
-          Lihat data hero
+          View hero data
         </Link>
       </div>
       <ScrollHint />
@@ -125,7 +123,7 @@ export function CharacteristicDetailPage() {
       {damageProfile ? (
         <div className="panel mt-3 grid gap-2 p-3 text-sm sm:grid-cols-2">
           <div>
-            <p className="text-xs text-stone-600">Profil damage</p>
+            <p className="text-xs text-stone-600">Damage profile</p>
             <p className="font-medium">
               Main {damageProfile.main ?? "-"} · Secondary{" "}
               {damageProfile.secondary ?? "-"}
@@ -134,14 +132,7 @@ export function CharacteristicDetailPage() {
           <div>
             <p className="text-xs text-stone-600">Basic attack</p>
             <p className="font-medium">
-              {damageDetail?.basicAttack?.counted
-                ? "Dihitung"
-                : "Tidak dihitung"}
-            </p>
-            <p className="muted text-xs">
-              {damageDetail?.basicAttack?.counted
-                ? "PHYSICAL termasuk main atau secondary."
-                : "PHYSICAL bukan main atau secondary, jadi serangan dasar diabaikan."}
+              {damageDetail?.basicAttack?.counted ? "Counted" : "Not counted"}
             </p>
           </div>
         </div>
@@ -149,15 +140,14 @@ export function CharacteristicDetailPage() {
 
       <section className="mt-4" aria-labelledby="summary-title">
         <h2 id="summary-title" className="text-base font-semibold">
-          Skor karakteristik
+          Characteristic scores
         </h2>
         <div className="scroll-x panel mt-2">
           <table className="data-table">
             <thead>
               <tr>
-                <th scope="col">Karakteristik</th>
-                <th scope="col">Skor</th>
-                <th scope="col">Status coverage</th>
+                <th scope="col">Characteristic</th>
+                <th scope="col">Score</th>
               </tr>
             </thead>
             <tbody>
@@ -171,11 +161,6 @@ export function CharacteristicDetailPage() {
                       ? "-"
                       : formatDecimal(characteristic.score)}
                   </td>
-                  <td>
-                    <Badge tone={calculationTone(characteristic.status)}>
-                      {characteristic.status}
-                    </Badge>
-                  </td>
                 </tr>
               ))}
             </tbody>
@@ -185,20 +170,18 @@ export function CharacteristicDetailPage() {
 
       <section className="mt-5" aria-labelledby="indicator-title">
         <h2 id="indicator-title" className="text-base font-semibold">
-          Rincian indikator
+          Indicator details
         </h2>
         <div className="scroll-x panel mt-2">
           <table className="data-table">
             <thead>
               <tr>
-                <th scope="col">Karakteristik</th>
-                <th scope="col">Indikator</th>
+                <th scope="col">Characteristic</th>
+                <th scope="col">Indicator</th>
                 <th scope="col">Raw</th>
                 <th scope="col">Unit</th>
                 <th scope="col">Percentile</th>
-                <th scope="col">Skor</th>
-                <th scope="col">Status</th>
-                <th scope="col">Detail</th>
+                <th scope="col">Score</th>
               </tr>
             </thead>
             <tbody>
@@ -224,32 +207,12 @@ export function CharacteristicDetailPage() {
                         : `${formatDecimal(score.percentile)}%`}
                     </td>
                     <td className="num">{score?.score ?? "-"}</td>
-                    <td>
-                      <Badge tone={calculationTone(indicator.status)}>
-                        {indicator.status}
-                      </Badge>
-                    </td>
-                    <td>
-                      <details>
-                        <summary className="cursor-pointer text-xs text-accent">
-                          Buka
-                        </summary>
-                        <pre className="mt-2 max-h-64 max-w-md overflow-auto whitespace-pre-wrap break-words border border-stone-200 bg-stone-50 p-2 text-[11px]">
-                          {JSON.stringify(indicator.detail, null, 2)}
-                        </pre>
-                      </details>
-                    </td>
                   </tr>
                 );
               })}
             </tbody>
           </table>
         </div>
-        <p className="muted mt-2 text-xs">
-          Percentile dihitung dari seluruh hero yang memiliki nilai valid untuk
-          indikator tersebut. Nilai 0 mendapat percentile 0 dan skor 1. Status
-          PARTIAL berarti sebagian mekanisme ability belum terhitung penuh.
-        </p>
       </section>
     </div>
   );
