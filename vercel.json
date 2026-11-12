@@ -5,7 +5,8 @@
       "root": "backend/",
       "framework": "nestjs",
       "entrypoint": "src/main.ts",
-      "outputDirectory": "."
+      "outputDirectory": ".",
+      "buildCommand": "npm run build"
     },
     "frontend": {
       "root": "frontend/",

@@ -3,7 +3,8 @@
   "private": true,
   "version": "0.1.0",
   "scripts": {
-    "build": "prisma generate && nest build",
+    "build": "prisma generate",
+    "build:app": "nest build",
     "start": "node dist/main.js",
     "start:dev": "nest start --watch",
     "prisma:generate": "prisma generate",
@@ -12,12 +13,12 @@
     "prisma:generate:sqlite": "prisma generate --schema prisma/schema.sqlite.prisma",
     "copy:data": "npm run prisma:generate:sqlite && tsx prisma/copy-from-sqlite.ts",
     "test": "vitest run",
-    "sync:constants": "npm run build && node dist/scripts/sync-constants.js",
-    "sync:meta": "npm run build && node dist/scripts/sync-meta.js",
-    "sync:patch": "npm run build && node dist/scripts/validate-patch.js",
-    "calculate": "npm run build && node dist/scripts/calculate.js",
-    "admin:seed": "npm run build && node dist/scripts/seed-admin.js",
-    "profiles:seed": "npm run build && node dist/scripts/seed-damage-profiles.js",
+    "sync:constants": "npm run build:app && node dist/scripts/sync-constants.js",
+    "sync:meta": "npm run build:app && node dist/scripts/sync-meta.js",
+    "sync:patch": "npm run build:app && node dist/scripts/validate-patch.js",
+    "calculate": "npm run build:app && node dist/scripts/calculate.js",
+    "admin:seed": "npm run build:app && node dist/scripts/seed-admin.js",
+    "profiles:seed": "npm run build:app && node dist/scripts/seed-damage-profiles.js",
     "cc:seed": "npm run build && node dist/scripts/seed-cc-config.js"
   },
   "dependencies": {
