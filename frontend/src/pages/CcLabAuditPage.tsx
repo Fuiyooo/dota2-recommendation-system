@@ -63,7 +63,7 @@ export function CcLabAuditPage() {
 
   return (
     <div>
-      <Link className="text-sm text-accent underline underline-offset-2" to="/cc-lab">
+      <Link className="text-sm text-link underline underline-offset-2" to="/cc-lab">
         Kembali ke CC Lab
       </Link>
       <div className="mt-3">
@@ -174,7 +174,7 @@ export function CcLabAuditPage() {
           </details>
         ) : null}
         <details className="mt-2">
-          <summary className="cursor-pointer text-accent">
+          <summary className="cursor-pointer text-link">
             Cara mengisi CSV
           </summary>
           <ul className="muted mt-2 list-disc space-y-1 pl-5 text-xs">
@@ -221,32 +221,32 @@ export function CcLabAuditPage() {
         <>
           <div className="panel mt-4 grid gap-3 p-3 text-sm sm:grid-cols-3 lg:grid-cols-5">
             <div>
-              <p className="text-xs text-stone-600">Total upgrade</p>
+              <p className="text-xs text-muted">Total upgrade</p>
               <p className="num font-medium">
                 {formatNumber(query.data.summary.totalUpgrades)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-stone-600">Scepter / Shard</p>
+              <p className="text-xs text-muted">Scepter / Shard</p>
               <p className="num font-medium">
                 {formatNumber(query.data.summary.scepter)} /{" "}
                 {formatNumber(query.data.summary.shard)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-stone-600">Dikecualikan</p>
+              <p className="text-xs text-muted">Dikecualikan</p>
               <p className="num font-medium text-amber-900">
                 {formatNumber(query.data.summary.excludedByScope)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-stone-600">Terdaftar di registry</p>
+              <p className="text-xs text-muted">Terdaftar di registry</p>
               <p className="num font-medium">
                 {formatNumber(query.data.summary.registered)}
               </p>
             </div>
             <div>
-              <p className="text-xs text-stone-600">Kandidat CC</p>
+              <p className="text-xs text-muted">Kandidat CC</p>
               <p className="num font-medium">
                 {formatNumber(
                   query.data.summary.newGranted +
@@ -257,8 +257,8 @@ export function CcLabAuditPage() {
               </p>
             </div>
             <div>
-              <p className="text-xs text-stone-600">Belum terdaftar</p>
-              <p className="num font-medium text-accent">
+              <p className="text-xs text-muted">Belum terdaftar</p>
+              <p className="num font-medium text-link">
                 {formatNumber(query.data.summary.unregisteredCcCandidates)}
               </p>
             </div>
@@ -266,7 +266,7 @@ export function CcLabAuditPage() {
 
           <div className="mt-3 flex flex-wrap gap-3">
             <label className="block">
-              <span className="text-xs text-stone-600">Upgrade</span>
+              <span className="text-xs text-muted">Upgrade</span>
               <select
                 className="field mt-1 block min-w-36"
                 value={type}
@@ -278,7 +278,7 @@ export function CcLabAuditPage() {
               </select>
             </label>
             <label className="block">
-              <span className="text-xs text-stone-600">Kategori</span>
+              <span className="text-xs text-muted">Kategori</span>
               <select
                 className="field mt-1 block min-w-44"
                 value={category}
@@ -293,7 +293,7 @@ export function CcLabAuditPage() {
               </select>
             </label>
             <label className="block">
-              <span className="text-xs text-stone-600">Registry</span>
+              <span className="text-xs text-muted">Registry</span>
               <select
                 className="field mt-1 block min-w-36"
                 value={registered}
@@ -305,7 +305,7 @@ export function CcLabAuditPage() {
               </select>
             </label>
             <label className="block">
-              <span className="text-xs text-stone-600">Cari hero atau ability</span>
+              <span className="text-xs text-muted">Cari hero atau ability</span>
               <input
                 className="field mt-1 block min-w-56"
                 type="search"

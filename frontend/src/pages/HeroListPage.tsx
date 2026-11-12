@@ -39,7 +39,7 @@ export function HeroListPage() {
       </div>
 
       <label className="mt-4 block max-w-sm">
-        <span className="text-xs text-stone-600">Search</span>
+        <span className="text-xs text-muted">Search</span>
         <input
           className="field mt-1 w-full"
           type="search"
@@ -96,7 +96,7 @@ export function HeroListPage() {
                   <tr key={hero.id}>
                     <th scope="row">
                       <Link
-                        className="flex items-center gap-2 text-accent"
+                        className="flex items-center gap-2 text-link"
                         to={`/heroes/${hero.id}`}
                       >
                         <GameImage
@@ -104,7 +104,7 @@ export function HeroListPage() {
                           width={64}
                           height={36}
                         />
-                        <span className="underline decoration-stone-400 underline-offset-2">
+                        <span className="underline decoration-line-strong underline-offset-2">
                           {hero.localizedName}
                         </span>
                       </Link>

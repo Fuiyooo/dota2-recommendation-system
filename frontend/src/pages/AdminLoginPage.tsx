@@ -35,7 +35,7 @@ export function AdminLoginPage() {
           Signed in as <span className="font-medium">{session.data.username}</span>.
         </p>
         <Link
-          className="mt-2 inline-block text-sm text-accent underline underline-offset-2"
+          className="mt-2 inline-block text-sm text-link underline underline-offset-2"
           to="/admin/damage-profiles"
         >
           Open admin page
@@ -65,7 +65,7 @@ export function AdminLoginPage() {
         }}
       >
         <label className="block text-sm">
-          <span className="text-xs text-stone-600">Username</span>
+          <span className="text-xs text-muted">Username</span>
           <input
             className="field mt-1 block w-full"
             type="text"
@@ -76,7 +76,7 @@ export function AdminLoginPage() {
           />
         </label>
         <label className="block text-sm">
-          <span className="text-xs text-stone-600">Password</span>
+          <span className="text-xs text-muted">Password</span>
           <input
             className="field mt-1 block w-full"
             type="password"

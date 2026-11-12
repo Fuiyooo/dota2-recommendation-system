@@ -68,7 +68,7 @@ export function CcLabDetailPage() {
 
   return (
     <div>
-      <Link className="text-sm text-accent underline underline-offset-2" to="/cc-lab">
+      <Link className="text-sm text-link underline underline-offset-2" to="/cc-lab">
         Kembali ke CC Lab
       </Link>
 
@@ -86,21 +86,21 @@ export function CcLabDetailPage() {
 
       <div className="panel mt-3 grid gap-3 p-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
         <div>
-          <p className="text-xs text-stone-600">CC total</p>
+          <p className="text-xs text-muted">CC total</p>
           <p className="num text-lg font-medium">
             {formatDecimal(result.totalCc)}
           </p>
         </div>
         <div>
-          <p className="text-xs text-stone-600">Status</p>
+          <p className="text-xs text-muted">Status</p>
           <Badge tone={statusTone(result.status)}>{result.status}</Badge>
         </div>
         <div>
-          <p className="text-xs text-stone-600">Efek terdaftar</p>
+          <p className="text-xs text-muted">Efek terdaftar</p>
           <p className="num font-medium">{result.effectCount}</p>
         </div>
         <div>
-          <p className="text-xs text-stone-600">Tidak dihitung</p>
+          <p className="text-xs text-muted">Tidak dihitung</p>
           <p className="num font-medium">{result.unsupportedCount}</p>
         </div>
       </div>
@@ -179,7 +179,7 @@ export function CcLabDetailPage() {
                       "Dihitung."
                     )}
                     <details className="mt-1">
-                      <summary className="cursor-pointer text-accent">
+                      <summary className="cursor-pointer text-link">
                         Sumber
                       </summary>
                       <p className="muted mt-1">{effect.sourceNote}</p>

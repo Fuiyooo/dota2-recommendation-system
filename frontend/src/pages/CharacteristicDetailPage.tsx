@@ -103,7 +103,7 @@ export function CharacteristicDetailPage() {
 
   return (
     <div>
-      <Link className="text-sm text-accent underline underline-offset-2" to="/characteristics">
+      <Link className="text-sm text-link underline underline-offset-2" to="/characteristics">
         Back to characteristics
       </Link>
 
@@ -114,7 +114,7 @@ export function CharacteristicDetailPage() {
             {hero.primaryAttr} · {hero.attackType}
           </p>
         </div>
-        <Link className="text-sm text-accent underline underline-offset-2" to={`/heroes/${hero.id}`}>
+        <Link className="text-sm text-link underline underline-offset-2" to={`/heroes/${hero.id}`}>
           View hero data
         </Link>
       </div>
@@ -123,14 +123,14 @@ export function CharacteristicDetailPage() {
       {damageProfile ? (
         <div className="panel mt-3 grid gap-2 p-3 text-sm sm:grid-cols-2">
           <div>
-            <p className="text-xs text-stone-600">Damage profile</p>
+            <p className="text-xs text-muted">Damage profile</p>
             <p className="font-medium">
               Main {damageProfile.main ?? "-"} · Secondary{" "}
               {damageProfile.secondary ?? "-"}
             </p>
           </div>
           <div>
-            <p className="text-xs text-stone-600">Basic attack</p>
+            <p className="text-xs text-muted">Basic attack</p>
             <p className="font-medium">
               {damageDetail?.basicAttack?.counted ? "Counted" : "Not counted"}
             </p>

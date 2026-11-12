@@ -45,7 +45,7 @@ export function HomePage() {
             <h2 className="text-base font-semibold">{card.title}</h2>
             <p className="muted mt-2 flex-1 text-sm">{card.description}</p>
             <Link
-              className="mt-4 text-sm text-accent underline underline-offset-2"
+              className="mt-4 text-sm text-link underline underline-offset-2"
               to={card.to}
             >
               Open

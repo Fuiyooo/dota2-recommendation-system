@@ -68,7 +68,7 @@ export function CharacteristicsPage() {
       {query.data?.run ? (
         <>
           <label className="mt-4 block max-w-sm">
-            <span className="text-xs text-stone-600">Search hero</span>
+            <span className="text-xs text-muted">Search hero</span>
             <input
               className="field mt-1 w-full"
               type="search"
@@ -102,7 +102,7 @@ export function CharacteristicsPage() {
                     <tr key={hero.heroId}>
                       <th scope="row">
                         <Link
-                          className="text-accent underline decoration-stone-400 underline-offset-2"
+                          className="text-link underline decoration-line-strong underline-offset-2"
                           to={`/characteristics/${hero.heroId}`}
                         >
                           {hero.heroName}

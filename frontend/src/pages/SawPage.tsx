@@ -163,7 +163,7 @@ export function SawPage() {
             <label key={characteristic.key} className="block">
               <span className="flex items-baseline justify-between gap-2 text-sm">
                 <span>{characteristic.label}</span>
-                <span className="num text-stone-700">
+                <span className="num text-ink-soft">
                   {Math.round(weights[characteristic.key] * 100)}
                 </span>
               </span>
@@ -212,7 +212,7 @@ export function SawPage() {
         </h2>
         <div className="mt-2 flex flex-wrap gap-3">
           <label className="block">
-            <span className="text-xs text-stone-600">Position</span>
+            <span className="text-xs text-muted">Position</span>
             <select
               className="field mt-1 block min-w-40"
               value={position}
@@ -231,7 +231,7 @@ export function SawPage() {
           </label>
 
           <label className="block">
-            <span className="text-xs text-stone-600">Complexity</span>
+            <span className="text-xs text-muted">Complexity</span>
             <select
               className="field mt-1 block min-w-40"
               value={complexity}
@@ -250,7 +250,7 @@ export function SawPage() {
           </label>
 
           <label className="block">
-            <span className="text-xs text-stone-600">Attack type</span>
+            <span className="text-xs text-muted">Attack type</span>
             <select
               className="field mt-1 block min-w-40"
               value={attackType}
@@ -310,7 +310,7 @@ export function SawPage() {
                   <td className="num">{index + 1}</td>
                   <th scope="row">
                     <Link
-                      className="font-medium text-accent underline underline-offset-2"
+                      className="font-medium text-link underline underline-offset-2"
                       to={`/characteristics/${result.heroId}`}
                     >
                       {result.heroName}

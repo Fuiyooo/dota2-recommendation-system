@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
+import { ThemeToggle } from "./ThemeToggle";
 
 interface NavItem {
   to: string;
@@ -18,8 +19,8 @@ const NAV_ITEMS: NavItem[] = [
 function linkClass({ isActive }: { isActive: boolean }): string {
   return `block rounded px-3 py-2 text-sm ${
     isActive
-      ? "bg-orange-50 font-medium text-accent"
-      : "text-stone-700 hover:bg-stone-100 hover:text-ink"
+      ? "bg-accent-soft font-medium text-link"
+      : "text-ink-soft hover:bg-surface-muted hover:text-ink"
   }`;
 }
 
@@ -42,19 +43,22 @@ export function Layout() {
 
   return (
     <div className="min-h-screen lg:flex">
-      <header className="flex items-center justify-between border-b border-stone-300 bg-white px-4 py-3 lg:hidden">
+      <header className="flex items-center justify-between border-b border-line bg-surface px-4 py-3 lg:hidden">
         <NavLink to="/" className="text-base font-semibold">
           Dota 2 Data Lab
         </NavLink>
-        <button
-          type="button"
-          className="button small"
-          aria-expanded={menuOpen}
-          aria-controls="sidebar-nav"
-          onClick={() => setMenuOpen((open) => !open)}
-        >
-          {menuOpen ? "Close" : "Menu"}
-        </button>
+        <div className="flex items-center gap-2">
+          <ThemeToggle />
+          <button
+            type="button"
+            className="button"
+            aria-expanded={menuOpen}
+            aria-controls="sidebar-nav"
+            onClick={() => setMenuOpen((open) => !open)}
+          >
+            {menuOpen ? "Close" : "Menu"}
+          </button>
+        </div>
       </header>
 
       {menuOpen ? (
@@ -70,7 +74,7 @@ export function Layout() {
         id="sidebar-nav"
         className={`${
           menuOpen ? "block" : "hidden"
-        } fixed inset-y-0 left-0 z-40 w-64 overflow-y-auto border-r border-stone-300 bg-white px-3 py-4 lg:sticky lg:top-0 lg:block lg:h-screen lg:w-60 lg:shrink-0`}
+        } fixed inset-y-0 left-0 z-40 w-64 overflow-y-auto border-r border-line bg-surface px-3 py-4 lg:sticky lg:top-0 lg:block lg:h-screen lg:w-60 lg:shrink-0`}
       >
         <div className="hidden lg:block">
           <NavLink to="/" className="block px-3 text-lg font-semibold">
@@ -99,6 +103,10 @@ export function Layout() {
             ))}
           </ul>
         </nav>
+
+        <div className="mt-4 border-t border-line-soft pt-3">
+          <ThemeToggle className="w-full" />
+        </div>
       </aside>
 
       <div className="min-w-0 flex-1">

@@ -65,7 +65,7 @@ export function HeroDetailPage() {
 
   return (
     <div>
-      <Link className="text-sm text-accent underline underline-offset-2" to="/heroes">
+      <Link className="text-sm text-link underline underline-offset-2" to="/heroes">
         Back to hero list
       </Link>
 

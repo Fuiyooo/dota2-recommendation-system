@@ -224,7 +224,7 @@ export function AdminCcAbilitiesPage() {
       <div className="panel p-4">
         <p className="text-sm">Admin session is not active.</p>
         <Link
-          className="mt-2 inline-block text-sm text-accent underline underline-offset-2"
+          className="mt-2 inline-block text-sm text-link underline underline-offset-2"
           to="/admin/login"
         >
           Go to login page
@@ -263,26 +263,26 @@ export function AdminCcAbilitiesPage() {
 
       <div className="panel mt-3 grid gap-3 p-3 text-sm sm:grid-cols-4">
         <div>
-          <p className="text-xs text-stone-600">CC abilities</p>
+          <p className="text-xs text-muted">CC abilities</p>
           <p className="num font-medium">{formatNumber(rows.length)}</p>
         </div>
         <div>
-          <p className="text-xs text-stone-600">Hard CC</p>
+          <p className="text-xs text-muted">Hard CC</p>
           <p className="num font-medium">{formatNumber(hardCount)}</p>
         </div>
         <div>
-          <p className="text-xs text-stone-600">Shown</p>
+          <p className="text-xs text-muted">Shown</p>
           <p className="num font-medium">{formatNumber(filtered.length)}</p>
         </div>
         <div>
-          <p className="text-xs text-stone-600">Unsaved</p>
+          <p className="text-xs text-muted">Unsaved</p>
           <p className="num font-medium">{formatNumber(dirtyRows.length)}</p>
         </div>
       </div>
 
       <div className="mt-3 flex flex-wrap items-end gap-3">
         <label className="block">
-          <span className="text-xs text-stone-600">Search hero or ability</span>
+          <span className="text-xs text-muted">Search hero or ability</span>
           <input
             className="field mt-1 block min-w-56"
             type="search"

@@ -48,11 +48,11 @@ export function DataStatusPage() {
         </h2>
         <div className="panel mt-2 grid gap-3 p-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="text-xs text-stone-600">Patch</p>
+            <p className="text-xs text-muted">Patch</p>
             <p className="num font-medium">{data.targetPatch}</p>
           </div>
           <div>
-            <p className="text-xs text-stone-600">Status</p>
+            <p className="text-xs text-muted">Status</p>
             <p>
               <Badge tone={data.patch.verified ? "ok" : "warn"}>
                 {data.patch.verified ? "Patch tercatat" : "Belum tercatat"}
@@ -60,29 +60,29 @@ export function DataStatusPage() {
             </p>
           </div>
           <div>
-            <p className="text-xs text-stone-600">Revisi sumber</p>
+            <p className="text-xs text-muted">Revisi sumber</p>
             <p className="num">{data.patch.sourceRevision ?? "-"}</p>
           </div>
           <div>
-            <p className="text-xs text-stone-600">Diambil</p>
+            <p className="text-xs text-muted">Diambil</p>
             <p className="num">{formatDate(data.patch.fetchedAt)}</p>
           </div>
         </div>
         <div className="panel mt-2 grid gap-3 p-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <p className="text-xs text-stone-600">Hero</p>
+            <p className="text-xs text-muted">Hero</p>
             <p className="num font-medium">{formatNumber(data.counts.heroes)}</p>
           </div>
           <div>
-            <p className="text-xs text-stone-600">Ability</p>
+            <p className="text-xs text-muted">Ability</p>
             <p className="num font-medium">{formatNumber(data.counts.abilities)}</p>
           </div>
           <div>
-            <p className="text-xs text-stone-600">Talent</p>
+            <p className="text-xs text-muted">Talent</p>
             <p className="num font-medium">{formatNumber(data.counts.talents)}</p>
           </div>
           <div>
-            <p className="text-xs text-stone-600">Baris meta</p>
+            <p className="text-xs text-muted">Baris meta</p>
             <p className="num font-medium">
               {formatNumber(data.counts.metaStats)}
             </p>
@@ -101,25 +101,25 @@ export function DataStatusPage() {
         {data.snapshot ? (
           <div className="panel mt-2 grid gap-3 p-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
             <div>
-              <p className="text-xs text-stone-600">Patch</p>
+              <p className="text-xs text-muted">Patch</p>
               <p className="num font-medium">{data.snapshot.patch}</p>
             </div>
             <div>
-              <p className="text-xs text-stone-600">Bracket</p>
+              <p className="text-xs text-muted">Bracket</p>
               <p className="font-medium">{data.snapshot.bracket}</p>
             </div>
             <div>
-              <p className="text-xs text-stone-600">Week</p>
+              <p className="text-xs text-muted">Week</p>
               <p className="num font-medium">{data.snapshot.week}</p>
             </div>
             <div>
-              <p className="text-xs text-stone-600">Dibuat</p>
+              <p className="text-xs text-muted">Dibuat</p>
               <p className="num font-medium">
                 {formatDate(data.snapshot.capturedAt)}
               </p>
             </div>
             <div className="sm:col-span-2 lg:col-span-4">
-              <p className="text-xs text-stone-600">Baris statistik</p>
+              <p className="text-xs text-muted">Baris statistik</p>
               <p className="num font-medium">
                 {formatNumber(data.snapshot._count?.stats ?? 0)}
               </p>
@@ -168,23 +168,23 @@ export function DataStatusPage() {
           <>
             <div className="panel mt-2 grid gap-3 p-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
               <div>
-                <p className="text-xs text-stone-600">Run</p>
+                <p className="text-xs text-muted">Run</p>
                 <p className="num font-medium">#{calculation.data.run.id}</p>
               </div>
               <div>
-                <p className="text-xs text-stone-600">Status</p>
+                <p className="text-xs text-muted">Status</p>
                 <Badge tone={runTone(calculation.data.run.status)}>
                   {calculation.data.run.status}
                 </Badge>
               </div>
               <div>
-                <p className="text-xs text-stone-600">Config</p>
+                <p className="text-xs text-muted">Config</p>
                 <p className="num font-medium">
                   {calculation.data.configVersion ?? "-"}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-stone-600">Selesai</p>
+                <p className="text-xs text-muted">Selesai</p>
                 <p className="num font-medium">
                   {formatDate(calculation.data.run.finishedAt)}
                 </p>
@@ -192,19 +192,19 @@ export function DataStatusPage() {
             </div>
             <div className="panel mt-2 grid gap-3 p-3 text-sm sm:grid-cols-3">
               <div>
-                <p className="text-xs text-stone-600">Indikator mentah</p>
+                <p className="text-xs text-muted">Indikator mentah</p>
                 <p className="num font-medium">
                   {formatNumber(calculation.data.counts?.indicators ?? 0)}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-stone-600">Skor indikator</p>
+                <p className="text-xs text-muted">Skor indikator</p>
                 <p className="num font-medium">
                   {formatNumber(calculation.data.counts?.scores ?? 0)}
                 </p>
               </div>
               <div>
-                <p className="text-xs text-stone-600">Skor karakteristik</p>
+                <p className="text-xs text-muted">Skor karakteristik</p>
                 <p className="num font-medium">
                   {formatNumber(calculation.data.counts?.characteristics ?? 0)}
                 </p>
@@ -213,7 +213,7 @@ export function DataStatusPage() {
             <p className="muted mt-2 text-xs">
               {calculation.data.run.note ?? "Tidak ada catatan."}{" "}
               <Link
-                className="text-accent underline underline-offset-2"
+                className="text-link underline underline-offset-2"
                 to="/characteristics"
               >
                 Buka skor karakteristik
@@ -322,17 +322,17 @@ export function DataStatusPage() {
         </h2>
         <div className="panel mt-2 grid gap-3 p-3 text-sm sm:grid-cols-3">
           <div>
-            <p className="text-xs text-stone-600">Total catatan</p>
+            <p className="text-xs text-muted">Total catatan</p>
             <p className="num font-medium">
               {formatNumber(data.validation.totalChanges)}
             </p>
           </div>
           <div>
-            <p className="text-xs text-stone-600">Patch</p>
+            <p className="text-xs text-muted">Patch</p>
             <p className="num font-medium">{data.targetPatch}</p>
           </div>
           <div>
-            <p className="text-xs text-stone-600">Sumber</p>
+            <p className="text-xs text-muted">Sumber</p>
             <p className="font-medium">Valve Datafeed</p>
           </div>
         </div>

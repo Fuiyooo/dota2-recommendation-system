@@ -106,7 +106,7 @@ export function CcLabPage() {
           dan overlap.
         </p>
         <Link
-          className="mt-2 inline-block text-sm text-accent underline underline-offset-2"
+          className="mt-2 inline-block text-sm text-link underline underline-offset-2"
           to="/cc-lab/audit"
         >
           Buka audit upgrade Aghanim (dikecualikan)
@@ -172,7 +172,7 @@ export function CcLabPage() {
           </label>
 
           <label className="block text-sm">
-            <span className="text-xs text-stone-600">Preset multiplier</span>
+            <span className="text-xs text-muted">Preset multiplier</span>
             <select
               className="field mt-1 block w-full"
               value={preset}
@@ -273,7 +273,7 @@ export function CcLabPage() {
                       </td>
                       <td>
                         <Link
-                          className="text-accent underline decoration-stone-400 underline-offset-2"
+                          className="text-link underline decoration-line-strong underline-offset-2"
                           to={`/cc-lab/${result.heroId}`}
                         >
                           Detail
@@ -303,7 +303,7 @@ export function CcLabPage() {
               : "Memuat registry..."}
           </summary>
           {registryQuery.data ? (
-            <div className="scroll-x border-t border-stone-200">
+            <div className="scroll-x border-t border-line-soft">
               <table className="data-table">
                 <thead>
                   <tr>

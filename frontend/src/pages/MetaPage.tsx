@@ -72,25 +72,25 @@ export function MetaPage() {
         <>
           <div className="panel mt-4 grid gap-3 p-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
             <div>
-              <p className="text-xs text-stone-600">Patch</p>
+              <p className="text-xs text-muted">Patch</p>
               <p className="num font-medium">{snapshot.patch}</p>
             </div>
             <div>
-              <p className="text-xs text-stone-600">Bracket</p>
+              <p className="text-xs text-muted">Bracket</p>
               <p className="font-medium">{snapshot.bracket}</p>
             </div>
             <div>
-              <p className="text-xs text-stone-600">Week</p>
+              <p className="text-xs text-muted">Week</p>
               <p className="num font-medium">{snapshot.week}</p>
             </div>
             <div>
-              <p className="text-xs text-stone-600">Captured</p>
+              <p className="text-xs text-muted">Captured</p>
               <p className="num font-medium">{formatDate(snapshot.capturedAt)}</p>
             </div>
           </div>
 
           <div className="mt-4 flex flex-wrap items-center gap-2">
-            <span className="text-sm text-stone-600">Position</span>
+            <span className="text-sm text-muted">Position</span>
             {POSITIONS.map((item) => (
               <button
                 key={item.label}
@@ -105,7 +105,7 @@ export function MetaPage() {
           </div>
 
           <label className="mt-3 block max-w-sm">
-            <span className="text-xs text-stone-600">Search hero</span>
+            <span className="text-xs text-muted">Search hero</span>
             <input
               className="field mt-1 w-full"
               type="search"
@@ -147,7 +147,7 @@ export function MetaPage() {
                         <td className="num muted">{rank}</td>
                         <th scope="row">
                           <Link
-                            className="text-accent underline decoration-stone-400 underline-offset-2"
+                            className="text-link underline decoration-line-strong underline-offset-2"
                             to={`/heroes/${row.heroId}`}
                           >
                             {row.hero.localizedName}
