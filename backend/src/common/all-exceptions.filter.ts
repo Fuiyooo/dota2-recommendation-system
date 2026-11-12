@@ -24,6 +24,13 @@ export class AllExceptionsFilter implements ExceptionFilter {
         ? exception.getResponse()
         : "Terjadi kesalahan internal pada server.";
 
+    if (status >= 500) {
+      console.error(
+        `[${request.method} ${request.url}]`,
+        exception instanceof Error ? (exception.stack ?? exception.message) : exception,
+      );
+    }
+
     response.status(status).json({
       statusCode: status,
       message,

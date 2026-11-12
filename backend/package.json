@@ -12,6 +12,7 @@
     "prisma:deploy": "prisma migrate deploy",
     "prisma:generate:sqlite": "prisma generate --schema prisma/schema.sqlite.prisma",
     "copy:data": "npm run prisma:generate:sqlite && tsx prisma/copy-from-sqlite.ts",
+    "push:supabase": "tsx prisma/push-postgres.ts",
     "test": "vitest run",
     "sync:constants": "npm run build:app && node dist/scripts/sync-constants.js",
     "sync:meta": "npm run build:app && node dist/scripts/sync-meta.js",
