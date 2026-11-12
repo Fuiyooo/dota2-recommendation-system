@@ -8,3 +8,4 @@ backend/prisma/*.db-journal
 backend/data/raw/
 frontend/dist/
 *.tsbuildinfo
+.serena/
