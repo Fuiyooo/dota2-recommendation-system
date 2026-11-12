@@ -1,0 +1,533 @@
+{
+  "lina_dragon_slave": {
+    "dname": "Dragon Slave",
+    "behavior": [
+      "Unit Target",
+      "Point Target"
+    ],
+    "dmg_type": "Magical",
+    "bkbpierce": "No",
+    "target_team": "Enemy",
+    "target_type": [
+      "Hero",
+      "Basic"
+    ],
+    "desc": "Lina channels the breath of a dragon, sending out a wave of fire that scorches every enemy in its path.",
+    "attrib": [
+      {
+        "key": "dragon_slave_damage",
+        "header": "DAMAGE:",
+        "value": [
+          "65",
+          "125",
+          "185",
+          "245"
+        ]
+      },
+      {
+        "key": "dragon_slave_speed",
+        "header": "DRAGON SLAVE SPEED:",
+        "value": "1200",
+        "generated": true
+      },
+      {
+        "key": "dragon_slave_width_initial",
+        "header": "DRAGON SLAVE WIDTH INITIAL:",
+        "value": "275",
+        "generated": true
+      },
+      {
+        "key": "dragon_slave_width_end",
+        "header": "DRAGON SLAVE WIDTH END:",
+        "value": "200",
+        "generated": true
+      },
+      {
+        "key": "dragon_slave_distance",
+        "header": "DRAGON SLAVE DISTANCE:",
+        "value": "1075",
+        "generated": true
+      },
+      {
+        "key": "abilitycastrange",
+        "header": "CAST RANGE:",
+        "value": "1075",
+        "generated": true
+      },
+      {
+        "key": "abilityduration",
+        "header": "DURATION:",
+        "value": "0.6875",
+        "generated": true
+      },
+      {
+        "key": "abilitycastpoint",
+        "header": "CAST TIME:",
+        "value": "0.35",
+        "generated": true
+      }
+    ],
+    "lore": "In the scorched barren of Misrule, Lina learned to manipulate the fiery breath of the Desert Wyrm as a form of entertainment.",
+    "mc": [
+      "100",
+      "110",
+      "120",
+      "130"
+    ],
+    "cd": [
+      "11",
+      "10",
+      "9",
+      "8"
+    ],
+    "img": "/apps/dota2/images/dota_react/abilities/lina_dragon_slave.png"
+  },
+  "lina_light_strike_array": {
+    "dname": "Light Strike Array",
+    "behavior": [
+      "Point Target",
+      "AOE"
+    ],
+    "dmg_type": "Magical",
+    "bkbpierce": "No",
+    "dispellable": "Strong Dispels Only",
+    "desc": "Summons a column of flames that damages and stuns enemies.",
+    "attrib": [
+      {
+        "key": "light_strike_array_aoe",
+        "header": "RADIUS:",
+        "value": "250"
+      },
+      {
+        "key": "light_strike_array_delay_time",
+        "header": "CAST DELAY:",
+        "value": "0.5"
+      },
+      {
+        "key": "light_strike_array_stun_duration",
+        "header": "STUN DURATION:",
+        "value": [
+          "1.2",
+          "1.6",
+          "2",
+          "2.4"
+        ]
+      },
+      {
+        "key": "light_strike_array_damage",
+        "header": "DAMAGE:",
+        "value": [
+          "80",
+          "120",
+          "160",
+          "200"
+        ]
+      },
+      {
+        "key": "abilitycastrange",
+        "header": "CAST RANGE:",
+        "value": "700",
+        "generated": true
+      },
+      {
+        "key": "abilitycastpoint",
+        "header": "CAST TIME:",
+        "value": "0.45",
+        "generated": true
+      }
+    ],
+    "lore": "Lina's essence allows her to focus the sun's energies, causing air to combust at will.",
+    "mc": [
+      "100",
+      "110",
+      "120",
+      "130"
+    ],
+    "cd": [
+      "13",
+      "11",
+      "9",
+      "7"
+    ],
+    "img": "/apps/dota2/images/dota_react/abilities/lina_light_strike_array.png"
+  },
+  "lina_laguna_blade": {
+    "dname": "Laguna Blade",
+    "behavior": "Unit Target",
+    "dmg_type": "Magical",
+    "bkbpierce": "No",
+    "target_team": "Enemy",
+    "target_type": [
+      "Hero",
+      "Basic"
+    ],
+    "desc": "Fires off a bolt of lightning at a single enemy unit, dealing massive damage.",
+    "attrib": [
+      {
+        "key": "damage",
+        "header": "DAMAGE:",
+        "value": [
+          "380",
+          "565",
+          "750"
+        ]
+      },
+      {
+        "key": "damage_delay",
+        "header": "DAMAGE DELAY:",
+        "value": "0.25",
+        "generated": true
+      },
+      {
+        "key": "pierce_immunity",
+        "header": "PIERCE IMMUNITY:",
+        "value": "0",
+        "generated": true
+      },
+      {
+        "key": "supercharge_duration",
+        "header": "SUPERCHARGE DURATION:",
+        "value": "0"
+      },
+      {
+        "key": "supercharge_stacks",
+        "header": "SUPERCHARGE STACKS:",
+        "value": "0"
+      },
+      {
+        "key": "barrier_pct",
+        "header": "BARRIER PCT:",
+        "value": "0",
+        "generated": true
+      },
+      {
+        "key": "barrier_duration",
+        "header": "BARRIER DURATION:",
+        "value": "0",
+        "generated": true
+      },
+      {
+        "key": "abilitycastrange",
+        "header": "CAST RANGE:",
+        "value": "750",
+        "generated": true
+      },
+      {
+        "key": "abilitycastpoint",
+        "header": "CAST TIME:",
+        "value": "0.3",
+        "generated": true
+      }
+    ],
+    "lore": "The air around Lina becomes so intensely torrid that it scorches a foe that comes too close with white-hot lightning.",
+    "mc": [
+      "150",
+      "300",
+      "450"
+    ],
+    "cd": [
+      "70",
+      "60",
+      "50"
+    ],
+    "img": "/apps/dota2/images/dota_react/abilities/lina_laguna_blade.png"
+  },
+  "antimage_mana_break": {
+    "dname": "Mana Break",
+    "behavior": "Passive",
+    "dmg_type": "Physical",
+    "bkbpierce": "No",
+    "desc": "Burns an opponent's mana on each attack and deals damage equal to a percentage of the mana burnt.",
+    "attrib": [
+      {
+        "key": "percent_damage_per_burn",
+        "header": "MANA BURNED AS DAMAGE:",
+        "value": "50"
+      },
+      {
+        "key": "mana_per_hit",
+        "header": "MANA BURNED PER HIT:",
+        "value": [
+          "25",
+          "30",
+          "35",
+          "40"
+        ]
+      },
+      {
+        "key": "mana_per_hit_pct",
+        "header": "MAX MANA BURNED PER HIT:",
+        "value": [
+          "1.6",
+          "2.4",
+          "3.2",
+          "4"
+        ]
+      },
+      {
+        "key": "illusion_percentage",
+        "header": "ILLUSION PERCENTAGE:",
+        "value": "25",
+        "generated": true
+      },
+      {
+        "key": "empowered_max_burn_pct",
+        "header": "EMPOWERED MAX BURN PCT:",
+        "value": "0",
+        "generated": true
+      },
+      {
+        "key": "empowered_mana_break_debuff_duration",
+        "header": "EMPOWERED MANA BREAK DEBUFF DURATION:",
+        "value": "0",
+        "generated": true
+      }
+    ],
+    "lore": "A modified technique of the Turstarkuri monks' peaceful ways is to turn magical energies on their owner.",
+    "img": "/apps/dota2/images/dota_react/abilities/antimage_mana_break.png"
+  },
+  "antimage_blink": {
+    "dname": "Blink",
+    "behavior": "Point Target",
+    "desc": "Short distance teleportation that allows Anti-Mage to move in and out of combat.",
+    "attrib": [
+      {
+        "key": "abilitycastrange",
+        "header": "CAST RANGE:",
+        "value": [
+          "875",
+          "950",
+          "1025",
+          "1100"
+        ],
+        "generated": true
+      },
+      {
+        "key": "min_blink_range",
+        "header": "MIN BLINK RANGE:",
+        "value": "200",
+        "generated": true
+      },
+      {
+        "key": "empowered_mana_break_duration",
+        "header": "EMPOWERED MANA BREAK DURATION:",
+        "value": "0",
+        "generated": true
+      },
+      {
+        "key": "empowered_max_burn_pct_tooltip",
+        "header": "EMPOWERED MAX BURN PCT TOOLTIP:",
+        "value": "0",
+        "generated": true
+      },
+      {
+        "key": "empowered_mana_break_debuff_duration_tooltip",
+        "header": "DEBUFF DURATION:",
+        "value": "0"
+      },
+      {
+        "key": "abilitycastpoint",
+        "header": "CAST TIME:",
+        "value": "0.4",
+        "generated": true
+      }
+    ],
+    "lore": "In his encounter with the Dead Gods, Anti-Mage learned the value of being elusive.",
+    "mc": [
+      "65",
+      "60",
+      "55",
+      "50"
+    ],
+    "cd": [
+      "10.5",
+      "9",
+      "7.5",
+      "6"
+    ],
+    "img": "/apps/dota2/images/dota_react/abilities/antimage_blink.png"
+  },
+  "antimage_counterspell": {
+    "dname": "Counterspell",
+    "behavior": [
+      "No Target",
+      "Instant Cast"
+    ],
+    "dispellable": "Yes",
+    "desc": "Passively grants magic resistance. Counterspell may be activated to create an anti-magic shell around Anti-Mage that blocks and reflects any targeted spells.",
+    "attrib": [
+      {
+        "key": "magic_resistance",
+        "header": "MAGIC RESISTANCE:",
+        "value": [
+          "14",
+          "21",
+          "28",
+          "35"
+        ]
+      },
+      {
+        "key": "duration",
+        "header": "DURATION:",
+        "value": "1.3"
+      },
+      {
+        "key": "duration_illusion",
+        "header": "DURATION ILLUSION:",
+        "value": "4",
+        "generated": true
+      },
+      {
+        "key": "outgoing_damage",
+        "header": "OUTGOING DAMAGE:",
+        "value": "0",
+        "generated": true
+      },
+      {
+        "key": "incoming_damage",
+        "header": "INCOMING DAMAGE:",
+        "value": "100",
+        "generated": true
+      },
+      {
+        "key": "does_reflect",
+        "header": "DOES REFLECT:",
+        "value": "1",
+        "generated": true
+      },
+      {
+        "key": "reflected_spell_amp",
+        "header": "REFLECTED SPELL AMP:",
+        "value": "0"
+      },
+      {
+        "key": "heal_pct",
+        "header": "HEAL PCT:",
+        "value": "0",
+        "generated": true
+      },
+      {
+        "key": "abilitycastrange",
+        "header": "CAST RANGE:",
+        "value": "0",
+        "generated": true
+      },
+      {
+        "key": "abilitycastpoint",
+        "header": "CAST TIME:",
+        "value": "0",
+        "generated": true
+      }
+    ],
+    "lore": "With the proper focus, Anti-Mage turns innate resistance into calculated retaliation.",
+    "mc": "50",
+    "cd": [
+      "15",
+      "11",
+      "7",
+      "3"
+    ],
+    "img": "/apps/dota2/images/dota_react/abilities/antimage_counterspell.png"
+  },
+  "antimage_mana_void": {
+    "dname": "Mana Void",
+    "behavior": [
+      "Unit Target",
+      "AOE"
+    ],
+    "dmg_type": "Magical",
+    "bkbpierce": "No",
+    "target_team": "Enemy",
+    "target_type": [
+      "Hero",
+      "Basic"
+    ],
+    "desc": "For each point of mana missing by the target unit, damage is dealt to it and surrounding enemies. The main target is also mini-stunned.",
+    "attrib": [
+      {
+        "key": "mana_void_damage_per_mana",
+        "header": "DAMAGE PER 1 MANA MISSING:",
+        "value": "1"
+      },
+      {
+        "key": "mana_void_ministun",
+        "header": "STUN DURATION:",
+        "value": "0.3"
+      },
+      {
+        "key": "mana_void_aoe_radius",
+        "header": "RADIUS:",
+        "value": [
+          "400",
+          "450",
+          "500"
+        ]
+      },
+      {
+        "key": "thirst_enabled",
+        "header": "THIRST ENABLED:",
+        "value": "0",
+        "generated": true
+      },
+      {
+        "key": "thirst_range",
+        "header": "THIRST RANGE:",
+        "value": "0",
+        "generated": true
+      },
+      {
+        "key": "threshold_pct",
+        "header": "THRESHOLD PCT:",
+        "value": "0",
+        "generated": true
+      },
+      {
+        "key": "min_bonus_pct",
+        "header": "MIN BONUS PCT:",
+        "value": "0",
+        "generated": true
+      },
+      {
+        "key": "max_bonus_pct",
+        "header": "MAX BONUS PCT:",
+        "value": "0",
+        "generated": true
+      },
+      {
+        "key": "bonus_attack_damage",
+        "header": "MANA THIRST MAX ATTACK DAMAGE:",
+        "value": "0"
+      },
+      {
+        "key": "linger_duration",
+        "header": "LINGER DURATION:",
+        "value": "0",
+        "generated": true
+      },
+      {
+        "key": "abilitycastrange",
+        "header": "CAST RANGE:",
+        "value": "600",
+        "generated": true
+      },
+      {
+        "key": "abilitycastpoint",
+        "header": "CAST TIME:",
+        "value": "0.3",
+        "generated": true
+      }
+    ],
+    "lore": "After bringing enemies to their knees, Anti-Mage punishes them for their use of the arcane arts.",
+    "mc": [
+      "100",
+      "150",
+      "200"
+    ],
+    "cd": [
+      "100",
+      "85",
+      "70"
+    ],
+    "img": "/apps/dota2/images/dota_react/abilities/antimage_mana_void.png"
+  }
+}
