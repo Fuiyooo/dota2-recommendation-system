@@ -1,0 +1,318 @@
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/sqlite-client"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+model Hero {
+  id                 Int      @id
+  name               String   @unique
+  localizedName      String
+  primaryAttr        String
+  attackType         String
+  roles              Json
+  baseStr            Float
+  baseAgi            Float
+  baseInt            Float
+  strGain            Float
+  agiGain            Float
+  intGain            Float
+  complexity         Int?
+  attackRange        Int?
+  moveSpeed          Int?
+  armor              Float?
+  damageMin          Float?
+  damageMax          Float?
+  attackRate         Float?
+  attackPoint        Float?
+  baseHealth         Float?
+  baseMana           Float?
+  baseMagicResistance Float?
+  rawConstants       Json
+  syncedAt           DateTime @default(now())
+
+  abilities            Ability[]
+  metaStats            HeroMetaStats[]
+  patchChanges         PatchChange[]
+  indicators           HeroIndicator[]
+  indicatorScores      IndicatorScore[]
+  characteristicScores CharacteristicScore[]
+  sawResults           SawResult[]
+  damageProfile        HeroDamageProfile?
+}
+
+model HeroDamageProfile {
+  heroId     Int      @id
+  main       String
+  secondary  String   @default("NONE")
+  notes      String?
+  updatedAt  DateTime @updatedAt
+
+  hero Hero @relation(fields: [heroId], references: [id], onDelete: Cascade)
+}
+
+model AdminUser {
+  id           Int       @id @default(autoincrement())
+  username     String    @unique
+  passwordHash String
+  createdAt    DateTime  @default(now())
+  lastLoginAt  DateTime?
+}
+
+model Ability {
+  id               Int      @id @default(autoincrement())
+  valveId          Int?
+  abilityKey       String
+  displayName      String
+  heroId           Int
+  abilityType      String
+  isInnate         Boolean  @default(false)
+  hasScepter       Boolean  @default(false)
+  hasShard         Boolean  @default(false)
+  maxLevel         Int      @default(1)
+  damageType       String?
+  sortOrder        Int      @default(0)
+  talentTier       Int?
+  talentLevel      Int?
+  linkedAbilityKey String?
+  specialValues    Json?
+  rawData          Json
+  validationStatus String   @default("PENDING")
+  syncedAt         DateTime @default(now())
+
+  hero         Hero          @relation(fields: [heroId], references: [id], onDelete: Cascade)
+  patchChanges PatchChange[]
+  ccConfig     CcAbilityConfig?
+
+  @@unique([heroId, abilityKey])
+  @@index([valveId])
+  @@index([abilityType])
+}
+
+model MetaSnapshot {
+  id         Int      @id @default(autoincrement())
+  patch      String
+  bracket    String
+  week       Int
+  source     String
+  timeWindow String
+  capturedAt DateTime @default(now())
+  rawData    Json?
+
+  stats HeroMetaStats[]
+
+  @@unique([patch, bracket, week, source])
+}
+
+model HeroMetaStats {
+  id         Int      @id @default(autoincrement())
+  snapshotId Int
+  heroId     Int
+  position   Int?
+  scope      String   @default("position")
+  pickCount  Int      @default(0)
+  winCount   Int      @default(0)
+  pickRate   Float?
+  winRate    Float?
+  matchCount Int      @default(0)
+  bracket    String
+  timeWindow String
+  source     String
+  rawStats   Json
+  syncedAt   DateTime @default(now())
+
+  snapshot MetaSnapshot @relation(fields: [snapshotId], references: [id], onDelete: Cascade)
+  hero     Hero         @relation(fields: [heroId], references: [id], onDelete: Cascade)
+
+  @@unique([snapshotId, heroId, position])
+  @@index([heroId])
+}
+
+model DataSource {
+  id               Int      @id @default(autoincrement())
+  sourceName       String
+  gameVersion      String
+  sourceRevision   String
+  fetchedAt        DateTime @default(now())
+  validationStatus String
+  notes            String?
+  rawPath          String?
+
+  @@unique([sourceName, gameVersion, sourceRevision])
+}
+
+model PatchChange {
+  id             Int      @id @default(autoincrement())
+  patch          String
+  heroId         Int?
+  abilityId      Int?
+  kind           String
+  note           String
+  requiresReview Boolean  @default(false)
+  valveValue     Json?
+  externalValue  Json?
+  createdAt      DateTime @default(now())
+
+  hero    Hero?    @relation(fields: [heroId], references: [id], onDelete: SetNull)
+  ability Ability? @relation(fields: [abilityId], references: [id], onDelete: SetNull)
+
+  @@index([patch, heroId])
+}
+
+model SyncRun {
+  id           Int       @id @default(autoincrement())
+  source       String
+  status       String
+  startedAt    DateTime  @default(now())
+  finishedAt   DateTime?
+  heroCount    Int       @default(0)
+  abilityCount Int       @default(0)
+  note         String?
+}
+
+model CcEffect {
+  id                   Int      @id @default(autoincrement())
+  abilityKey           String
+  effectName           String
+  controlType          String
+  durationField        String?
+  durationFixed        Float?
+  instances            Int      @default(1)
+  scepterMode          String?
+  shardMode            String?
+  requiresScepter      Boolean  @default(false)
+  requiresShard        Boolean  @default(false)
+  dispelType           String
+  debuffImmunity       String
+  isConditional        Boolean  @default(false)
+  conditionDescription String?
+  conditionSupported   Boolean  @default(true)
+  startOffset          Float    @default(0)
+  upgradeType          String   @default("BASE")
+  confidence           String   @default("VERIFIED")
+  sourceNote           String?
+  notes                String?
+  verified             Boolean  @default(false)
+  createdAt            DateTime @default(now())
+  updatedAt            DateTime @updatedAt
+
+  @@unique([abilityKey, effectName, upgradeType])
+  @@index([abilityKey])
+  @@index([verified])
+}
+
+model CalculationRun {
+  id            Int       @id @default(autoincrement())
+  patch         String
+  configVersion String
+  status        String
+  startedAt     DateTime  @default(now())
+  finishedAt    DateTime?
+  heroCount     Int       @default(0)
+  note          String?
+
+  indicators      HeroIndicator[]
+  scores          IndicatorScore[]
+  characteristics CharacteristicScore[]
+  sawRuns         SawRun[]
+}
+
+model HeroIndicator {
+  id             Int      @id @default(autoincrement())
+  runId          Int
+  heroId         Int
+  characteristic String
+  indicator      String
+  rawValue       Float?
+  unit           String
+  status         String
+  detail         Json?
+  createdAt      DateTime @default(now())
+
+  run  CalculationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  hero Hero           @relation(fields: [heroId], references: [id], onDelete: Cascade)
+
+  @@unique([runId, heroId, indicator])
+  @@index([heroId])
+}
+
+model IndicatorScore {
+  id             Int      @id @default(autoincrement())
+  runId          Int
+  heroId         Int
+  indicator      String
+  characteristic String
+  rawValue       Float?
+  percentile     Float?
+  score          Int?
+  populationSize Int      @default(0)
+  status         String
+  createdAt      DateTime @default(now())
+
+  run  CalculationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  hero Hero           @relation(fields: [heroId], references: [id], onDelete: Cascade)
+
+  @@unique([runId, heroId, indicator])
+  @@index([heroId])
+}
+
+model CharacteristicScore {
+  id             Int      @id @default(autoincrement())
+  runId          Int
+  heroId         Int
+  characteristic String
+  score          Float?
+  status         String
+  weights        Json
+  indicators     Json
+  createdAt      DateTime @default(now())
+
+  run  CalculationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  hero Hero           @relation(fields: [heroId], references: [id], onDelete: Cascade)
+
+  @@unique([runId, heroId, characteristic])
+  @@index([heroId])
+}
+
+model SawRun {
+  id        Int      @id @default(autoincrement())
+  runId     Int
+  weights   Json
+  createdAt DateTime @default(now())
+
+  run     CalculationRun @relation(fields: [runId], references: [id], onDelete: Cascade)
+  results SawResult[]
+}
+
+model SawResult {
+  id               Int      @id @default(autoincrement())
+  sawRunId         Int
+  heroId           Int
+  normalizedScores Json
+  finalScore       Float
+  rank             Int
+  status           String
+  mainPosition     Int?
+  pickRate         Float?
+  pickCount        Int?
+  createdAt        DateTime @default(now())
+
+  sawRun SawRun @relation(fields: [sawRunId], references: [id], onDelete: Cascade)
+  hero   Hero   @relation(fields: [heroId], references: [id], onDelete: Cascade)
+
+  @@unique([sawRunId, heroId])
+  @@index([heroId])
+}
+
+model CcAbilityConfig {
+  abilityId       Int      @id
+  dispelType      String
+  piercesImmunity Boolean?
+  updatedAt       DateTime @updatedAt
+
+  ability Ability @relation(fields: [abilityId], references: [id], onDelete: Cascade)
+}

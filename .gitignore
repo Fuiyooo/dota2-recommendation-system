@@ -3,9 +3,11 @@ dist/
 *.log
 .env
 .env.local
+backend/*.db
 backend/prisma/*.db
 backend/prisma/*.db-journal
 backend/data/raw/
+backend/src/generated/
 frontend/dist/
 *.tsbuildinfo
 .serena/
