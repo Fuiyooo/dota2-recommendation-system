@@ -97,7 +97,7 @@ export function HeroListPage() {
                   <tr key={hero.id}>
                     <th scope="row">
                       <Link
-                        className="flex items-center gap-2 text-link"
+                        className="flex min-w-0 items-center gap-2 text-link"
                         to={`/heroes/${hero.id}`}
                       >
                         <GameImage
@@ -105,7 +105,7 @@ export function HeroListPage() {
                           width={HERO_THUMB_WIDTH}
                           height={HERO_THUMB_HEIGHT}
                         />
-                        <span className="underline decoration-line-strong underline-offset-2">
+                        <span className="break-words underline decoration-line-strong underline-offset-2">
                           {hero.localizedName}
                         </span>
                       </Link>

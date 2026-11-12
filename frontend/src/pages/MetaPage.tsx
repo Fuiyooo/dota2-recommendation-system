@@ -149,11 +149,11 @@ export function MetaPage() {
                       <tr key={row.id}>
                         <td className="num muted">{rank}</td>
                         <th scope="row">
-                          <div className="flex items-center gap-2">
+                          <div className="flex min-w-0 items-center gap-2">
                             <HeroThumb hero={heroIndex.get(row.heroId)} />
-                            <div className="flex flex-wrap items-baseline gap-x-2">
+                            <div className="flex min-w-0 flex-wrap items-baseline gap-x-2">
                               <Link
-                                className="text-link underline decoration-line-strong underline-offset-2"
+                                className="break-words text-link underline decoration-line-strong underline-offset-2"
                                 to={`/heroes/${row.heroId}`}
                               >
                                 {row.hero.localizedName}
