@@ -4,8 +4,10 @@ import { Link } from "react-router-dom";
 import { apiGet } from "../api/client";
 import type { MetaResponse } from "../api/types";
 import { Badge } from "../components/Badge";
+import { HeroThumb } from "../components/HeroThumb";
 import { EmptyPanel, ErrorPanel, LoadingPanel } from "../components/StatePanel";
 import { ScrollHint } from "../components/ScrollHint";
+import { useHeroIndex } from "../hooks/useHeroIndex";
 import {
   formatDate,
   formatNumber,
@@ -24,6 +26,7 @@ const POSITIONS = [
 export function MetaPage() {
   const [position, setPosition] = useState<number | null>(null);
   const [search, setSearch] = useState("");
+  const heroIndex = useHeroIndex();
 
   const query = useQuery({
     queryKey: ["meta", position],
@@ -146,15 +149,20 @@ export function MetaPage() {
                       <tr key={row.id}>
                         <td className="num muted">{rank}</td>
                         <th scope="row">
-                          <Link
-                            className="text-link underline decoration-line-strong underline-offset-2"
-                            to={`/heroes/${row.heroId}`}
-                          >
-                            {row.hero.localizedName}
-                          </Link>
-                          <span className="muted block text-xs">
-                            {row.hero.primaryAttr} · {row.hero.attackType}
-                          </span>
+                          <div className="flex items-center gap-2">
+                            <HeroThumb hero={heroIndex.get(row.heroId)} />
+                            <div>
+                              <Link
+                                className="text-link underline decoration-line-strong underline-offset-2"
+                                to={`/heroes/${row.heroId}`}
+                              >
+                                {row.hero.localizedName}
+                              </Link>
+                              <span className="muted block text-xs">
+                                {row.hero.primaryAttr} · {row.hero.attackType}
+                              </span>
+                            </div>
+                          </div>
                         </th>
                         <td>
                           <Badge tone="neutral">Pos {row.position ?? "-"}</Badge>

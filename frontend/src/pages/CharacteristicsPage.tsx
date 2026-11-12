@@ -6,8 +6,10 @@ import type {
   CharacteristicName,
   CharacteristicsResponse,
 } from "../api/types";
+import { HeroThumb } from "../components/HeroThumb";
 import { EmptyPanel, ErrorPanel, LoadingPanel } from "../components/StatePanel";
 import { ScrollHint } from "../components/ScrollHint";
+import { useHeroIndex } from "../hooks/useHeroIndex";
 import { formatDecimal } from "../utils/format";
 
 const CHARACTERISTICS: Array<{
@@ -27,6 +29,7 @@ function ScoreCell({ value }: { value: number | null }) {
 
 export function CharacteristicsPage() {
   const [search, setSearch] = useState("");
+  const heroIndex = useHeroIndex();
   const query = useQuery({
     queryKey: ["characteristics"],
     queryFn: () => apiGet<CharacteristicsResponse>("/characteristics/heroes"),
@@ -101,15 +104,20 @@ export function CharacteristicsPage() {
                   {heroes.map((hero) => (
                     <tr key={hero.heroId}>
                       <th scope="row">
-                        <Link
-                          className="text-link underline decoration-line-strong underline-offset-2"
-                          to={`/characteristics/${hero.heroId}`}
-                        >
-                          {hero.heroName}
-                        </Link>
-                        <span className="muted block text-xs">
-                          {hero.primaryAttr} · {hero.attackType}
-                        </span>
+                        <div className="flex items-center gap-2">
+                          <HeroThumb hero={heroIndex.get(hero.heroId)} />
+                          <div>
+                            <Link
+                              className="text-link underline decoration-line-strong underline-offset-2"
+                              to={`/characteristics/${hero.heroId}`}
+                            >
+                              {hero.heroName}
+                            </Link>
+                            <span className="muted block text-xs">
+                              {hero.primaryAttr} · {hero.attackType}
+                            </span>
+                          </div>
+                        </div>
                       </th>
                       {CHARACTERISTICS.map((characteristic) => {
                         const score = hero.scores[characteristic.key];

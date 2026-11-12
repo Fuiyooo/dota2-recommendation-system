@@ -1,7 +1,7 @@
 import { useState } from "react";
 
 interface GameImageProps {
-  src: string;
+  src?: string;
   width: number;
   height: number;
   variant?: "thumb" | "icon";
@@ -22,7 +22,7 @@ export function GameImage({
   const [failed, setFailed] = useState(false);
   const base = variant === "thumb" ? "asset-thumb" : "asset-icon";
 
-  if (failed) {
+  if (!src || failed) {
     return (
       <span
         aria-hidden="true"

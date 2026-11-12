@@ -7,8 +7,10 @@ import type {
   SawResponse,
 } from "../api/types";
 import { Badge } from "../components/Badge";
+import { HeroThumb } from "../components/HeroThumb";
 import { EmptyPanel, ErrorPanel, LoadingPanel } from "../components/StatePanel";
 import { ScrollHint } from "../components/ScrollHint";
+import { useHeroIndex } from "../hooks/useHeroIndex";
 import {
   formatDecimal,
   formatNumber,
@@ -86,6 +88,7 @@ export function SawPage() {
     "all",
   );
   const queryClient = useQueryClient();
+  const heroIndex = useHeroIndex();
 
   const query = useQuery({
     queryKey: ["saw"],
@@ -309,15 +312,20 @@ export function SawPage() {
                 <tr key={result.heroId}>
                   <td className="num">{index + 1}</td>
                   <th scope="row">
-                    <Link
-                      className="font-medium text-link underline underline-offset-2"
-                      to={`/characteristics/${result.heroId}`}
-                    >
-                      {result.heroName}
-                    </Link>
-                    <span className="muted block text-xs">
-                      Global #{result.rank}
-                    </span>
+                    <div className="flex items-center gap-2">
+                      <HeroThumb hero={heroIndex.get(result.heroId)} />
+                      <div>
+                        <Link
+                          className="font-medium text-link underline underline-offset-2"
+                          to={`/characteristics/${result.heroId}`}
+                        >
+                          {result.heroName}
+                        </Link>
+                        <span className="muted block text-xs">
+                          Global #{result.rank}
+                        </span>
+                      </div>
+                    </div>
                   </th>
                   <td className="num font-medium">
                     {formatDecimal(result.finalScore)}
