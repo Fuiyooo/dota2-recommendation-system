@@ -26,7 +26,7 @@ export function GameImage({
     return (
       <span
         aria-hidden="true"
-        className={`${base} inline-block shrink-0 ${className ?? ""}`}
+        className={`asset-fallback inline-block shrink-0 ${className ?? ""}`}
         style={{ width, height }}
       />
     );

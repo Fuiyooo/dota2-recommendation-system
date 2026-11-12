@@ -7,7 +7,7 @@ import { GameImage } from "../components/GameImage";
 import { EmptyPanel, ErrorPanel, LoadingPanel } from "../components/StatePanel";
 import { ScrollHint } from "../components/ScrollHint";
 import { formatDecimal } from "../utils/format";
-import { heroIconUrl } from "../utils/dotaAssets";
+import { heroPortraitUrl } from "../utils/dotaAssets";
 
 export function HeroListPage() {
   const [search, setSearch] = useState("");
@@ -100,9 +100,9 @@ export function HeroListPage() {
                         to={`/heroes/${hero.id}`}
                       >
                         <GameImage
-                          src={heroIconUrl(hero.name)}
-                          width={40}
-                          height={24}
+                          src={heroPortraitUrl(hero.name)}
+                          width={64}
+                          height={36}
                         />
                         <span className="underline decoration-stone-400 underline-offset-2">
                           {hero.localizedName}

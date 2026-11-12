@@ -13,10 +13,6 @@ export function heroSlug(name: string): string {
   return name.replace(/^npc_dota_hero_/, "");
 }
 
-export function heroIconUrl(name: string): string {
-  return `${CDN_BASE}/heroes/icons/${heroSlug(name)}.png`;
-}
-
 export function heroPortraitUrl(name: string): string {
   return `${CDN_BASE}/heroes/${heroSlug(name)}.png`;
 }

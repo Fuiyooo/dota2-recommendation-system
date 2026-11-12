@@ -51,11 +51,15 @@
   }
 
   .asset-thumb {
-    @apply border border-stone-300 bg-stone-200 object-cover;
+    @apply object-cover;
   }
 
   .asset-icon {
-    @apply bg-stone-200 object-contain;
+    @apply object-contain;
+  }
+
+  .asset-fallback {
+    @apply border border-stone-300 bg-stone-200;
   }
 
   .button {
