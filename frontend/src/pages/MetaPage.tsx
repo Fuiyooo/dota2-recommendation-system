@@ -151,14 +151,14 @@ export function MetaPage() {
                         <th scope="row">
                           <div className="flex items-center gap-2">
                             <HeroThumb hero={heroIndex.get(row.heroId)} />
-                            <div>
+                            <div className="flex flex-wrap items-baseline gap-x-2">
                               <Link
                                 className="text-link underline decoration-line-strong underline-offset-2"
                                 to={`/heroes/${row.heroId}`}
                               >
                                 {row.hero.localizedName}
                               </Link>
-                              <span className="muted block text-xs">
+                              <span className="muted text-xs">
                                 {row.hero.primaryAttr} · {row.hero.attackType}
                               </span>
                             </div>

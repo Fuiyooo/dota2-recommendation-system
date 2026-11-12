@@ -314,14 +314,14 @@ export function SawPage() {
                   <th scope="row">
                     <div className="flex items-center gap-2">
                       <HeroThumb hero={heroIndex.get(result.heroId)} />
-                      <div>
+                      <div className="flex flex-wrap items-baseline gap-x-2">
                         <Link
                           className="font-medium text-link underline underline-offset-2"
                           to={`/characteristics/${result.heroId}`}
                         >
                           {result.heroName}
                         </Link>
-                        <span className="muted block text-xs">
+                        <span className="muted text-xs">
                           Global #{result.rank}
                         </span>
                       </div>

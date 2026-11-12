@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 import { apiGet } from "../api/client";
 import type { HeroSummary } from "../api/types";
 import { GameImage } from "../components/GameImage";
+import { HERO_THUMB_HEIGHT, HERO_THUMB_WIDTH } from "../components/HeroThumb";
 import { EmptyPanel, ErrorPanel, LoadingPanel } from "../components/StatePanel";
 import { ScrollHint } from "../components/ScrollHint";
 import { formatDecimal } from "../utils/format";
@@ -101,8 +102,8 @@ export function HeroListPage() {
                       >
                         <GameImage
                           src={heroPortraitUrl(hero.name)}
-                          width={64}
-                          height={36}
+                          width={HERO_THUMB_WIDTH}
+                          height={HERO_THUMB_HEIGHT}
                         />
                         <span className="underline decoration-line-strong underline-offset-2">
                           {hero.localizedName}
