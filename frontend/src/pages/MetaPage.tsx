@@ -153,7 +153,7 @@ export function MetaPage() {
                             <HeroThumb hero={heroIndex.get(row.heroId)} />
                             <div className="flex min-w-0 flex-wrap items-baseline gap-x-2">
                               <Link
-                                className="break-words text-link underline decoration-line-strong underline-offset-2"
+                                className="min-w-0 break-words text-link underline decoration-line-strong underline-offset-2"
                                 to={`/heroes/${row.heroId}`}
                               >
                                 {row.hero.localizedName}

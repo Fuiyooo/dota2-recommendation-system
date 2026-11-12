@@ -110,7 +110,7 @@ export function Layout() {
       </aside>
 
       <div className="min-w-0 flex-1">
-        <main className="mx-auto max-w-6xl px-4 py-6">
+        <main className="mx-auto max-w-[1600px] px-4 py-6">
           <Outlet />
         </main>
       </div>

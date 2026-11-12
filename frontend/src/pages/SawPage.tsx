@@ -290,7 +290,7 @@ export function SawPage() {
 
       {filtered.length > 0 ? (
         <div className="scroll-x panel mt-4">
-          <table className="data-table">
+          <table className="data-table min-w-[1100px]">
             <thead>
               <tr>
                 <th scope="col">Rank</th>
@@ -316,12 +316,12 @@ export function SawPage() {
                       <HeroThumb hero={heroIndex.get(result.heroId)} />
                       <div className="flex min-w-0 flex-wrap items-baseline gap-x-2">
                         <Link
-                          className="break-words font-medium text-link underline underline-offset-2"
+                          className="min-w-0 break-words font-medium text-link underline underline-offset-2"
                           to={`/characteristics/${result.heroId}`}
                         >
                           {result.heroName}
                         </Link>
-                        <span className="muted text-xs">
+                        <span className="muted whitespace-nowrap text-xs">
                           Global #{result.rank}
                         </span>
                       </div>
