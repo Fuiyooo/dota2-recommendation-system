@@ -133,9 +133,9 @@ describe("damage", () => {
 
   it("menghitung Mana Break Anti-Mage per serangan", () => {
     const { damage } = damageProfile(antiMage);
-    expect(damage.physical).toBeCloseTo(2708, 0);
+    expect(damage.physical).toBeCloseTo(4641.75, 2);
     const manaBreak = damage.detail.manaBreak as { total: number };
-    expect(manaBreak.total).toBeCloseTo(650, 0);
+    expect(manaBreak.total).toBeCloseTo(2583.75, 2);
   });
 
   it("menghitung damage universal Abaddon", () => {

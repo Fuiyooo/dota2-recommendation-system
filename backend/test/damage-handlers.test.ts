@@ -244,7 +244,7 @@ describe("handler damage baru", () => {
     expect(damage.magic).toBeCloseTo(14 * (7218.6 / 100), 1);
   });
 
-  it("Mana Void memakai 1000 missing mana", () => {
+  it("Mana Void memakai 5000 missing mana", () => {
     const damage = calculateDamage(
       hero([
         ability("antimage_mana_void", "Mana Void", "Magical", [
@@ -255,7 +255,7 @@ describe("handler damage baru", () => {
       [],
       magicalProfile,
     );
-    expect(damage.magic).toBeCloseTo(1000, 5);
+    expect(damage.magic).toBeCloseTo(5000, 5);
   });
 
   it("Medusa Mana Shield menambah effective HP dari mana", () => {

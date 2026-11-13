@@ -10,11 +10,28 @@ scoring dan SAW).
 | --- | --- |
 | Frontend | React 19 + TypeScript + Vite + Tailwind CSS 4 |
 | Backend | NestJS 12 + TypeScript |
-| Database | SQLite + Prisma 6 |
+| Database | PostgreSQL 17 + Prisma 6 |
 | Sumber constants | Valve Datafeed (utama) |
 | Sumber pelengkap | OpenDota dotaconstants (role, fallback attack type, `attack_point`) |
 | Sumber meta | STRATZ GraphQL |
 | Dokumentasi API | Swagger di `/api/docs` |
+
+Alasan pemilihan:
+
+- React dan Vite: halaman berupa dashboard data dengan banyak tabel, filter,
+  dan state server. Vite memberi dev server cepat dan build aset statis yang
+  cocok untuk Vercel. Tidak ada kebutuhan SSR atau SEO, jadi Next.js tidak
+  diperlukan.
+- NestJS: domain dipisah per modul (heroes, meta, characteristics, saw,
+  scoring, admin) dengan dependency injection, validasi DTO, dan Swagger.
+  Service yang sama dipakai API dan skrip `npm run calculate`, sehingga
+  rumus tidak diduplikasi.
+- PostgreSQL dan Prisma: data relasional dengan foreign key antar run,
+  indikator, dan skor, ditambah kolom JSON untuk data mentah Valve. Postgres
+  juga dibutuhkan saat deploy serverless di Vercel. Prisma memberi schema-first,
+  client bertipe, dan migrasi.
+
+SQLite hanya dipakai sebagai sumber data lama untuk `npm run copy:data`.
 
 ## Menjalankan
 
@@ -148,8 +165,8 @@ tersebut tetap dipakai dengan penanda coverage, bukan diubah menjadi 0.
 | Buff eksternal | Tidak digunakan |
 | Basic attack window | 10 detik |
 | Target basic attack | 1 target, armor 0 untuk raw physical |
-| Target HP | 2.000 |
-| Target mana | 1.000, mulai penuh |
+| Target HP | 5.682 (Target Dummy) |
+| Target mana | 5.000, mulai penuh (Target Dummy) |
 | Movement speed cap | 550 |
 | Attack speed cap | 700 |
 
@@ -510,7 +527,7 @@ posisi teratas. Ranking berubah ketika bobot atau filter diubah.
 - Refraction: bonus 60 per hit.
 - Invading Force: dikeluarkan dari durability.
 - Greater Bash: passive bash tanpa AoE/cast range, tetap dihitung.
-- Mana Void: 1.000 missing mana × 1,2 = 1.200 magical.
+- Mana Void: 5.000 missing mana × 1,2 = 6.000 magical.
 - Ball Lightning: 14 damage per 100 unit × jarak 7.218,6 = 1.010,6 magical.
 - Electric Vortex: hard CC pull 2,0 + 0,2 talent = 2,2 detik.
 
@@ -770,7 +787,8 @@ dimasukkan ke Git.
 - Seluruh 8 talent level 30 dipakai, yaitu dua opsi di setiap tier. Efek talent
   diterapkan secara generik, sehingga beberapa interaksi khusus ability belum
   dimodelkan.
-- Target HP, mana, dan armor memakai asumsi tetap.
+- Target damage memakai Target Dummy demo mode: 5.682 HP dan 5.000 mana,
+  armor 0, tanpa mitigasi magic resistance.
 - Item, Aghanim's Scepter, Aghanim's Shard, dan buff hero lain tidak dihitung.
   Building damage juga tidak dihitung karena bukan penentu rekomendasi dan
   heuristik lamanya terbukti salah untuk beberapa hero.

@@ -1,12 +1,12 @@
 import type { CharacteristicName } from "./types";
 
-export const CONFIG_VERSION = "m2-v24";
+export const CONFIG_VERSION = "m2-v25";
 
 export const TARGET = {
   heroLevel: 30,
   attackWindowSeconds: 10,
-  targetHp: 2000,
-  targetMana: 1000,
+  targetHp: 5682,
+  targetMana: 5000,
   targetArmor: 0,
   targetMagicResistance: 0,
   movementSpeedCap: 550,

@@ -199,7 +199,7 @@ describe("handler attack modifier", () => {
         special("percent_damage", [10]),
       ]),
     ]);
-    expect(result.magic).toBeCloseTo(1000, 6);
+    expect(result.magic).toBeCloseTo(2841, 6);
   });
 
   it("Gunslinger menambah tembakan kedua", () => {

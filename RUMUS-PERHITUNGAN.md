@@ -1,6 +1,6 @@
 # Rumus Perhitungan Sistem Rekomendasi
 
-Dokumen ini menjelaskan rumus yang dipakai untuk menghitung atribut, damage, durability, crowd control, mobility, skor indikator, skor karakteristik, dan SAW. Versi konfigurasi: `m2-v24` dan `cc-lab-v2`.
+Dokumen ini menjelaskan rumus yang dipakai untuk menghitung atribut, damage, durability, crowd control, mobility, skor indikator, skor karakteristik, dan SAW. Versi konfigurasi: `m2-v25` dan `cc-lab-v2`.
 
 ## 1. Simbol
 
@@ -36,10 +36,14 @@ Dokumen ini menjelaskan rumus yang dipakai untuk menghitung atribut, damage, dur
 | --- | ---: |
 | Hero level | 30 |
 | Window basic attack | 10 detik |
-| Target HP | 2.000 |
-| Target mana | 1.000 |
+| Target HP | 5.682 |
+| Target mana | 5.000 |
 | Target armor | 0 |
 | Target magic resistance | 0 |
+
+Target HP dan mana mengikuti Target Dummy demo mode Dota 2: 5.682 HP dan
+5.000 mana. Dummy menampilkan 25% magic resistance, tetapi mitigasi belum
+diterapkan karena tidak mengubah peringkat percentile.
 | Attack speed cap | 700 |
 | Movement speed cap | 550 |
 | HP per strength | 22 |
@@ -208,7 +212,7 @@ Custom handler:
 
 ```text
 Mana Break:
-  burn_i = min(mana_i, mana_per_hit + (mana_per_hit_pct / 100) × 1.000)
+  burn_i = min(mana_i, mana_per_hit + (mana_per_hit_pct / 100) × 5.000)
   damage_i = burn_i × (percent_damage_per_burn / 100)
   mana_(i+1) = max(0, mana_i - burn_i)
   total = Σ damage_i untuk N serangan
@@ -238,7 +242,7 @@ Liquid Fire:
   damage = damage × floor(AbilityDuration / tick_rate), satu aplikasi
 
 Arctic Burn:
-  damage = percent_damage × 2.000 × 5
+  damage = percent_damage × 5.682 × 5
 
 Lil' Shredder:
   damage = buffed_attacks × (damage + damage_pct × average_damage)
@@ -257,14 +261,14 @@ Contoh handler damage khusus:
 
 ```text
 Mana Break:
-  burn per hit = 40 + 4,5% × 1.000 = 85
-  damage per hit = 85 × 65% = 55,25
-  total 15 attack = 650 physical
+  burn per hit = 40 + 4,5% × 5.000 = 265
+  damage per hit = 265 × 65% = 172,25
+  total 15 attack = 2.583,75 physical
 
 Mana Void:
-  missing mana = 1.000
+  missing mana = 5.000
   damage per missing mana = 1 + 0,2 talent = 1,2
-  damage = 1.000 × 1,2 = 1.200 magical
+  damage = 5.000 × 1,2 = 6.000 magical
 ```
 
 Profil Anti-Mage memakai `PHYSICAL / MAGICAL 70/30`, sehingga Mana Void masuk
@@ -725,5 +729,5 @@ Skor karakteristik Damage:
 
 ## 17. Catatan versi
 
-- `m2-v24` memakai seluruh 8 talent level 30, bobot profil damage 70/30 atau 100 untuk satu tipe, skor indikator 1 sampai 10, bonus attack speed ability, daftar putih mobility, handler attack modifier, hard CC saja, multiplier dispel dan pierce di SAW, pengaturan CC dari admin, bonus talent durasi CC, pemisahan blind, attack slow, dan disarm dari daftar CC, bobot durability 50/25/25, mobility/escape dengan bobot 40/60 dan gabungan dash/blink, magic resistance dari INT, bonus armor dan HP regen dari ability pasif, handler damage baru, Medusa Mana Shield sebagai effective HP, Leviathan 10 stack, Tiny Grow, Windrun, Scurry, Berserker's Blood, Amphibian Rhapsody, Wukong's Command, serta handler Night Stalker, Lich, Kez, Nyx, Largo, dan Bounty Hunter.
+- `m2-v25` memakai Target Dummy demo mode dengan 5.682 HP dan 5.000 mana, seluruh 8 talent level 30, bobot profil damage 70/30 atau 100 untuk satu tipe, skor indikator 1 sampai 10, bonus attack speed ability, daftar putih mobility, handler attack modifier, hard CC saja, multiplier dispel dan pierce di SAW, pengaturan CC dari admin, bonus talent durasi CC, pemisahan blind, attack slow, dan disarm dari daftar CC, bobot durability 50/25/25, mobility/escape dengan bobot 40/60 dan gabungan dash/blink, magic resistance dari INT, bonus armor dan HP regen dari ability pasif, handler damage baru, Medusa Mana Shield sebagai effective HP, Leviathan 10 stack, Tiny Grow, Windrun, Scurry, Berserker's Blood, Amphibian Rhapsody, Wukong's Command, serta handler Night Stalker, Lich, Kez, Nyx, Largo, dan Bounty Hunter.
 - `cc-lab-v2` memakai efek `BASE` saja dan tidak menghitung Aghanim's Scepter atau Shard.
