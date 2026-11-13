@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { apiGet, apiPost } from "../api/client";
@@ -37,48 +37,6 @@ const COMPLEXITY_LABEL: Record<number, string> = {
   3: "High",
 };
 
-function redistributeWeights(
-  current: Record<CharacteristicName, number>,
-  changed: CharacteristicName,
-  targetPercent: number,
-): Record<CharacteristicName, number> {
-  const keys = CHARACTERISTICS.map((item) => item.key);
-  const percent = Object.fromEntries(
-    keys.map((key) => [key, Math.round(current[key] * 100)]),
-  ) as Record<CharacteristicName, number>;
-  const target = Math.max(0, Math.min(100, Math.round(targetPercent)));
-  const others = keys.filter((key) => key !== changed);
-  const remaining = 100 - target;
-  const otherSum = others.reduce((sum, key) => sum + percent[key], 0);
-  percent[changed] = target;
-
-  if (otherSum <= 0) {
-    const each = Math.floor(remaining / others.length);
-    let assigned = 0;
-    others.forEach((key, index) => {
-      const value =
-        index === others.length - 1 ? remaining - assigned : each;
-      percent[key] = value;
-      assigned += value;
-    });
-  } else {
-    let assigned = 0;
-    others.forEach((key, index) => {
-      if (index === others.length - 1) {
-        percent[key] = remaining - assigned;
-      } else {
-        const value = Math.round(remaining * (percent[key] / otherSum));
-        percent[key] = value;
-        assigned += value;
-      }
-    });
-  }
-
-  return Object.fromEntries(
-    keys.map((key) => [key, percent[key] / 100]),
-  ) as Record<CharacteristicName, number>;
-}
-
 export function SawPage() {
   const [weights, setWeights] =
     useState<Record<CharacteristicName, number>>(DEFAULT_WEIGHTS);
@@ -100,18 +58,25 @@ export function SawPage() {
       apiPost<SawResponse>("/saw/calculate", payload),
     onSuccess: (data) => {
       queryClient.setQueryData(["saw"], data);
-      if (data.sawRun?.weights) setWeights(data.sawRun.weights);
     },
   });
 
+  const hydratedWeights = useRef(false);
+
   useEffect(() => {
-    if (query.data?.sawRun?.weights) {
-      setWeights(query.data.sawRun.weights);
-    }
-  }, [query.data?.sawRun?.id]);
+    if (hydratedWeights.current) return;
+    const stored = query.data?.sawRun?.weights;
+    if (!stored) return;
+    setWeights(stored);
+    hydratedWeights.current = true;
+  }, [query.data]);
 
   const data = mutation.data ?? query.data;
   const results = data?.results ?? [];
+  const totalWeight = CHARACTERISTICS.reduce(
+    (sum, item) => sum + Math.round(weights[item.key] * 100),
+    0,
+  );
 
   const filtered = useMemo(
     () =>
@@ -155,7 +120,7 @@ export function SawPage() {
           <button
             type="button"
             className="button small"
-            onClick={() => setWeights(DEFAULT_WEIGHTS)}
+            onClick={() => setWeights({ ...DEFAULT_WEIGHTS })}
           >
             Reset 25%
           </button>
@@ -180,24 +145,27 @@ export function SawPage() {
                 onChange={(event) => {
                   const value = Number.parseFloat(event.target.value);
                   if (!Number.isFinite(value)) return;
-                  setWeights((current) =>
-                    redistributeWeights(current, characteristic.key, value),
-                  );
+                  const percent = Math.max(0, Math.min(100, Math.round(value)));
+                  setWeights((current) => ({
+                    ...current,
+                    [characteristic.key]: percent / 100,
+                  }));
                 }}
               />
             </label>
           ))}
         </div>
 
-        <div className="mt-2">
+        <div className="mt-2 flex flex-wrap items-center gap-3">
           <button
             type="button"
             className="button button-primary"
-            disabled={mutation.isPending}
+            disabled={mutation.isPending || totalWeight <= 0}
             onClick={() => mutation.mutate(weights)}
           >
             {mutation.isPending ? "Calculating..." : "Calculate ranking"}
           </button>
+          <span className="muted text-sm">Total {totalWeight}</span>
         </div>
 
         {mutation.isError ? (
