@@ -321,9 +321,6 @@ export function SawPage() {
                         >
                           {result.heroName}
                         </Link>
-                        <span className="muted whitespace-nowrap text-xs">
-                          Global #{result.rank}
-                        </span>
                       </div>
                     </div>
                   </th>
