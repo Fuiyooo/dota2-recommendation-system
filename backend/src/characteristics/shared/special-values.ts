@@ -125,20 +125,24 @@ export function findByKeyword(
   });
 }
 
-export function talentBonusForValue(
+export function talentAdjustedValue(
+  baseValue: number,
   abilityKey: string,
   valueName: string,
   selectedTalents: AbilityData[],
 ): number {
-  let total = 0;
+  let flat = 0;
+  let percentage = 0;
   for (const talent of selectedTalents) {
     for (const ref of talentRefsOf(talent)) {
-      if (ref.abilityKey === abilityKey && ref.specialValue === valueName) {
-        total += ref.value;
+      if (ref.abilityKey !== abilityKey || ref.specialValue !== valueName) {
+        continue;
       }
+      if (ref.operation === 3) percentage += ref.value;
+      else if (ref.operation === 0) flat += ref.value;
     }
   }
-  return total;
+  return (baseValue + flat) * (1 + percentage / 100);
 }
 
 export function heroTalentBonus(

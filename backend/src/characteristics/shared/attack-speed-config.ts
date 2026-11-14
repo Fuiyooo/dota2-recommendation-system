@@ -1,9 +1,11 @@
 import type { AbilityData } from "../types";
+import { TARGET } from "../config";
 import { findValue, maxValue } from "./special-values";
 
 interface AttackSpeedRule {
   field: string;
   note: string;
+  durationField?: string;
 }
 
 /**
@@ -38,6 +40,11 @@ export const ABILITY_ATTACK_SPEED: Record<string, AttackSpeedRule> = {
   ursa_overpower: {
     field: "attack_speed_bonus_pct",
     note: "Overpower memberi bonus attack speed.",
+  },
+  legion_commander_overwhelming_odds: {
+    field: "bonus_attack_speed",
+    durationField: "duration",
+    note: "Overwhelming Odds memberi attack speed selama 6 detik.",
   },
   invoker_alacrity: {
     field: "bonus_attack_speed",
@@ -79,7 +86,14 @@ export function abilityAttackSpeedBonus(
     if (!rule) continue;
     const value = findValue(ability, [rule.field]);
     if (!value) continue;
-    total += maxValue(value);
+    let uptime = 1;
+    if (rule.durationField) {
+      const duration = findValue(ability, [rule.durationField]);
+      if (duration) {
+        uptime = Math.min(TARGET.attackWindowSeconds, maxValue(duration)) / TARGET.attackWindowSeconds;
+      }
+    }
+    total += maxValue(value) * uptime;
   }
   return total;
 }

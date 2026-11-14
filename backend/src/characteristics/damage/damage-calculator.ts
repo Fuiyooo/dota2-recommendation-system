@@ -16,7 +16,7 @@ import {
   isAttackModifier,
   maxValue,
   specialValuesOf,
-  talentBonusForValue,
+  talentAdjustedValue,
 } from "../shared/special-values";
 
 export interface DamageCalculation {
@@ -76,6 +76,10 @@ const DAMAGE_EXCLUDED = new Set<string>([
   "tiny_grow",
   "tiny_toss_tree",
   "tusk_tag_team",
+  "sven_great_cleave",
+  "enigma_demonic_conversion",
+  "beastmaster_summon_razorback",
+  "beastmaster_summon_raptor",
 ]);
 
 const BASIC_ATTACK_HANDLED = new Set<string>([
@@ -96,6 +100,15 @@ const BASIC_ATTACK_HANDLED = new Set<string>([
   "tiny_tree_grab",
   "ursa_fury_swipes",
   "weaver_geminate_attack",
+  "chaos_knight_chaos_strike",
+  "meepo_ransack",
+  "sven_gods_strength",
+  "sven_wrath_of_god",
+  "lycan_feral_impulse",
+  "lycan_shapeshift",
+  "skeleton_king_mortal_strike",
+  "dawnbreaker_luminosity",
+  "dawnbreaker_break_of_dawn",
 ]);
 
 const DAMAGE_AMPS = new Set<string>([
@@ -189,10 +202,62 @@ function basicAttackBonusDamage(
       value = valueAtMax(ability, "bonus_damage", talents) * attacks;
       note = "Bodyguard bonus damage pasif.";
     } else if (key === "spectre_desolate") {
-      const bonus = 25 + 1.5 * (TARGET.heroLevel - 1) + 12;
+      const bonus = valueAtMax(ability, "bonus_damage", talents);
       value = bonus * attacks;
       type = "Pure";
       note = `Desolate ${bonus} pure per hit.`;
+    } else if (key === "chaos_knight_chaos_strike") {
+      const chance = valueAtMax(ability, "chance", talents) / 100;
+      const minCrit = valueAtMax(ability, "crit_min", talents) / 100;
+      const maxCrit = valueAtMax(ability, "crit_max", talents) / 100;
+      const multiplier = (minCrit + maxCrit) / 2;
+      if (chance > 0 && multiplier > 1) {
+        value = average * attacks * chance * (multiplier - 1);
+        note = `Chaos Strike crit ${chance * 100}% dengan multiplier ${multiplier.toFixed(2)}.`;
+      }
+    } else if (key === "meepo_ransack") {
+      value = valueAtMax(ability, "health_steal_heroes", talents) * attacks;
+      note = "Ransack per hit.";
+    } else if (key === "sven_gods_strength") {
+      const bonus = valueAtMax(ability, "gods_strength_damage", talents) / 100;
+      value = average * attacks * bonus;
+      note = `God's Strength +${bonus * 100}% attack damage.`;
+    } else if (key === "sven_wrath_of_god") {
+      const perStrength = valueAtMax(ability, "bonus_damage_per_str", talents);
+      value = attributes.strength * perStrength * attacks;
+      note = `Wrath of God ${perStrength} damage per STR.`;
+    } else if (key === "lycan_feral_impulse") {
+      value = valueAtMax(ability, "bonus_damage", talents) * attacks;
+      note = "Feral Impulse per hit.";
+    } else if (key === "lycan_shapeshift") {
+      const chance = valueAtMax(ability, "crit_chance", talents) / 100;
+      const multiplier = valueAtMax(ability, "crit_multiplier", talents) / 100;
+      if (chance > 0 && multiplier > 1) {
+        value = average * attacks * chance * (multiplier - 1);
+        note = `Shapeshift crit ${chance * 100}% dengan multiplier ${multiplier}.`;
+      }
+    } else if (key === "skeleton_king_mortal_strike") {
+      const chance = 0.2;
+      const multiplier = valueAtMax(ability, "crit_mult", talents) / 100;
+      if (multiplier > 1) {
+        value = average * attacks * chance * (multiplier - 1);
+        note = `Mortal Strike crit 20% dengan multiplier ${multiplier}.`;
+      }
+    } else if (key === "dawnbreaker_luminosity") {
+      const bonus = valueAtMax(ability, "bonus_damage", talents);
+      const fireWreath = hero.abilities.find(
+        (item) => item.abilityKey === "dawnbreaker_fire_wreath",
+      );
+      const swings = fireWreath
+        ? valueAtMax(fireWreath, "total_attacks", talents)
+        : 0;
+      const procs = Math.floor((attacks + swings) / 3);
+      value = bonus * procs;
+      note = `Luminosity ${procs} proc x ${bonus}, termasuk ${swings} putaran Starbreaker.`;
+    } else if (key === "dawnbreaker_break_of_dawn") {
+      const pct = valueAtMax(ability, "max_dmg_pct", talents) / 100;
+      value = average * attacks * pct;
+      note = `Break of Dawn ${pct * 100}% bonus damage, asumsi siang penuh.`;
     } else if (key === "templar_assassin_refraction") {
       value = valueAtMax(ability, "bonus_damage", talents) * attacks;
       note = "Refraction bonus damage per hit.";
@@ -232,7 +297,12 @@ function basicAttackBonusDamage(
 function valueAtMax(ability: AbilityData, name: string, talents: AbilityData[]): number {
   const value = findValue(ability, [name]);
   if (!value) return 0;
-  return maxValue(value) + talentBonusForValue(ability.abilityKey, name, talents);
+  return talentAdjustedValue(
+    maxValue(value),
+    ability.abilityKey,
+    name,
+    talents,
+  );
 }
 
 function calculateManaBreak(
@@ -542,6 +612,175 @@ function customAbilityDamage(
     };
   }
 
+  if (ability.abilityKey === "chaos_knight_chaos_bolt") {
+    const min = valueAtMax(ability, "damage_min", talents);
+    const max = valueAtMax(ability, "damage_max", talents);
+    const value = (min + max) / 2;
+    return {
+      type: "Magical",
+      value,
+      note: `Chaos Bolt rata-rata ${min} dan ${max}.`,
+    };
+  }
+
+  if (ability.abilityKey === "meepo_poof") {
+    const damage = valueAtMax(ability, "poof_damage", talents);
+    const divided = hero.abilities.find(
+      (item) => item.abilityKey === "meepo_divided_we_stand",
+    );
+    const clones = divided
+      ? valueAtMax(divided, "tooltip_clones", talents)
+      : 0;
+    const meepos = 1 + clones;
+    return {
+      type: "Magical",
+      value: damage * meepos,
+      note: `Poof ${meepos} Meepo x ${damage}.`,
+    };
+  }
+
+  if (ability.abilityKey === "wisp_spirits") {
+    const damage = valueAtMax(ability, "hero_damage", talents);
+    const spirits = valueAtMax(ability, "spirit_amount", talents);
+    const revolutions = Math.floor(
+      TARGET.attackWindowSeconds /
+        Math.max(1, valueAtMax(ability, "revolution_time", talents)),
+    );
+    const hits = Math.max(1, revolutions);
+    return {
+      type: "Magical",
+      value: damage * spirits * hits,
+      note: `${spirits} spirit x ${hits} putaran x ${damage}.`,
+    };
+  }
+
+  if (ability.abilityKey === "abyssal_underlord_firestorm") {
+    const waves = valueAtMax(ability, "wave_count", talents);
+    const damage = valueAtMax(ability, "wave_damage", talents);
+    return {
+      type: "Magical",
+      value: waves * damage,
+      note: `Firestorm ${waves} wave x ${damage}.`,
+    };
+  }
+
+  if (ability.abilityKey === "abyssal_underlord_pit_of_malice") {
+    const damage = valueAtMax(ability, "pit_damage", talents);
+    const interval = valueAtMax(ability, "pit_interval", talents);
+    const duration = Math.min(
+      TARGET.attackWindowSeconds,
+      valueAtMax(ability, "pit_duration", talents),
+    );
+    const ticks =
+      interval > 0 ? Math.max(1, Math.floor(duration / interval) + 1) : 1;
+    return {
+      type: "Magical",
+      value: damage * ticks,
+      note: `Pit of Malice ${ticks} tick x ${damage}.`,
+    };
+  }
+
+  if (ability.abilityKey === "enigma_malefice") {
+    const damage = valueAtMax(ability, "damage", talents);
+    const instances = 3;
+    return {
+      type: "Magical",
+      value: damage * instances,
+      note: `Malefice ${instances} instance x ${damage}.`,
+    };
+  }
+
+  if (ability.abilityKey === "enigma_midnight_pulse") {
+    const base = valueAtMax(ability, "base_damage", talents);
+    const percent = valueAtMax(ability, "damage_percent", talents) / 100;
+    const tickRate = valueAtMax(ability, "tick_rate", talents);
+    const duration = Math.min(
+      TARGET.attackWindowSeconds,
+      valueAtMax(ability, "duration", talents),
+    );
+    const ticks =
+      tickRate > 0 ? Math.max(1, Math.floor(duration / tickRate)) : 1;
+    let currentHp = TARGET.targetHp;
+    let total = 0;
+    for (let index = 0; index < ticks; index += 1) {
+      const hit = base + percent * currentHp;
+      total += hit;
+      currentHp -= hit;
+    }
+    return {
+      type: "Magical",
+      value: total,
+      note: `Midnight Pulse ${ticks} tick, base ${base} + ${percent * 100}% HP terkini.`,
+    };
+  }
+
+  if (ability.abilityKey === "enigma_black_hole") {
+    const dps = valueAtMax(ability, "damage", talents);
+    const duration = valueAtMax(ability, "duration", talents);
+    return {
+      type: "Pure",
+      value: dps * duration,
+      note: `Black Hole ${dps} per detik x ${duration} detik.`,
+    };
+  }
+
+  if (ability.abilityKey === "dawnbreaker_fire_wreath") {
+    const swings = valueAtMax(ability, "total_attacks", talents);
+    const bonus = valueAtMax(ability, "smash_damage", talents);
+    return {
+      type: "Physical",
+      value: swings * (averageDamage + bonus),
+      note: `Starbreaker ${swings} putaran x (attack + ${bonus}).`,
+    };
+  }
+
+  if (ability.abilityKey === "razor_eye_of_the_storm") {
+    const damage = valueAtMax(ability, "damage", talents);
+    const interval = valueAtMax(ability, "strike_interval", talents);
+    const duration = Math.min(
+      TARGET.attackWindowSeconds,
+      valueAtMax(ability, "duration", talents),
+    );
+    const strikes =
+      interval > 0 ? Math.max(1, Math.floor(duration / interval)) : 1;
+    return {
+      type: "Physical",
+      value: damage * strikes,
+      note: `Eye of the Storm ${strikes} strike x ${damage}.`,
+    };
+  }
+
+  if (ability.abilityKey === "razor_storm_surge") {
+    const damage = valueAtMax(ability, "strike_damage", talents);
+    const chance = valueAtMax(ability, "strike_pct_chance", talents) / 100;
+    const internal = valueAtMax(ability, "strike_internal_cd", talents);
+    const procs =
+      internal > 0
+        ? (TARGET.attackWindowSeconds / internal) * chance
+        : 0;
+    return {
+      type: "Magical",
+      value: damage * procs,
+      note: `Storm Surge expected ${procs.toFixed(2)} proc.`,
+    };
+  }
+
+  if (ability.abilityKey === "luna_eclipse") {
+    const lucent = hero.abilities.find(
+      (item) => item.abilityKey === "luna_lucent_beam",
+    );
+    if (!lucent) return null;
+    const beamDamage =
+      valueAtMax(lucent, "beam_damage", talents) ||
+      valueAtMax(lucent, "damage", talents);
+    const beams = valueAtMax(ability, "beams", talents);
+    return {
+      type: "Magical",
+      value: beamDamage * beams,
+      note: `Eclipse ${beams} beam x ${beamDamage}.`,
+    };
+  }
+
   return null;
 }
 
@@ -563,7 +802,8 @@ function pickDamageValue(
     exact ??
     [...values].sort((left, right) => maxValue(right) - maxValue(left))[0];
 
-  let raw = maxValue(chosen) + talentBonusForValue(
+  let raw = talentAdjustedValue(
+    maxValue(chosen),
     ability.abilityKey,
     chosen.name,
     talents,
@@ -632,6 +872,406 @@ function pickDamageValue(
   };
 }
 
+function attacksWithin(
+  attributes: AttributesResult,
+  seconds: number,
+): number {
+  if (attributes.attackInterval <= 0) return 0;
+  let count = 0;
+  let time = 0;
+  while (time + attributes.attackPoint <= seconds + 1e-9) {
+    count += 1;
+    time += attributes.attackInterval;
+  }
+  return count;
+}
+
+function multiUnitAttackDamage(
+  hero: HeroData,
+  attributes: AttributesResult,
+  attackCounted: boolean,
+  averageDamage: number,
+  talents: AbilityData[],
+): {
+  physical: number;
+  magical: number;
+  pure: number;
+  details: Array<Record<string, unknown>>;
+} {
+  if (!attackCounted) {
+    return { physical: 0, magical: 0, pure: 0, details: [] };
+  }
+
+  let physical = 0;
+  let magical = 0;
+  let pure = 0;
+  const details: Array<Record<string, unknown>> = [];
+  const attacks = attributes.attacksInWindow;
+
+  const divided = hero.abilities.find(
+    (ability) => ability.abilityKey === "meepo_divided_we_stand",
+  );
+  if (divided) {
+    const clones = valueAtMax(divided, "tooltip_clones", talents);
+    const ransack = hero.abilities.find(
+      (ability) => ability.abilityKey === "meepo_ransack",
+    );
+    const ransackPerHit = ransack
+      ? valueAtMax(ransack, "health_steal_heroes", talents)
+      : 0;
+    const value = clones * (averageDamage + ransackPerHit) * attacks;
+    physical += value;
+    details.push({
+      ability: "Divided We Stand",
+      type: "Physical",
+      value,
+      note: `${clones} clone x ${attacks} serangan, tanpa penalti item.`,
+      custom: true,
+    });
+  }
+
+  const haunt = hero.abilities.find(
+    (ability) => ability.abilityKey === "spectre_haunt",
+  );
+  if (haunt) {
+    const illusions = 5;
+    const outgoing = valueAtMax(haunt, "tooltip_outgoing", talents) / 100;
+    const duration = valueAtMax(haunt, "duration", talents);
+    const illusionAttacks = attacksWithin(attributes, duration);
+    const desolate = hero.abilities.find(
+      (ability) => ability.abilityKey === "spectre_desolate",
+    );
+    const desolateBonus = desolate
+      ? valueAtMax(desolate, "bonus_damage", talents)
+      : 0;
+    const physicalValue =
+      illusions * illusionAttacks * averageDamage * outgoing;
+    const pureValue =
+      illusions * illusionAttacks * desolateBonus * outgoing;
+    physical += physicalValue;
+    pure += pureValue;
+    details.push({
+      ability: "Haunt",
+      type: "Physical",
+      value: physicalValue,
+      note: `${illusions} illusion, ${illusionAttacks} serangan, ${outgoing * 100}% damage.`,
+      custom: true,
+    });
+    if (pureValue > 0) {
+      details.push({
+        ability: "Haunt Desolate",
+        type: "Pure",
+        value: pureValue,
+        note: `Desolate illusion ${illusions} x ${illusionAttacks} serangan.`,
+        custom: true,
+      });
+    }
+  }
+
+  const phantasm = hero.abilities.find(
+    (ability) => ability.abilityKey === "chaos_knight_phantasm",
+  );
+  if (phantasm) {
+    const images = valueAtMax(phantasm, "images_count", talents);
+    const outgoing =
+      valueAtMax(phantasm, "outgoing_damage_tooltip", talents) / 100;
+    const chaosStrike = hero.abilities.find(
+      (ability) => ability.abilityKey === "chaos_knight_chaos_strike",
+    );
+    let critBonus = 0;
+    if (chaosStrike) {
+      const chance = valueAtMax(chaosStrike, "chance", talents) / 100;
+      const minCrit = valueAtMax(chaosStrike, "crit_min", talents) / 100;
+      const maxCrit = valueAtMax(chaosStrike, "crit_max", talents) / 100;
+      const multiplier = (minCrit + maxCrit) / 2;
+      if (chance > 0 && multiplier > 1) {
+        critBonus = averageDamage * chance * (multiplier - 1);
+      }
+    }
+    const value = images * outgoing * (averageDamage + critBonus) * attacks;
+    physical += value;
+    details.push({
+      ability: "Phantasm",
+      type: "Physical",
+      value,
+      note: `${images} illusion x ${attacks} serangan, ${outgoing * 100}% damage.`,
+      custom: true,
+    });
+  }
+
+  const mirrorImage = hero.abilities.find(
+    (ability) => ability.abilityKey === "naga_siren_mirror_image",
+  );
+  if (mirrorImage) {
+    const images = valueAtMax(mirrorImage, "images_count", talents);
+    const outgoing =
+      valueAtMax(mirrorImage, "outgoing_damage_tooltip", talents) / 100;
+    const duration = valueAtMax(mirrorImage, "illusion_duration", talents);
+    const illusionAttacks = attacksWithin(
+      attributes,
+      Math.min(TARGET.attackWindowSeconds, duration),
+    );
+    const value = images * outgoing * averageDamage * illusionAttacks;
+    physical += value;
+    details.push({
+      ability: "Mirror Image",
+      type: "Physical",
+      value,
+      note: `${images} illusion x ${illusionAttacks} serangan, ${outgoing * 100}% damage.`,
+      custom: true,
+    });
+  }
+
+  const juxtapose = hero.abilities.find(
+    (ability) => ability.abilityKey === "phantom_lancer_juxtapose",
+  );
+  if (juxtapose) {
+    const illusions = 5;
+    const outgoing =
+      valueAtMax(juxtapose, "tooltip_illusion_damage", talents) / 100;
+    const duration = valueAtMax(juxtapose, "illusion_duration", talents);
+    const illusionAttacks = attacksWithin(
+      attributes,
+      Math.min(TARGET.attackWindowSeconds, duration),
+    );
+    const value = illusions * outgoing * averageDamage * illusionAttacks;
+    physical += value;
+    details.push({
+      ability: "Juxtapose",
+      type: "Physical",
+      value,
+      note: `${illusions} illusion diasumsikan aktif, ${illusionAttacks} serangan, ${outgoing * 100}% damage.`,
+      custom: true,
+    });
+  }
+
+  const doppelganger = hero.abilities.find(
+    (ability) => ability.abilityKey === "phantom_lancer_doppelwalk",
+  );
+  if (doppelganger) {
+    const amount = valueAtMax(doppelganger, "illusion_2_amount", talents);
+    const reduction =
+      Math.abs(valueAtMax(doppelganger, "illusion_2_damage_out_pct", talents)) /
+      100;
+    const outgoing = Math.max(0, 1 - reduction);
+    const duration = valueAtMax(doppelganger, "illusion_duration", talents);
+    const illusionAttacks = attacksWithin(
+      attributes,
+      Math.min(TARGET.attackWindowSeconds, duration),
+    );
+    const value = amount * outgoing * averageDamage * illusionAttacks;
+    physical += value;
+    details.push({
+      ability: "Doppelganger",
+      type: "Physical",
+      value,
+      note: `${amount} illusion x ${illusionAttacks} serangan, ${outgoing * 100}% damage.`,
+      custom: true,
+    });
+  }
+
+  const spiritBear = hero.abilities.find(
+    (ability) => ability.abilityKey === "lone_druid_spirit_bear",
+  );
+  if (spiritBear) {
+    const bearBat = valueAtMax(spiritBear, "bear_bat", talents) || 1.5;
+    const agilityGain = valueAtMax(
+      spiritBear,
+      "agility_gain_tooltip",
+      talents,
+    );
+    const bearAgility = agilityGain * (TARGET.heroLevel - 1);
+    const attackSpeed = 100 + bearAgility;
+    const interval = attackSpeed > 0 ? (100 * bearBat) / attackSpeed : 0;
+    let bearAttacks = 0;
+    let time = 0;
+    while (
+      interval > 0 &&
+      time + attributes.attackPoint <= TARGET.attackWindowSeconds + 1e-9
+    ) {
+      bearAttacks += 1;
+      time += interval;
+    }
+    const value = averageDamage * bearAttacks;
+    physical += value;
+    details.push({
+      ability: "Spirit Bear",
+      type: "Physical",
+      value,
+      note: `${bearAttacks} serangan, BAT ${bearBat}, damage per hit memakai average Druid.`,
+      custom: true,
+    });
+  }
+
+  const boar = hero.abilities.find(
+    (ability) => ability.abilityKey === "beastmaster_summon_razorback",
+  );
+  if (boar) {
+    const damage = valueAtMax(boar, "boar_base_damage", talents);
+    const bat = 1.35;
+    let boarAttacks = 0;
+    let boarTime = 0;
+    while (boarTime + 0.675 <= TARGET.attackWindowSeconds + 1e-9) {
+      boarAttacks += 1;
+      boarTime += bat;
+    }
+    const value = damage * boarAttacks;
+    physical += value;
+    details.push({
+      ability: "Summon Razorback",
+      type: "Physical",
+      value,
+      note: `1 boar x ${boarAttacks} serangan x ${damage}, BAT 1,35 dari file unit.`,
+      custom: true,
+    });
+  }
+
+  const raptors = hero.abilities.find(
+    (ability) => ability.abilityKey === "beastmaster_summon_raptor",
+  );
+  if (raptors) {
+    const count = valueAtMax(raptors, "hawk_count", talents);
+    const diveDamage = valueAtMax(raptors, "dive_damage", talents);
+    const interval = valueAtMax(raptors, "hawk_base_attack_interval", talents);
+    const dives =
+      interval > 0
+        ? Math.floor(TARGET.attackWindowSeconds / interval) + 1
+        : 1;
+    const value = count * dives * diveDamage;
+    magical += value;
+    details.push({
+      ability: "Summon Raptors",
+      type: "Magical",
+      value,
+      note: `${count} raptor x ${dives} dive x ${diveDamage}.`,
+      custom: true,
+    });
+  }
+
+  const wolves = hero.abilities.find(
+    (ability) => ability.abilityKey === "lycan_summon_wolves",
+  );
+  if (wolves) {
+    const count = valueAtMax(wolves, "wolf_count", talents);
+    const damage = valueAtMax(wolves, "wolf_damage", talents);
+    const bat = valueAtMax(wolves, "wolf_bat", talents) || 1;
+    let wolfAttacks = 0;
+    let wolfTime = 0;
+    while (
+      wolfTime + 0.3 <= TARGET.attackWindowSeconds + 1e-9
+    ) {
+      wolfAttacks += 1;
+      wolfTime += bat;
+    }
+    const value = count * damage * wolfAttacks;
+    physical += value;
+    details.push({
+      ability: "Summon Wolves",
+      type: "Physical",
+      value,
+      note: `${count} wolf x ${wolfAttacks} serangan x ${damage}.`,
+      custom: true,
+    });
+  }
+
+  const skeletons = hero.abilities.find(
+    (ability) => ability.abilityKey === "skeleton_king_bone_guard",
+  );
+  if (skeletons) {
+    const count = valueAtMax(skeletons, "max_skeleton_charges", talents);
+    const damage = valueAtMax(
+      skeletons,
+      "skeleton_damage_tooltip",
+      talents,
+    );
+    let skeletonAttacks = 0;
+    let skeletonTime = 0;
+    while (
+      skeletonTime + 0.672 <= TARGET.attackWindowSeconds + 1e-9
+    ) {
+      skeletonAttacks += 1;
+      skeletonTime += 1.2;
+    }
+    const value = count * damage * skeletonAttacks;
+    physical += value;
+    details.push({
+      ability: "Bone Guard",
+      type: "Physical",
+      value,
+      note: `${count} skeleton x ${skeletonAttacks} serangan x ${damage}, BAT 1,2 dari file unit.`,
+      custom: true,
+    });
+  }
+
+  return { physical, magical, pure, details };
+}
+
+function essenceShiftBonus(
+  hero: HeroData,
+  attributes: AttributesResult,
+  averageDamage: number,
+  talents: AbilityData[],
+): { value: number; note: string } | null {
+  const ability = hero.abilities.find(
+    (item) => item.abilityKey === "slark_essence_shift",
+  );
+  if (!ability) return null;
+
+  const perStack = valueAtMax(ability, "agi_gain", talents);
+  if (perStack <= 0 || attributes.bat <= 0) return null;
+
+  let attackSpeed = attributes.attackSpeedTotal;
+  let stacks = 0;
+  let time = 0;
+  let total = 0;
+
+  while (time + attributes.attackPoint <= TARGET.attackWindowSeconds + 1e-9) {
+    total += averageDamage + stacks * perStack;
+    stacks += 1;
+    attackSpeed += perStack;
+    time += (100 * attributes.bat) / Math.max(1, attackSpeed);
+  }
+
+  const staticTotal = averageDamage * attributes.attacksInWindow;
+  const value = Math.max(0, total - staticTotal);
+  if (value <= 0) return null;
+
+  return {
+    value,
+    note: `Essence Shift ${perStack} agility per hit, ${stacks} stack dalam window.`,
+  };
+}
+
+function adjustUrsaAttackWindow(
+  hero: HeroData,
+  attributes: AttributesResult,
+  talents: AbilityData[],
+): AttributesResult {
+  const overpower = hero.abilities.find(
+    (ability) => ability.abilityKey === "ursa_overpower",
+  );
+  if (!overpower || attributes.abilityAttackSpeed <= 0) return attributes;
+
+  const maxAttacks = valueAtMax(overpower, "max_attacks", talents);
+  if (maxAttacks <= 0) return attributes;
+
+  const bonus = attributes.abilityAttackSpeed;
+  const baseAttackSpeed = Math.max(1, attributes.attackSpeedTotal - bonus);
+  let time = 0;
+  let attacks = 0;
+  let empowered = 0;
+
+  while (time + attributes.attackPoint <= TARGET.attackWindowSeconds + 1e-9) {
+    const attackSpeed =
+      baseAttackSpeed + (empowered < maxAttacks ? bonus : 0);
+    attacks += 1;
+    empowered += 1;
+    time += (100 * attributes.bat) / Math.max(1, attackSpeed);
+  }
+
+  return { ...attributes, attacksInWindow: attacks, attackSpeedTotal: baseAttackSpeed };
+}
+
 export function calculateDamage(
   hero: HeroData,
   attributes: AttributesResult,
@@ -639,6 +1279,8 @@ export function calculateDamage(
   profile: DamageProfile = DEFAULT_DAMAGE_PROFILE,
   profileMissing = false,
 ): DamageCalculation {
+  attributes = adjustUrsaAttackWindow(hero, attributes, talents);
+
   const unsupported: string[] = [];
   const abilityDetails: Array<Record<string, unknown>> = [];
   const averageDamage = (attributes.damageMin + attributes.damageMax) / 2;
@@ -675,6 +1317,55 @@ export function calculateDamage(
   let magic = basicBonus.magical;
   let pure = basicBonus.pure;
   abilityDetails.push(...basicBonus.details);
+
+  const multiUnit = multiUnitAttackDamage(
+    hero,
+    attributes,
+    attackCounted,
+    averageDamage,
+    talents,
+  );
+  physical += multiUnit.physical;
+  magic += multiUnit.magical;
+  pure += multiUnit.pure;
+  abilityDetails.push(...multiUnit.details);
+
+  const staticLink = hero.abilities.find(
+    (ability) => ability.abilityKey === "razor_static_link",
+  );
+  if (staticLink) {
+    const drain = valueAtMax(staticLink, "drain_rate", talents);
+    const duration = Math.min(
+      TARGET.attackWindowSeconds,
+      valueAtMax(staticLink, "drain_duration", talents),
+    );
+    const averageBonus = (drain * duration) / 2;
+    const value = averageBonus * attributes.attacksInWindow;
+    if (value > 0) {
+      physical += value;
+      abilityDetails.push({
+        ability: "Static Link",
+        type: "Physical",
+        value,
+        note: `Rata-rata ${averageBonus} damage tambahan per serangan.`,
+        custom: true,
+      });
+    }
+  }
+
+  if (attackCounted) {
+    const essence = essenceShiftBonus(hero, attributes, averageDamage, talents);
+    if (essence) {
+      physical += essence.value;
+      abilityDetails.push({
+        ability: "Essence Shift",
+        type: "Physical",
+        value: essence.value,
+        note: essence.note,
+        custom: true,
+      });
+    }
+  }
 
   for (const ability of hero.abilities) {
     if (ability.abilityType === "Talent") continue;

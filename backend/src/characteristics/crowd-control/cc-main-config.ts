@@ -230,6 +230,12 @@ export const CC_MAIN_OVERRIDES: Record<string, CcMainOverride> = {
     field: "duration",
     note: "Slow dari Spirit Lance.",
   },
+  legion_commander_duel: {
+    control: "HARD",
+    field: "duration",
+    castRange: 200,
+    note: "Duel, durasi 5 detik ditambah talent 0,75 detik.",
+  },
   pudge_dismember: {
     control: "HARD",
     field: "AbilityChannelTime",

@@ -1,6 +1,6 @@
 # Rumus Perhitungan Sistem Rekomendasi
 
-Dokumen ini menjelaskan rumus yang dipakai untuk menghitung atribut, damage, durability, crowd control, mobility, skor indikator, skor karakteristik, dan SAW. Versi konfigurasi: `m2-v25` dan `cc-lab-v2`.
+Dokumen ini menjelaskan rumus yang dipakai untuk menghitung atribut, damage, durability, crowd control, mobility, skor indikator, skor karakteristik, dan SAW. Versi konfigurasi: `m2-v32` dan `cc-lab-v2`.
 
 ## 1. Simbol
 
@@ -286,6 +286,63 @@ Electric Vortex dihitung sebagai hard CC pull:
 durasi = 2,0 + 0,2 talent = 2,2 detik
 kontribusi = 2,2 × 0,8 × 0,6 = 1,056
 ```
+
+Handler multi-unit, tick, dan buff pada `m2-v32`:
+
+```text
+Desolate        = bonus_damage + talent = 35,5 pure per hit
+Haunt           = 5 illusion × 65% damage × serangan dalam 6 detik
+Mirror Image    = 4 illusion × 50% damage × serangan dalam 10 detik
+Juxtapose       = 5 illusion × 15% damage × serangan dalam 8 detik
+Doppelganger    = 1 illusion × 20% damage × serangan dalam 8 detik
+Phantasm        = 3 illusion × 100% damage × serangan dalam 10 detik
+Meepo clone     = 4 clone × basic attack, tanpa penalti item
+Poof            = 5 Meepo × poof_damage
+Ransack         = health_steal_heroes × jumlah serangan
+Malefice        = damage × 3 instance
+Midnight Pulse  = tiap tick base_damage + 10% HP terkini, 20 tick
+Black Hole      = damage per detik × 4 detik
+Firestorm       = 6 wave × wave_damage
+Pit of Malice   = 3 tick × pit_damage dalam window 10 detik
+Spirits         = 5 spirit × 2 putaran × hero_damage
+Spirit Bear     = serangan dengan BAT 1,5 dan agility bear, damage per hit = average Druid
+Eclipse         = beams × beam_damage Lucent Beam
+                  = 12 × 380 = 4.560 magical
+Eye of Storm    = strike per interval dalam window
+Storm Surge     = strike_damage × expected proc (chance × window / internal_cd)
+Static Link     = rata-rata drain × jumlah serangan
+Wolves          = 2 wolf × wolf_damage × serangan
+Bone Guard      = 8 skeleton × skeleton_damage × serangan
+Overpower       = bonus attack speed hanya untuk max_attacks
+Duel            = hard CC 5 detik + 0,75 talent = 5,75
+Overwhelming Odds = +125 attack speed selama 6 detik
+Razorback       = 75 damage x 7 serangan, BAT 1,35
+Raptors         = 2 raptor x 3 dive x 165
+Skeleton        = 8 skeleton x 8 serangan x 49, BAT 1,2
+Starbreaker     = 3 putaran x (attack + smash_damage)
+Luminosity      = bonus_damage x floor((attack + 3 putaran) / 3)
+Break of Dawn   = 8% bonus base damage, asumsi siang penuh
+Essence Shift   = stack 4 agility per hit, dihitung iteratif dalam window
+Chaos Bolt      = (damage_min + damage_max) / 2
+Chaos Strike    = average × attacks × chance × (multiplier - 1)
+God's Strength  = basic attack × (1 + bonus%)
+Wrath of God    = 0,08 × STR × jumlah serangan
+```
+
+Asumsi multi-unit: Meepo memakai 4 clone tanpa penalti item, Spectre Haunt
+memakai 5 illusion dengan 65% damage, Naga Siren memakai 4 image dengan 50%
+damage, Phantom Lancer memakai 5 illusion Juxtapose 15% dan 1 illusion
+Doppelganger 20%, Chaos Knight memakai 3 illusion dengan 100% damage. Spirit
+Bear memakai average damage Druid tanpa True Form, BAT 1,5, dan attack point
+Druid. Eidolon Enigma dan Great Cleave Sven tidak dihitung karena model
+memakai satu target.
+
+Talent dengan operasi persentase dihitung multiplicatively, bukan ditambahkan
+secara datar. Contoh Rip Tide: 60 × 1,30 × 6 = 468.
+
+Asumsi tambahan `m2-v32`: Mortal Strike memakai crit chance 20%, Duel reward
+tidak dihitung, dan Storm Surge memakai expected proc. Skeleton memakai BAT
+1,2 dan wolf memakai BAT dari file unit.
 
 ## 7. Durability
 
@@ -729,5 +786,13 @@ Skor karakteristik Damage:
 
 ## 17. Catatan versi
 
-- `m2-v25` memakai Target Dummy demo mode dengan 5.682 HP dan 5.000 mana, seluruh 8 talent level 30, bobot profil damage 70/30 atau 100 untuk satu tipe, skor indikator 1 sampai 10, bonus attack speed ability, daftar putih mobility, handler attack modifier, hard CC saja, multiplier dispel dan pierce di SAW, pengaturan CC dari admin, bonus talent durasi CC, pemisahan blind, attack slow, dan disarm dari daftar CC, bobot durability 50/25/25, mobility/escape dengan bobot 40/60 dan gabungan dash/blink, magic resistance dari INT, bonus armor dan HP regen dari ability pasif, handler damage baru, Medusa Mana Shield sebagai effective HP, Leviathan 10 stack, Tiny Grow, Windrun, Scurry, Berserker's Blood, Amphibian Rhapsody, Wukong's Command, serta handler Night Stalker, Lich, Kez, Nyx, Largo, dan Bounty Hunter.
+- `m2-v32` menambahkan Starbreaker 3 putaran, Luminosity, dan Break of Dawn
+  Dawnbreaker. Sebelumnya, `m2-v31` menambahkan Duel Legion Commander sebagai hard CC, attack speed
+  Overwhelming Odds, summon Razorback dan Raptors Beastmaster, serta BAT
+  skeleton dari file unit. Sebelumnya, `m2-v30` membatasi Overpower Ursa ke 6 serangan, menambahkan Eye of the Storm,
+  Storm Surge, dan Static Link Razor, wolf Lycan, skeleton Wraith King, serta
+  crit Lycan dan Wraith King. Sebelumnya, `m2-v29` menambahkan Eclipse Luna. Seluruh 12 beam dianggap mengenai target
+  yang sama. Sebelumnya, `m2-v28` menambahkan Spirit Bear Lone Druid dan Essence Shift Slark.
+  Sebelumnya, `m2-v27` memperbaiki talent persentase dan menambahkan illusion Naga Siren
+  serta Phantom Lancer. Sebelumnya, `m2-v26` menambahkan handler damage multi-unit, tick, wave, DPS, crit, dan buff attack, termasuk Desolate, Haunt, Phantasm, clone Meepo, Malefice, Midnight Pulse, Black Hole, Firestorm, Pit of Malice, Spirits, Chaos Bolt, Chaos Strike, God's Strength, dan Wrath of God. Asumsi: Meepo 4 clone, Haunt 5 illusion 65%, Phantasm 3 illusion 100%. Versi ini juga memakai Target Dummy demo mode dengan 5.682 HP dan 5.000 mana, seluruh 8 talent level 30, bobot profil damage 70/30 atau 100 untuk satu tipe, skor indikator 1 sampai 10, bonus attack speed ability, daftar putih mobility, handler attack modifier, hard CC saja, multiplier dispel dan pierce di SAW, pengaturan CC dari admin, bonus talent durasi CC, pemisahan blind, attack slow, dan disarm dari daftar CC, bobot durability 50/25/25, mobility/escape dengan bobot 40/60 dan gabungan dash/blink, magic resistance dari INT, bonus armor dan HP regen dari ability pasif, handler damage baru, Medusa Mana Shield sebagai effective HP, Leviathan 10 stack, Tiny Grow, Windrun, Scurry, Berserker's Blood, Amphibian Rhapsody, Wukong's Command, serta handler Night Stalker, Lich, Kez, Nyx, Largo, dan Bounty Hunter.
 - `cc-lab-v2` memakai efek `BASE` saja dan tidak menghitung Aghanim's Scepter atau Shard.

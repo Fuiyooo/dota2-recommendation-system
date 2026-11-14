@@ -530,6 +530,7 @@ posisi teratas. Ranking berubah ketika bobot atau filter diubah.
 - Mana Void: 5.000 missing mana × 1,2 = 6.000 magical.
 - Ball Lightning: 14 damage per 100 unit × jarak 7.218,6 = 1.010,6 magical.
 - Electric Vortex: hard CC pull 2,0 + 0,2 talent = 2,2 detik.
+- Eclipse: 12 beam × 380 damage Lucent Beam = 4.560 magical.
 
 Ability yang dikeluarkan dari damage antara lain Bloodrage, Bone Chill,
 Corrosive Weaponry, Celestial Quiver, Tree Throw, Tag Team, Kazurai Katana,
@@ -759,7 +760,7 @@ dimasukkan ke Git.
 
 ## Testing
 
-- 153 unit test backend: normalisasi, patch notes, atribut, basic attack,
+- 176 unit test backend: normalisasi, patch notes, atribut, basic attack,
   Universal damage, Mana Break, durability, CC, mobility, percentile, main
   position, SAW, formula CC Lab, registry BASE, Enigma multi-instance, overlap,
   conditional, data unknown, durasi fixed, bobot profil damage, basic attack
@@ -797,6 +798,17 @@ dimasukkan ke Git.
   Techies dihitung sebagai CC, bukan mobility.
 - Profil main dan secondary damage ditentukan manual, jadi bersifat penilaian
   peneliti. Daftar lengkap dan catatan alasan perlu dilampirkan di skripsi.
+- Beberapa interaksi memakai asumsi: Mortal Strike crit 20%, Duel reward tidak
+  dihitung, Luminosity menghitung putaran Starbreaker, Break of Dawn memakai
+  siang penuh, dan Spirit Bear masih memakai average damage Druid,
+  dihitung, dan Spirit Bear masih memakai average damage Druid,
+  Overpower hanya 6 serangan, dan Storm Surge memakai expected proc.
+- Damage multi-unit memakai asumsi tetap: Meepo 4 clone, Spectre Haunt
+  5 illusion 65%, Naga Siren 4 image 50%, Phantom Lancer 5 illusion Juxtapose
+  15% ditambah 1 illusion Doppelganger 20%, Chaos Knight Phantasm 3 illusion
+  100%, dan Spirit Bear Lone Druid dengan average damage Druid serta BAT 1,5.
+  Eidolon Enigma dan Great Cleave Sven tidak dihitung karena model memakai
+  satu target.
 - Hasil SAW tetap bergantung pada asumsi model. Pada run terakhir seluruh
   indikator berstatus `SUPPORTED`.
 - CC Lab mencakup 10 hero validasi. Hero lain berstatus `UNSUPPORTED`.

@@ -1,6 +1,6 @@
 import type { CharacteristicName } from "./types";
 
-export const CONFIG_VERSION = "m2-v25";
+export const CONFIG_VERSION = "m2-v32";
 
 export const TARGET = {
   heroLevel: 30,
