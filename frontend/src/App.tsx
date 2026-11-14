@@ -2,6 +2,7 @@ import { Route, Routes } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { AdminCcAbilitiesPage } from "./pages/AdminCcAbilitiesPage";
 import { AdminDamageProfilesPage } from "./pages/AdminDamageProfilesPage";
+import { AboutPage } from "./pages/AboutPage";
 import { AdminLoginPage } from "./pages/AdminLoginPage";
 import { CharacteristicDetailPage } from "./pages/CharacteristicDetailPage";
 import { CharacteristicsPage } from "./pages/CharacteristicsPage";
@@ -27,6 +28,7 @@ export default function App() {
         />
         <Route path="saw" element={<SawPage />} />
         <Route path="guide" element={<GuidePage />} />
+        <Route path="about" element={<AboutPage />} />
         <Route path="admin/login" element={<AdminLoginPage />} />
         <Route
           path="admin/damage-profiles"

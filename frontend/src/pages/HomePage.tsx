@@ -25,6 +25,12 @@ export function HomePage() {
               {button.label}
             </Link>
           ))}
+          <Link
+            className="button button-primary flex min-h-16 items-center justify-center px-6 py-4 text-sm font-semibold uppercase tracking-wide sm:col-span-2"
+            to="/about"
+          >
+            About
+          </Link>
         </div>
       </div>
     </div>

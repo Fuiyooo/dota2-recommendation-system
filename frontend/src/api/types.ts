@@ -67,6 +67,11 @@ export interface Ability {
   talentLevel: number | null;
   linkedAbilityKey: string | null;
   specialValues: SpecialValue[] | TalentSpecialValues | null;
+  rawData?: {
+    desc_loc?: string;
+    lore_loc?: string;
+    notes_loc?: string[];
+  };
   validationStatus: string;
 }
 

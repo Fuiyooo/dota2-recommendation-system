@@ -17,6 +17,7 @@ const NAV_ITEMS: NavItem[] = [
   { to: "/meta", label: "Meta" },
   { to: "/characteristics", label: "Karakteristik" },
   { to: "/saw", label: "Rekomendasi" },
+  { to: "/about", label: "About" },
 ];
 
 function linkClass({ isActive }: { isActive: boolean }): string {

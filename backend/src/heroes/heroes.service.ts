@@ -37,6 +37,7 @@ const ABILITY_SELECT = {
   talentLevel: true,
   linkedAbilityKey: true,
   specialValues: true,
+  rawData: true,
   validationStatus: true,
 } satisfies Prisma.AbilitySelect;
 

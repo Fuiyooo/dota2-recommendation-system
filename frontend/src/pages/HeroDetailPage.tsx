@@ -6,11 +6,7 @@ import { Badge } from "../components/Badge";
 import { GameImage } from "../components/GameImage";
 import { EmptyPanel, ErrorPanel, LoadingPanel } from "../components/StatePanel";
 import { ScrollHint } from "../components/ScrollHint";
-import {
-  formatDecimal,
-  isPercentValue,
-  trackedDamageValues,
-} from "../utils/format";
+import { formatDecimal } from "../utils/format";
 import {
   abilityIconUrl,
   attributeIconUrl,
@@ -170,62 +166,79 @@ export function HeroDetailPage() {
             Data ability hero ini belum tersimpan.
           </EmptyPanel>
         ) : (
-          <div className="scroll-x panel mt-2">
-            <table className="data-table">
-              <thead>
-                <tr>
-                  <th scope="col">Ability</th>
-                  <th scope="col">Type</th>
-                  <th scope="col">Damage</th>
-                  <th scope="col">Max Level</th>
-                </tr>
-              </thead>
-              <tbody>
+          <div className="mt-2 space-y-3">
                 {skills.map((ability) => {
-                  const damageValues = trackedDamageValues(ability);
+                  const description = ability.rawData?.desc_loc;
+                  const lore = ability.rawData?.lore_loc;
+                  const values = Array.isArray(ability.specialValues)
+                    ? ability.specialValues.filter(
+                        (value) => value.values.length > 0,
+                      )
+                    : [];
+
                   return (
-                    <tr key={ability.id}>
-                      <th scope="row">
-                        <span className="flex items-start gap-3">
-                          <GameImage
-                            src={abilityIconUrl(ability.abilityKey)}
-                            width={48}
-                            height={36}
-                            variant="icon"
-                          />
-                          <span className="min-w-0">
-                            <span className="font-medium">
+                    <article key={ability.id} className="panel p-4">
+                      <div className="flex items-start gap-3">
+                        <GameImage
+                          src={abilityIconUrl(ability.abilityKey)}
+                          width={48}
+                          height={36}
+                          variant="icon"
+                        />
+                        <div className="min-w-0 flex-1">
+                          <div className="flex flex-wrap items-center gap-2">
+                            <h3 className="font-medium">
                               {ability.displayName}
+                            </h3>
+                            <Badge tone={abilityTone(ability)}>
+                              {ability.abilityType}
+                            </Badge>
+                            <span className="muted text-xs">
+                              Max level {ability.maxLevel}
                             </span>
-                            <span className="muted num block text-xs">
-                              {ability.abilityKey}
-                            </span>
-                            {damageValues.map((value) => (
-                              <span
-                                key={value.name}
-                                className="muted num mt-1 block text-xs"
-                              >
-                                {value.heading || `${value.name}:`}{" "}
-                                {value.values.join(" / ")}
-                                {isPercentValue(value) ? "%" : ""}
+                            {ability.damageType ? (
+                              <span className="muted text-xs">
+                                · {ability.damageType}
                               </span>
-                            ))}
-                          </span>
-                        </span>
-                      </th>
-                      <td>
-                        <Badge tone={abilityTone(ability)}>
-                          {ability.abilityType}
-                        </Badge>
-                      </td>
-                      <td className="num">{ability.damageType ?? "-"}</td>
-                      <td className="num">{ability.maxLevel}</td>
-                    </tr>
+                            ) : null}
+                          </div>
+
+                          {description ? (
+                            <p className="muted mt-2 text-sm">{description}</p>
+                          ) : null}
+                          {lore ? (
+                            <p className="muted mt-2 text-xs italic">{lore}</p>
+                          ) : null}
+
+                          {values.length > 0 ? (
+                            <dl className="mt-3 grid gap-x-6 gap-y-1 text-xs sm:grid-cols-2">
+                              {values.map((value) => (
+                                <div
+                                  key={value.name}
+                                  className="flex flex-wrap items-baseline justify-between gap-2 border-b border-line-soft py-1"
+                                >
+                                  <dt className="text-muted">
+                                    {value.heading || value.name}
+                                  </dt>
+                                  <dd className="num text-right">
+                                    {value.values.map((item) => formatDecimal(item)).join(" / ")}{value.isPercentage ? "%" : ""}
+                                    {value.scepterValues.length > 0
+                                      ? ` · Scepter ${value.scepterValues.map((item) => formatDecimal(item)).join(" / ")}`
+                                      : ""}
+                                    {value.shardValues.length > 0
+                                      ? ` · Shard ${value.shardValues.map((item) => formatDecimal(item)).join(" / ")}`
+                                      : ""}
+                                  </dd>
+                                </div>
+                              ))}
+                            </dl>
+                          ) : null}
+                        </div>
+                      </div>
+                    </article>
                   );
                 })}
-              </tbody>
-            </table>
-          </div>
+              </div>
         )}
       </section>
 
@@ -257,9 +270,6 @@ export function HeroDetailPage() {
                       <td className="num">{talent.talentLevel ?? "-"}</td>
                       <th scope="row">
                         <span className="font-medium">{talent.displayName}</span>
-                        <span className="muted num block text-xs">
-                          {talent.abilityKey}
-                        </span>
                       </th>
                       <td className="muted">
                         {linked?.displayName ?? talent.linkedAbilityKey ?? "-"}

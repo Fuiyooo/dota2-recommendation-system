@@ -165,6 +165,18 @@ export function GuidePage() {
         </dl>
       </section>
 
+      <section className="panel mt-4 flex flex-wrap items-center justify-between gap-3 p-5">
+        <div>
+          <h2 className="text-base font-semibold">Tentang aplikasi</h2>
+          <p className="muted mt-1 text-sm">
+            Penjelasan tujuan, ruang lingkup, dan cara kerja aplikasi.
+          </p>
+        </div>
+        <Link className="button button-primary" to="/about">
+          About
+        </Link>
+      </section>
+
       <section className="panel mt-4 p-5">
         <h2 className="text-base font-semibold">Istilah</h2>
         <dl className="mt-3 grid gap-3 sm:grid-cols-2">
