@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { apiGet, apiPost } from "../api/client";
@@ -17,11 +17,11 @@ import {
   formatPercent,
 } from "../utils/format";
 
-const CHARACTERISTICS: Array<{ key: CharacteristicName; label: string }> = [
+const CHARACTERISTICS: Array<{ key: CharacteristicName; label: ReactNode }> = [
   { key: "damage", label: "Damage" },
   { key: "durability", label: "Durability" },
   { key: "crowdControl", label: "Crowd Control" },
-  { key: "mobility", label: "Mobility / Escape" },
+  { key: "mobility", label: (<>Mobility /<br />Escape</>) },
 ];
 
 const DEFAULT_WEIGHTS: Record<CharacteristicName, number> = {
@@ -99,14 +99,14 @@ export function SawPage() {
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">Recommendation</h1>
+      <h1 className="text-xl font-semibold">Rekomendasi</h1>
       <ScrollHint />
 
-      {query.isPending ? <LoadingPanel label="recommendation ranking" /> : null}
+      {query.isPending ? <LoadingPanel label="peringkat rekomendasi" /> : null}
       {query.isError ? (
         <ErrorPanel
           message={
-            query.error instanceof Error ? query.error.message : "Unknown error"
+            query.error instanceof Error ? query.error.message : "Error tidak dikenal"
           }
           onRetry={() => void query.refetch()}
         />
@@ -115,7 +115,7 @@ export function SawPage() {
       <section className="mt-4" aria-labelledby="weights-title">
         <div className="flex flex-wrap items-end justify-between gap-2">
           <h2 id="weights-title" className="text-base font-semibold">
-            Criteria weights
+            Bobot kriteria
           </h2>
           <button
             type="button"
@@ -163,7 +163,7 @@ export function SawPage() {
             disabled={mutation.isPending || totalWeight <= 0}
             onClick={() => mutation.mutate(weights)}
           >
-            {mutation.isPending ? "Calculating..." : "Calculate ranking"}
+            {mutation.isPending ? "Menghitung..." : "Hitung peringkat"}
           </button>
           <span className="muted text-sm">Total {totalWeight}</span>
         </div>
@@ -172,18 +172,18 @@ export function SawPage() {
           <p className="status error mt-3" role="alert">
             {mutation.error instanceof Error
               ? mutation.error.message
-              : "Failed to calculate the ranking."}
+              : "Gagal menghitung peringkat."}
           </p>
         ) : null}
       </section>
 
       <section className="mt-5" aria-labelledby="filter-title">
         <h2 id="filter-title" className="text-base font-semibold">
-          Filters
+          Filter
         </h2>
         <div className="mt-2 flex flex-wrap gap-3">
           <label className="block">
-            <span className="text-xs text-muted">Position</span>
+            <span className="text-xs text-muted">Posisi</span>
             <select
               className="field mt-1 block min-w-40"
               value={position}
@@ -192,7 +192,7 @@ export function SawPage() {
                 setPosition(value === "all" ? "all" : Number(value));
               }}
             >
-              <option value="all">All positions</option>
+              <option value="all">Semua posisi</option>
               {[1, 2, 3, 4, 5].map((item) => (
                 <option key={item} value={item}>
                   Pos {item}
@@ -211,7 +211,7 @@ export function SawPage() {
                 setComplexity(value === "all" ? "all" : Number(value));
               }}
             >
-              <option value="all">All complexity</option>
+              <option value="all">Semua complexity</option>
               {[1, 2, 3].map((item) => (
                 <option key={item} value={item}>
                   {item} ({COMPLEXITY_LABEL[item]})
@@ -221,7 +221,7 @@ export function SawPage() {
           </label>
 
           <label className="block">
-            <span className="text-xs text-muted">Attack type</span>
+            <span className="text-xs text-muted">Tipe serangan</span>
             <select
               className="field mt-1 block min-w-40"
               value={attackType}
@@ -231,7 +231,7 @@ export function SawPage() {
                 )
               }
             >
-              <option value="all">All types</option>
+              <option value="all">Semua tipe</option>
               <option value="Melee">Melee</option>
               <option value="Ranged">Ranged</option>
             </select>
@@ -241,32 +241,32 @@ export function SawPage() {
 
       {!query.isPending && results.length === 0 ? (
         <div className="mt-4">
-          <EmptyPanel title="No recommendation ranking yet">
-            Run <span className="num">npm run calculate</span>, then press
-            Calculate ranking.
+          <EmptyPanel title="Belum ada peringkat rekomendasi">
+            Jalankan <span className="num">npm run calculate</span>, lalu tekan
+            Hitung peringkat.
           </EmptyPanel>
         </div>
       ) : null}
 
       {results.length > 0 && filtered.length === 0 ? (
         <div className="mt-4">
-          <EmptyPanel title="No heroes match these filters">
-            Change the position, complexity, or attack type.
+          <EmptyPanel title="Tidak ada hero untuk filter ini">
+            Ubah posisi, complexity, atau tipe serangan.
           </EmptyPanel>
         </div>
       ) : null}
 
       {filtered.length > 0 ? (
         <div className="scroll-x panel mt-4">
-          <table className="data-table min-w-[1100px]">
+          <table className="data-table min-w-[1100px] lg:min-w-0">
             <thead>
               <tr>
-                <th scope="col">Rank</th>
+                <th scope="col" className="w-12 px-2">Rank</th>
                 <th scope="col">Hero</th>
-                <th scope="col">Final score</th>
+                <th scope="col">Final Score</th>
                 <th scope="col">Pick rate</th>
                 {CHARACTERISTICS.map((characteristic) => (
-                  <th key={characteristic.key} scope="col">
+                  <th key={characteristic.key} scope="col" className="px-2">
                     {characteristic.label}
                   </th>
                 ))}
@@ -278,7 +278,7 @@ export function SawPage() {
             <tbody>
               {filtered.map((result, index) => (
                 <tr key={result.heroId}>
-                  <td className="num">{index + 1}</td>
+                  <td className="num w-12 px-2">{index + 1}</td>
                   <th scope="row">
                     <div className="flex min-w-0 items-center gap-2">
                       <HeroThumb hero={heroIndex.get(result.heroId)} />
@@ -298,11 +298,11 @@ export function SawPage() {
                   <td className="num">
                     {formatPercent(result.pickRate)}
                     <span className="muted block text-xs">
-                      {formatNumber(result.pickCount)} matches
+                      {formatNumber(result.pickCount)} match
                     </span>
                   </td>
                   {CHARACTERISTICS.map((characteristic) => (
-                    <td key={characteristic.key} className="num">
+                    <td key={characteristic.key} className="num px-2">
                       {formatDecimal(
                         result.normalizedScores[characteristic.key] ?? 0,
                       )}

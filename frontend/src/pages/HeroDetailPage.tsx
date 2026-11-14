@@ -36,15 +36,15 @@ export function HeroDetailPage() {
   });
 
   if (!validId) {
-    return <ErrorPanel message="Invalid hero ID." />;
+    return <ErrorPanel message="ID hero tidak valid." />;
   }
 
-  if (query.isPending) return <LoadingPanel label="hero detail" />;
+  if (query.isPending) return <LoadingPanel label="detail hero" />;
   if (query.isError) {
     return (
       <ErrorPanel
         message={
-          query.error instanceof Error ? query.error.message : "Unknown error"
+          query.error instanceof Error ? query.error.message : "Error tidak dikenal"
         }
         onRetry={() => void query.refetch()}
       />
@@ -66,7 +66,7 @@ export function HeroDetailPage() {
   return (
     <div>
       <Link className="text-sm text-link underline underline-offset-2" to="/heroes">
-        Back to hero list
+        Kembali ke daftar hero
       </Link>
 
       <div className="mt-3 flex items-start gap-4">
@@ -82,14 +82,14 @@ export function HeroDetailPage() {
             {hero.primaryAttr} {hero.attackType} · Complexity{" "}
             {hero.complexity ?? "-"}
           </p>
-          <p className="muted text-sm">{hero.roles.join(", ") || "No roles"}</p>
+          <p className="muted text-sm">{hero.roles.join(", ") || "Role belum ada"}</p>
         </div>
       </div>
       <ScrollHint />
 
       <section className="mt-5" aria-labelledby="attributes-title">
         <h2 id="attributes-title" className="text-base font-semibold">
-          Attributes
+          Atribut
         </h2>
         <div className="scroll-x panel mt-2">
           <table className="data-table">
@@ -163,11 +163,11 @@ export function HeroDetailPage() {
 
       <section className="mt-6" aria-labelledby="abilities-title">
         <h2 id="abilities-title" className="text-base font-semibold">
-          Abilities and innate
+          Ability dan innate
         </h2>
         {skills.length === 0 ? (
-          <EmptyPanel title="No abilities">
-            Ability data for this hero has not been stored.
+          <EmptyPanel title="Tidak ada ability">
+            Data ability hero ini belum tersimpan.
           </EmptyPanel>
         ) : (
           <div className="scroll-x panel mt-2">
@@ -177,7 +177,7 @@ export function HeroDetailPage() {
                   <th scope="col">Ability</th>
                   <th scope="col">Type</th>
                   <th scope="col">Damage</th>
-                  <th scope="col">Max level</th>
+                  <th scope="col">Max Level</th>
                 </tr>
               </thead>
               <tbody>
@@ -231,11 +231,11 @@ export function HeroDetailPage() {
 
       <section className="mt-6" aria-labelledby="talents-title">
         <h2 id="talents-title" className="text-base font-semibold">
-          Talents
+          Talent
         </h2>
         {talents.length === 0 ? (
-          <EmptyPanel title="No talents">
-            Talent data for this hero has not been stored.
+          <EmptyPanel title="Tidak ada talent">
+            Data talent hero ini belum tersimpan.
           </EmptyPanel>
         ) : (
           <div className="scroll-x panel mt-2">
@@ -244,7 +244,7 @@ export function HeroDetailPage() {
                 <tr>
                   <th scope="col">Level</th>
                   <th scope="col">Talent</th>
-                  <th scope="col">Linked ability</th>
+                  <th scope="col">Linked Ability</th>
                 </tr>
               </thead>
               <tbody>

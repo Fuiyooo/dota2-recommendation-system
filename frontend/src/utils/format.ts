@@ -8,7 +8,7 @@ export function formatDate(value: string | null | undefined): string {
   if (!value) return "-";
   const date = new Date(value);
   if (Number.isNaN(date.getTime())) return "-";
-  return new Intl.DateTimeFormat("en-US", {
+  return new Intl.DateTimeFormat("id-ID", {
     dateStyle: "medium",
     timeStyle: "short",
   }).format(date);
@@ -21,12 +21,12 @@ export function formatPercent(value: number | null | undefined): string {
 
 export function formatNumber(value: number | null | undefined): string {
   if (value === null || value === undefined) return "-";
-  return new Intl.NumberFormat("en-US").format(value);
+  return new Intl.NumberFormat("id-ID").format(value);
 }
 
 export function formatDecimal(value: number | null | undefined): string {
   if (value === null || value === undefined) return "-";
-  return new Intl.NumberFormat("en-US", {
+  return new Intl.NumberFormat("id-ID", {
     maximumFractionDigits: 2,
   }).format(value);
 }

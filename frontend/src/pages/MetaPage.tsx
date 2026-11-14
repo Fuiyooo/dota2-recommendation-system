@@ -2,20 +2,15 @@ import { useMemo, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { apiGet } from "../api/client";
-import type { MetaResponse } from "../api/types";
-import { Badge } from "../components/Badge";
+import type { MetaResponse, MetaStat } from "../api/types";
 import { HeroThumb } from "../components/HeroThumb";
 import { EmptyPanel, ErrorPanel, LoadingPanel } from "../components/StatePanel";
 import { ScrollHint } from "../components/ScrollHint";
 import { useHeroIndex } from "../hooks/useHeroIndex";
-import {
-  formatDate,
-  formatNumber,
-  formatPercent,
-} from "../utils/format";
+import { formatNumber, formatPercent } from "../utils/format";
 
 const POSITIONS = [
-  { value: null, label: "All" },
+  { value: null, label: "Semua" },
   { value: 1, label: "Pos 1" },
   { value: 2, label: "Pos 2" },
   { value: 3, label: "Pos 3" },
@@ -36,27 +31,47 @@ export function MetaPage() {
       ),
   });
 
-  const stats = useMemo(() => {
-    const items = query.data?.stats ?? [];
+  const groups = useMemo(() => {
     const needle = search.trim().toLowerCase();
-    if (!needle) return items;
-    return items.filter((item) =>
-      item.hero.localizedName.toLowerCase().includes(needle),
-    );
+    const byPosition = new Map<number, MetaStat[]>();
+
+    for (const row of query.data?.stats ?? []) {
+      if (row.position === null) continue;
+      if (
+        needle &&
+        !row.hero.localizedName.toLowerCase().includes(needle)
+      ) {
+        continue;
+      }
+      const list = byPosition.get(row.position) ?? [];
+      list.push(row);
+      byPosition.set(row.position, list);
+    }
+
+    return [...byPosition.entries()]
+      .sort(([left], [right]) => left - right)
+      .map(([pos, rows]) => [
+        pos,
+        [...rows].sort((left, right) => {
+          const pickDiff = (right.pickRate ?? 0) - (left.pickRate ?? 0);
+          if (pickDiff !== 0) return pickDiff;
+          return right.matchCount - left.matchCount;
+        }),
+      ] as const);
   }, [query.data?.stats, search]);
 
   const snapshot = query.data?.snapshot;
 
   return (
     <div>
-      <h1 className="text-xl font-semibold">Immortal Meta</h1>
+      <h1 className="text-xl font-semibold">Meta</h1>
       <ScrollHint />
 
-      {query.isPending ? <LoadingPanel label="meta snapshot" /> : null}
+      {query.isPending ? <LoadingPanel label="snapshot meta" /> : null}
       {query.isError ? (
         <ErrorPanel
           message={
-            query.error instanceof Error ? query.error.message : "Unknown error"
+            query.error instanceof Error ? query.error.message : "Error tidak dikenal"
           }
           onRetry={() => void query.refetch()}
         />
@@ -64,36 +79,17 @@ export function MetaPage() {
 
       {query.isSuccess && !snapshot ? (
         <div className="mt-4">
-          <EmptyPanel title="No meta snapshot yet">
-            Run <span className="num">npm run sync:meta</span> from the project
-            root. Position statistics are collected for the Immortal bracket.
+          <EmptyPanel title="Belum ada snapshot meta">
+            Jalankan <span className="num">npm run sync:meta</span> di root
+            project.
           </EmptyPanel>
         </div>
       ) : null}
 
       {snapshot ? (
         <>
-          <div className="panel mt-4 grid gap-3 p-3 text-sm sm:grid-cols-2 lg:grid-cols-4">
-            <div>
-              <p className="text-xs text-muted">Patch</p>
-              <p className="num font-medium">{snapshot.patch}</p>
-            </div>
-            <div>
-              <p className="text-xs text-muted">Bracket</p>
-              <p className="font-medium">{snapshot.bracket}</p>
-            </div>
-            <div>
-              <p className="text-xs text-muted">Week</p>
-              <p className="num font-medium">{snapshot.week}</p>
-            </div>
-            <div>
-              <p className="text-xs text-muted">Captured</p>
-              <p className="num font-medium">{formatDate(snapshot.capturedAt)}</p>
-            </div>
-          </div>
-
           <div className="mt-4 flex flex-wrap items-center gap-2">
-            <span className="text-sm text-muted">Position</span>
+            <span className="text-sm text-muted">Posisi</span>
             {POSITIONS.map((item) => (
               <button
                 key={item.label}
@@ -108,74 +104,78 @@ export function MetaPage() {
           </div>
 
           <label className="mt-3 block max-w-sm">
-            <span className="text-xs text-muted">Search hero</span>
+            <span className="text-xs text-muted">Cari hero</span>
             <input
               className="field mt-1 w-full"
               type="search"
               value={search}
               onChange={(event) => setSearch(event.target.value)}
-              placeholder="Hero name"
+              placeholder="Nama hero"
             />
           </label>
 
-          {stats.length === 0 ? (
+          {groups.length === 0 ? (
             <div className="mt-4">
-              <EmptyPanel title="No rows for this filter">
-                Change the position or clear the search keyword.
+              <EmptyPanel title="Tidak ada baris untuk filter ini">
+                Ubah posisi atau hapus kata kunci pencarian.
               </EmptyPanel>
             </div>
           ) : (
-            <div className="scroll-x panel mt-4">
-              <table className="data-table">
-                <thead>
-                  <tr>
-                    <th scope="col">Rank</th>
-                    <th scope="col">Hero</th>
-                    <th scope="col">Position</th>
-                    <th scope="col">Pick rate</th>
-                    <th scope="col">Win rate</th>
-                    <th scope="col">Matches</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {stats.map((row) => {
-                    const rank =
-                      (query.data?.stats ?? []).filter(
-                        (item) =>
-                          item.position === row.position &&
-                          (item.pickRate ?? 0) > (row.pickRate ?? 0),
-                      ).length + 1;
-                    return (
-                      <tr key={row.id}>
-                        <td className="num muted">{rank}</td>
-                        <th scope="row">
-                          <div className="flex min-w-0 items-center gap-2">
-                            <HeroThumb hero={heroIndex.get(row.heroId)} />
-                            <div className="flex min-w-0 flex-wrap items-baseline gap-x-2">
-                              <Link
-                                className="min-w-0 break-words text-link underline decoration-line-strong underline-offset-2"
-                                to={`/heroes/${row.heroId}`}
-                              >
-                                {row.hero.localizedName}
-                              </Link>
-                              <span className="muted text-xs">
-                                {row.hero.primaryAttr} · {row.hero.attackType}
-                              </span>
-                            </div>
-                          </div>
+            groups.map(([pos, rows]) => (
+              <section
+                key={pos}
+                className="mt-5"
+                aria-labelledby={`meta-pos-${pos}`}
+              >
+                <h2
+                  id={`meta-pos-${pos}`}
+                  className="text-base font-semibold"
+                >
+                  Pos {pos}
+                </h2>
+                <div className="scroll-x panel mt-2">
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th scope="col" className="w-12 px-2">
+                          Rank
                         </th>
-                        <td>
-                          <Badge tone="neutral">Pos {row.position ?? "-"}</Badge>
-                        </td>
-                        <td className="num">{formatPercent(row.pickRate)}</td>
-                        <td className="num">{formatPercent(row.winRate)}</td>
-                        <td className="num">{formatNumber(row.matchCount)}</td>
+                        <th scope="col">Hero</th>
+                        <th scope="col">Pick rate</th>
+                        <th scope="col">Win rate</th>
+                        <th scope="col">Match</th>
                       </tr>
-                    );
-                  })}
-                </tbody>
-              </table>
-            </div>
+                    </thead>
+                    <tbody>
+                      {rows.map((row, index) => (
+                        <tr key={row.id}>
+                          <td className="num w-12 px-2">{index + 1}</td>
+                          <th scope="row">
+                            <div className="flex min-w-0 items-center gap-2">
+                              <HeroThumb hero={heroIndex.get(row.heroId)} />
+                              <div className="flex min-w-0 flex-wrap items-baseline gap-x-2">
+                                <Link
+                                  className="min-w-0 break-words text-link underline decoration-line-strong underline-offset-2"
+                                  to={`/heroes/${row.heroId}`}
+                                >
+                                  {row.hero.localizedName}
+                                </Link>
+                                <span className="muted text-xs">
+                                  {row.hero.primaryAttr} · {row.hero.attackType}
+                                </span>
+                              </div>
+                            </div>
+                          </th>
+                          <td className="num">{formatPercent(row.pickRate)}</td>
+                          <td className="num">{formatPercent(row.winRate)}</td>
+                          <td className="num">{formatNumber(row.matchCount)}</td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
+              </section>
+            ))
           )}
         </>
       ) : null}

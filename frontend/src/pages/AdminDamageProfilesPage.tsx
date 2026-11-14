@@ -32,7 +32,7 @@ const SECONDARY_TYPES: DamageSecondary[] = [
 ];
 
 function typeLabel(type: DamageType | DamageSecondary): string {
-  if (type === "NONE") return "None";
+  if (type === "NONE") return "Tidak ada";
   if (type === "PHYSICAL") return "Physical";
   if (type === "MAGICAL") return "Magical";
   return "Pure";
@@ -135,12 +135,12 @@ export function AdminDamageProfilesPage() {
         return next;
       });
       await queryClient.invalidateQueries({ queryKey: ["admin-profiles"] });
-      setStatus({ kind: "ok", text: `${row.heroName} profile saved.` });
+      setStatus({ kind: "ok", text: `Profil ${row.heroName} disimpan.` });
     },
     onError: (error) => {
       setStatus({
         kind: "error",
-        text: error instanceof Error ? error.message : "Failed to save.",
+        text: error instanceof Error ? error.message : "Gagal menyimpan.",
       });
     },
   });
@@ -163,13 +163,13 @@ export function AdminDamageProfilesPage() {
       await queryClient.invalidateQueries({ queryKey: ["admin-profiles"] });
       setStatus({
         kind: "ok",
-        text: `${formatNumber(result.updated)} profiles saved.`,
+        text: `${formatNumber(result.updated)} profil disimpan.`,
       });
     },
     onError: (error) => {
       setStatus({
         kind: "error",
-        text: error instanceof Error ? error.message : "Failed to save.",
+        text: error instanceof Error ? error.message : "Gagal menyimpan.",
       });
     },
   });
@@ -189,7 +189,7 @@ export function AdminDamageProfilesPage() {
       ]);
       setStatus({
         kind: "ok",
-        text: "Characteristics and recommendation recalculated.",
+        text: "Karakteristik dan rekomendasi sudah dihitung ulang.",
       });
     },
     onError: (error) => {
@@ -199,21 +199,21 @@ export function AdminDamageProfilesPage() {
         text:
           error instanceof Error
             ? error.message
-            : "Failed to recalculate.",
+            : "Gagal menghitung ulang.",
       });
     },
   });
 
-  if (session.isPending) return <LoadingPanel label="admin session" />;
+  if (session.isPending) return <LoadingPanel label="sesi admin" />;
   if (session.isError) {
     return (
       <div className="panel p-4">
-        <p className="text-sm">Admin session is not active.</p>
+        <p className="text-sm">Sesi admin tidak aktif.</p>
         <Link
           className="mt-2 inline-block text-sm text-link underline underline-offset-2"
           to="/admin/login"
         >
-          Go to login page
+          Masuk ke halaman login
         </Link>
       </div>
     );
@@ -224,10 +224,10 @@ export function AdminDamageProfilesPage() {
   return (
     <div>
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <h1 className="text-xl font-semibold">Hero damage profiles</h1>
+        <h1 className="text-xl font-semibold">Profil damage hero</h1>
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <span className="muted">
-            Signed in: <span className="font-medium">{session.data?.username}</span>
+            Login: <span className="font-medium">{session.data?.username}</span>
           </span>
           <button
             type="button"
@@ -239,7 +239,7 @@ export function AdminDamageProfilesPage() {
               navigate("/admin/login", { replace: true });
             }}
           >
-            Logout
+            Keluar
           </button>
         </div>
       </div>
@@ -247,30 +247,30 @@ export function AdminDamageProfilesPage() {
 
       <div className="panel mt-3 grid gap-3 p-3 text-sm sm:grid-cols-3">
         <div>
-          <p className="text-xs text-muted">Heroes</p>
+          <p className="text-xs text-muted">Hero</p>
           <p className="num font-medium">{formatNumber(rows.length)}</p>
         </div>
         <div>
-          <p className="text-xs text-muted">Unset</p>
+          <p className="text-xs text-muted">Belum diatur</p>
           <p className="num font-medium">
             {formatNumber(emptyCount)}
           </p>
         </div>
         <div>
-          <p className="text-xs text-muted">Unsaved changes</p>
+          <p className="text-xs text-muted">Perubahan belum disimpan</p>
           <p className="num font-medium">{formatNumber(dirtyRows.length)}</p>
         </div>
       </div>
 
       <div className="mt-3 flex flex-wrap items-end gap-3">
         <label className="block">
-          <span className="text-xs text-muted">Search hero</span>
+          <span className="text-xs text-muted">Cari hero</span>
           <input
             className="field mt-1 block min-w-56"
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Example: Techies"
+            placeholder="Contoh: Techies"
           />
         </label>
         <label className="flex items-center gap-2 text-sm">
@@ -279,7 +279,7 @@ export function AdminDamageProfilesPage() {
             checked={onlyEmpty}
             onChange={(event) => setOnlyEmpty(event.target.checked)}
           />
-          Only unset
+          Hanya yang belum diatur
         </label>
         <button
           type="button"
@@ -288,8 +288,8 @@ export function AdminDamageProfilesPage() {
           onClick={() => saveAll.mutate()}
         >
           {saveAll.isPending
-            ? "Saving..."
-            : `Save all (${formatNumber(dirtyRows.length)})`}
+            ? "Menyimpan..."
+            : `Simpan semua (${formatNumber(dirtyRows.length)})`}
         </button>
         <button
           type="button"
@@ -298,8 +298,8 @@ export function AdminDamageProfilesPage() {
           onClick={() => recalculation.mutate()}
         >
           {recalcState === "running"
-            ? "Calculating..."
-            : "Recalculate characteristics and recommendation"}
+            ? "Menghitung..."
+            : "Hitung ulang karakteristik dan rekomendasi"}
         </button>
       </div>
 
@@ -314,13 +314,13 @@ export function AdminDamageProfilesPage() {
         </p>
       ) : null}
 
-      {profiles.isPending ? <LoadingPanel label="damage profiles" /> : null}
+      {profiles.isPending ? <LoadingPanel label="profil damage" /> : null}
       {profiles.isError ? (
         <ErrorPanel
           message={
             profiles.error instanceof Error
               ? profiles.error.message
-              : "Failed to load profiles."
+              : "Gagal memuat profil."
           }
           onRetry={() => void profiles.refetch()}
         />
@@ -330,8 +330,8 @@ export function AdminDamageProfilesPage() {
         <>
           {filtered.length === 0 ? (
             <div className="mt-3">
-              <EmptyPanel title="No heroes for this filter">
-                Change the keyword or turn off the filter.
+              <EmptyPanel title="Tidak ada hero untuk filter ini">
+                Ubah kata kunci atau matikan filter.
               </EmptyPanel>
             </div>
           ) : (
@@ -360,7 +360,7 @@ export function AdminDamageProfilesPage() {
                           <span className="muted mt-1 block text-xs">
                             <Badge tone="neutral">{row.attackType}</Badge>
                             {dirty ? (
-                              <Badge tone="warn">Unsaved</Badge>
+                              <Badge tone="warn">Belum disimpan</Badge>
                             ) : null}
                           </span>
                         </th>
@@ -376,7 +376,7 @@ export function AdminDamageProfilesPage() {
                         <td>
                           <select
                             className="field"
-                            aria-label={`Main damage ${row.heroName}`}
+                            aria-label={`Damage utama ${row.heroName}`}
                             value={draft.main}
                             onChange={(event) => {
                               const main = event.target.value as DamageType;
@@ -397,7 +397,7 @@ export function AdminDamageProfilesPage() {
                         <td>
                           <select
                             className="field"
-                            aria-label={`Secondary damage ${row.heroName}`}
+                            aria-label={`Damage sekunder ${row.heroName}`}
                             value={draft.secondary}
                             onChange={(event) =>
                               updateDraft(row, {
@@ -422,12 +422,12 @@ export function AdminDamageProfilesPage() {
                             className="field min-w-48"
                             type="text"
                             maxLength={500}
-                            aria-label={`Notes for ${row.heroName}`}
+                            aria-label={`Catatan untuk ${row.heroName}`}
                             value={draft.notes}
                             onChange={(event) =>
                               updateDraft(row, { notes: event.target.value })
                             }
-                            placeholder="Optional"
+                            placeholder="Opsional"
                           />
                         </td>
                         <td>
@@ -444,7 +444,7 @@ export function AdminDamageProfilesPage() {
                             {saveOne.isPending &&
                             saveOne.variables?.heroId === row.heroId
                               ? "..."
-                              : "Save"}
+                              : "Simpan"}
                           </button>
                         </td>
                       </tr>

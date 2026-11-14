@@ -1,58 +1,32 @@
 import { Link } from "react-router-dom";
 
-const CARDS = [
-  {
-    to: "/heroes",
-    title: "Hero data",
-    description: "127 heroes on patch 7.41f with attributes, abilities, and talents.",
-  },
-  {
-    to: "/characteristics",
-    title: "Characteristics",
-    description: "Damage, durability, crowd control, and mobility scores.",
-  },
-  {
-    to: "/saw",
-    title: "Recommendation",
-    description: "Ranked heroes with adjustable criteria weights.",
-  },
+const BUTTONS = [
+  { to: "/saw", label: "Rekomendasi" },
+  { to: "/meta", label: "Meta / Posisi" },
+  { to: "/heroes", label: "Hero" },
+  { to: "/guide", label: "Guide" },
 ];
 
 export function HomePage() {
   return (
-    <div>
-      <section className="panel p-5 sm:p-7">
-        <h1 className="max-w-3xl text-2xl font-semibold sm:text-3xl">
-          Pick a Dota 2 hero with traceable reasoning.
-        </h1>
-        <p className="muted mt-3 max-w-2xl text-sm">
-          Hero characteristics calculated from Valve data and ranked with Simple
-          Additive Weighting.
-        </p>
-        <div className="mt-5 flex flex-wrap gap-2">
-          <Link className="button button-primary" to="/heroes">
-            Browse heroes
-          </Link>
-          <Link className="button" to="/saw">
-            View recommendation
-          </Link>
-        </div>
-      </section>
+    <div className="flex min-h-[calc(100vh-4.0625rem)] flex-col items-center justify-center px-6 py-12 text-center">
+      <h1 className="max-w-4xl text-3xl font-bold uppercase leading-tight tracking-tight text-white [text-shadow:0_2px_12px_rgba(0,0,0,0.65)] sm:text-5xl lg:text-6xl">
+        Sistem Rekomendasi Hero Dota 2
+      </h1>
 
-      <section className="mt-4 grid gap-3 md:grid-cols-3">
-        {CARDS.map((card) => (
-          <article key={card.to} className="panel flex flex-col p-4">
-            <h2 className="text-base font-semibold">{card.title}</h2>
-            <p className="muted mt-2 flex-1 text-sm">{card.description}</p>
+      <div className="mt-12 w-full max-w-3xl">
+        <div className="grid gap-4 sm:grid-cols-2">
+          {BUTTONS.map((button) => (
             <Link
-              className="mt-4 text-sm text-link underline underline-offset-2"
-              to={card.to}
+              key={button.to}
+              className="button button-primary flex min-h-16 items-center justify-center px-6 py-4 text-sm font-semibold uppercase tracking-wide"
+              to={button.to}
             >
-              Open
+              {button.label}
             </Link>
-          </article>
-        ))}
-      </section>
+          ))}
+        </div>
+      </div>
     </div>
   );
 }

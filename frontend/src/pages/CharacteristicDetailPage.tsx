@@ -52,15 +52,15 @@ export function CharacteristicDetailPage() {
     enabled: validId,
   });
 
-  if (!validId) return <ErrorPanel message="Invalid hero ID." />;
+  if (!validId) return <ErrorPanel message="ID hero tidak valid." />;
   if (heroQuery.isPending || breakdownQuery.isPending) {
-    return <LoadingPanel label="characteristic details" />;
+    return <LoadingPanel label="rincian karakteristik" />;
   }
   if (heroQuery.isError || breakdownQuery.isError) {
     const error = heroQuery.error ?? breakdownQuery.error;
     return (
       <ErrorPanel
-        message={error instanceof Error ? error.message : "Unknown error"}
+        message={error instanceof Error ? error.message : "Error tidak dikenal"}
         onRetry={() => {
           void heroQuery.refetch();
           void breakdownQuery.refetch();
@@ -76,8 +76,8 @@ export function CharacteristicDetailPage() {
 
   if (!run || !hero) {
     return (
-      <EmptyPanel title="No calculation results yet">
-        Run <span className="num">npm run calculate</span> first.
+      <EmptyPanel title="Belum ada hasil perhitungan">
+        Jalankan <span className="num">npm run calculate</span> terlebih dahulu.
       </EmptyPanel>
     );
   }
@@ -104,7 +104,7 @@ export function CharacteristicDetailPage() {
   return (
     <div>
       <Link className="text-sm text-link underline underline-offset-2" to="/characteristics">
-        Back to characteristics
+        Kembali ke karakteristik
       </Link>
 
       <div className="mt-3 flex flex-wrap items-end justify-between gap-3">
@@ -115,7 +115,7 @@ export function CharacteristicDetailPage() {
           </p>
         </div>
         <Link className="text-sm text-link underline underline-offset-2" to={`/heroes/${hero.id}`}>
-          View hero data
+          Lihat data hero
         </Link>
       </div>
       <ScrollHint />
@@ -123,7 +123,7 @@ export function CharacteristicDetailPage() {
       {damageProfile ? (
         <div className="panel mt-3 grid gap-2 p-3 text-sm sm:grid-cols-2">
           <div>
-            <p className="text-xs text-muted">Damage profile</p>
+            <p className="text-xs text-muted">Profil damage</p>
             <p className="font-medium">
               Main {damageProfile.main ?? "-"} · Secondary{" "}
               {damageProfile.secondary ?? "-"}
@@ -132,7 +132,7 @@ export function CharacteristicDetailPage() {
           <div>
             <p className="text-xs text-muted">Basic attack</p>
             <p className="font-medium">
-              {damageDetail?.basicAttack?.counted ? "Counted" : "Not counted"}
+              {damageDetail?.basicAttack?.counted ? "Dihitung" : "Tidak dihitung"}
             </p>
           </div>
         </div>
@@ -140,7 +140,7 @@ export function CharacteristicDetailPage() {
 
       <section className="mt-4" aria-labelledby="summary-title">
         <h2 id="summary-title" className="text-base font-semibold">
-          Characteristic scores
+          Skor karakteristik
         </h2>
         <div className="scroll-x panel mt-2">
           <table className="data-table">
@@ -170,7 +170,7 @@ export function CharacteristicDetailPage() {
 
       <section className="mt-5" aria-labelledby="indicator-title">
         <h2 id="indicator-title" className="text-base font-semibold">
-          Indicator details
+          Rincian indikator
         </h2>
         <div className="scroll-x panel mt-2">
           <table className="data-table">

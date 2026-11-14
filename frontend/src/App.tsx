@@ -5,6 +5,7 @@ import { AdminDamageProfilesPage } from "./pages/AdminDamageProfilesPage";
 import { AdminLoginPage } from "./pages/AdminLoginPage";
 import { CharacteristicDetailPage } from "./pages/CharacteristicDetailPage";
 import { CharacteristicsPage } from "./pages/CharacteristicsPage";
+import { GuidePage } from "./pages/GuidePage";
 import { HeroDetailPage } from "./pages/HeroDetailPage";
 import { HeroListPage } from "./pages/HeroListPage";
 import { HomePage } from "./pages/HomePage";
@@ -25,6 +26,7 @@ export default function App() {
           element={<CharacteristicDetailPage />}
         />
         <Route path="saw" element={<SawPage />} />
+        <Route path="guide" element={<GuidePage />} />
         <Route path="admin/login" element={<AdminLoginPage />} />
         <Route
           path="admin/damage-profiles"
@@ -35,10 +37,10 @@ export default function App() {
           path="*"
           element={
             <div className="panel p-4">
-              <h1 className="text-lg font-semibold">Page not found</h1>
+              <h1 className="text-lg font-semibold">Halaman tidak ditemukan</h1>
               <p className="muted mt-1 text-sm">
-                This address does not exist in the app. Go back to the home page
-                using the navigation.
+                Alamat ini tidak ada di aplikasi. Kembali ke beranda lewat
+                navigasi.
               </p>
             </div>
           }

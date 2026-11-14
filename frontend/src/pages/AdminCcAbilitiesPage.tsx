@@ -27,13 +27,13 @@ const DISPEL_OPTIONS: Array<{ value: AdminCcDispel; label: string }> = [
   { value: "STRONG", label: "Strong dispel" },
   { value: "BASIC", label: "Basic dispel" },
   { value: "UNDISPELLABLE", label: "Undispellable" },
-  { value: "UNKNOWN", label: "Unknown" },
+  { value: "UNKNOWN", label: "Belum pasti" },
 ];
 
 const PIERCE_OPTIONS: Array<{ value: AdminCcPierce; label: string }> = [
-  { value: "YES", label: "Yes" },
-  { value: "NO", label: "No" },
-  { value: "UNKNOWN", label: "Unknown" },
+  { value: "YES", label: "Ya" },
+  { value: "NO", label: "Tidak" },
+  { value: "UNKNOWN", label: "Belum pasti" },
 ];
 
 function dispelLabel(value: AdminCcDispel): string {
@@ -147,13 +147,13 @@ export function AdminCcAbilitiesPage() {
       });
       setStatus({
         kind: "ok",
-        text: `${row.abilityName} saved.`,
+        text: `${row.abilityName} disimpan.`,
       });
     },
     onError: (error) => {
       setStatus({
         kind: "error",
-        text: error instanceof Error ? error.message : "Failed to save.",
+        text: error instanceof Error ? error.message : "Gagal menyimpan.",
       });
     },
   });
@@ -177,13 +177,13 @@ export function AdminCcAbilitiesPage() {
       });
       setStatus({
         kind: "ok",
-        text: `${formatNumber(result.updated)} abilities saved.`,
+        text: `${formatNumber(result.updated)} ability disimpan.`,
       });
     },
     onError: (error) => {
       setStatus({
         kind: "error",
-        text: error instanceof Error ? error.message : "Failed to save.",
+        text: error instanceof Error ? error.message : "Gagal menyimpan.",
       });
     },
   });
@@ -203,7 +203,7 @@ export function AdminCcAbilitiesPage() {
       ]);
       setStatus({
         kind: "ok",
-        text: "Characteristics and recommendation recalculated.",
+        text: "Karakteristik dan rekomendasi sudah dihitung ulang.",
       });
     },
     onError: (error) => {
@@ -213,21 +213,21 @@ export function AdminCcAbilitiesPage() {
         text:
           error instanceof Error
             ? error.message
-            : "Failed to recalculate.",
+            : "Gagal menghitung ulang.",
       });
     },
   });
 
-  if (session.isPending) return <LoadingPanel label="admin session" />;
+  if (session.isPending) return <LoadingPanel label="sesi admin" />;
   if (session.isError) {
     return (
       <div className="panel p-4">
-        <p className="text-sm">Admin session is not active.</p>
+        <p className="text-sm">Sesi admin tidak aktif.</p>
         <Link
           className="mt-2 inline-block text-sm text-link underline underline-offset-2"
           to="/admin/login"
         >
-          Go to login page
+          Masuk ke halaman login
         </Link>
       </div>
     );
@@ -238,10 +238,10 @@ export function AdminCcAbilitiesPage() {
   return (
     <div>
       <div className="flex flex-wrap items-start justify-between gap-3">
-        <h1 className="text-xl font-semibold">CC ability settings</h1>
+        <h1 className="text-xl font-semibold">Pengaturan ability CC</h1>
         <div className="flex flex-wrap items-center gap-2 text-sm">
           <span className="muted">
-            Signed in: <span className="font-medium">{session.data?.username}</span>
+            Login: <span className="font-medium">{session.data?.username}</span>
           </span>
           <button
             type="button"
@@ -255,7 +255,7 @@ export function AdminCcAbilitiesPage() {
               navigate("/admin/login", { replace: true });
             }}
           >
-            Logout
+            Keluar
           </button>
         </div>
       </div>
@@ -263,7 +263,7 @@ export function AdminCcAbilitiesPage() {
 
       <div className="panel mt-3 grid gap-3 p-3 text-sm sm:grid-cols-4">
         <div>
-          <p className="text-xs text-muted">CC abilities</p>
+          <p className="text-xs text-muted">Ability CC</p>
           <p className="num font-medium">{formatNumber(rows.length)}</p>
         </div>
         <div>
@@ -271,24 +271,24 @@ export function AdminCcAbilitiesPage() {
           <p className="num font-medium">{formatNumber(hardCount)}</p>
         </div>
         <div>
-          <p className="text-xs text-muted">Shown</p>
+          <p className="text-xs text-muted">Ditampilkan</p>
           <p className="num font-medium">{formatNumber(filtered.length)}</p>
         </div>
         <div>
-          <p className="text-xs text-muted">Unsaved</p>
+          <p className="text-xs text-muted">Belum disimpan</p>
           <p className="num font-medium">{formatNumber(dirtyRows.length)}</p>
         </div>
       </div>
 
       <div className="mt-3 flex flex-wrap items-end gap-3">
         <label className="block">
-          <span className="text-xs text-muted">Search hero or ability</span>
+          <span className="text-xs text-muted">Cari hero atau ability</span>
           <input
             className="field mt-1 block min-w-56"
             type="search"
             value={search}
             onChange={(event) => setSearch(event.target.value)}
-            placeholder="Example: Magnus"
+            placeholder="Contoh: Magnus"
           />
         </label>
         <label className="flex items-center gap-2 text-sm">
@@ -297,7 +297,7 @@ export function AdminCcAbilitiesPage() {
             checked={onlyHard}
             onChange={(event) => setOnlyHard(event.target.checked)}
           />
-          Hard CC only
+          Hanya hard CC
         </label>
         <button
           type="button"
@@ -306,8 +306,8 @@ export function AdminCcAbilitiesPage() {
           onClick={() => saveAll.mutate()}
         >
           {saveAll.isPending
-            ? "Saving..."
-            : `Save all (${formatNumber(dirtyRows.length)})`}
+            ? "Menyimpan..."
+            : `Simpan semua (${formatNumber(dirtyRows.length)})`}
         </button>
         <button
           type="button"
@@ -316,8 +316,8 @@ export function AdminCcAbilitiesPage() {
           onClick={() => recalculation.mutate()}
         >
           {recalcState === "running"
-            ? "Calculating..."
-            : "Recalculate characteristics and recommendation"}
+            ? "Menghitung..."
+            : "Hitung ulang karakteristik dan rekomendasi"}
         </button>
       </div>
 
@@ -332,13 +332,13 @@ export function AdminCcAbilitiesPage() {
         </p>
       ) : null}
 
-      {abilities.isPending ? <LoadingPanel label="CC abilities" /> : null}
+      {abilities.isPending ? <LoadingPanel label="ability CC" /> : null}
       {abilities.isError ? (
         <ErrorPanel
           message={
             abilities.error instanceof Error
               ? abilities.error.message
-              : "Failed to load CC abilities."
+              : "Gagal memuat ability CC."
           }
           onRetry={() => void abilities.refetch()}
         />
@@ -348,8 +348,8 @@ export function AdminCcAbilitiesPage() {
         <>
           {filtered.length === 0 ? (
             <div className="mt-3">
-              <EmptyPanel title="No abilities for this filter">
-                Change the keyword or turn off the hard CC filter.
+              <EmptyPanel title="Tidak ada ability untuk filter ini">
+                Ubah kata kunci atau matikan filter hard CC.
               </EmptyPanel>
             </div>
           ) : (
@@ -362,7 +362,7 @@ export function AdminCcAbilitiesPage() {
                     <th scope="col">Control</th>
                     <th scope="col">Duration</th>
                     <th scope="col">Dispel</th>
-                    <th scope="col">Pierces immunity</th>
+                    <th scope="col">Pierces Immunity</th>
                     <th scope="col">Actions</th>
                   </tr>
                 </thead>
@@ -402,7 +402,7 @@ export function AdminCcAbilitiesPage() {
                         <td>
                           <select
                             className="field"
-                            aria-label={`Dispel type ${row.abilityName}`}
+                            aria-label={`Tipe dispel ${row.abilityName}`}
                             value={draft.dispelType}
                             onChange={(event) =>
                               updateDraft(row, {
@@ -421,7 +421,7 @@ export function AdminCcAbilitiesPage() {
                         <td>
                           <select
                             className="field"
-                            aria-label={`Pierces immunity ${row.abilityName}`}
+                            aria-label={`Tembus immunity ${row.abilityName}`}
                             value={draft.piercesImmunity}
                             onChange={(event) =>
                               updateDraft(row, {
@@ -440,14 +440,14 @@ export function AdminCcAbilitiesPage() {
                         <td>
                           {dirty ? (
                             <span className="flex flex-col items-start gap-1">
-                              <Badge tone="warn">Unsaved</Badge>
+                              <Badge tone="warn">Belum disimpan</Badge>
                               <button
                                 type="button"
                                 className="button small"
                                 disabled={saveOne.isPending}
                                 onClick={() => saveOne.mutate(row)}
                               >
-                                Save
+                                Simpan
                               </button>
                             </span>
                           ) : (

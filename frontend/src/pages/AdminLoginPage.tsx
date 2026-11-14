@@ -26,19 +26,19 @@ export function AdminLoginPage() {
     },
   });
 
-  if (session.isPending) return <LoadingPanel label="admin session" />;
+  if (session.isPending) return <LoadingPanel label="sesi admin" />;
 
   if (session.data?.username) {
     return (
       <div className="panel p-4">
         <p className="text-sm">
-          Signed in as <span className="font-medium">{session.data.username}</span>.
+          Login sebagai <span className="font-medium">{session.data.username}</span>.
         </p>
         <Link
           className="mt-2 inline-block text-sm text-link underline underline-offset-2"
           to="/admin/damage-profiles"
         >
-          Open admin page
+          Buka halaman admin
         </Link>
       </div>
     );
@@ -47,15 +47,15 @@ export function AdminLoginPage() {
   const errorMessage =
     mutation.error instanceof ApiError
       ? mutation.error.status === 429
-        ? "Too many attempts. Try again in 15 minutes."
-        : "Incorrect username or password."
+        ? "Terlalu banyak percobaan. Coba lagi setelah 15 menit."
+        : "Username atau password salah."
       : mutation.error instanceof Error
         ? mutation.error.message
         : null;
 
   return (
     <div className="mx-auto max-w-md">
-      <h1 className="text-xl font-semibold">Admin login</h1>
+      <h1 className="text-xl font-semibold">Login admin</h1>
 
       <form
         className="panel mt-4 grid gap-3 p-4"
@@ -65,7 +65,7 @@ export function AdminLoginPage() {
         }}
       >
         <label className="block text-sm">
-          <span className="text-xs text-muted">Username</span>
+          <span className="text-xs text-muted">Nama pengguna</span>
           <input
             className="field mt-1 block w-full"
             type="text"
@@ -76,7 +76,7 @@ export function AdminLoginPage() {
           />
         </label>
         <label className="block text-sm">
-          <span className="text-xs text-muted">Password</span>
+          <span className="text-xs text-muted">Kata sandi</span>
           <input
             className="field mt-1 block w-full"
             type="password"
@@ -96,7 +96,7 @@ export function AdminLoginPage() {
           type="submit"
           disabled={mutation.isPending}
         >
-          {mutation.isPending ? "Checking..." : "Sign in"}
+          {mutation.isPending ? "Memeriksa..." : "Masuk"}
         </button>
       </form>
     </div>

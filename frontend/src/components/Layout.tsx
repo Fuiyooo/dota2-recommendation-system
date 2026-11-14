@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { NavLink, Outlet, useLocation } from "react-router-dom";
-import { ThemeToggle } from "./ThemeToggle";
+import dotaBg1280 from "../assets/dota-bg-1280.webp";
+import dotaBg1920 from "../assets/dota-bg-1920.webp";
+import dotaLogo from "../assets/dota-logo.webp";
 
 interface NavItem {
   to: string;
@@ -9,15 +11,16 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { to: "/", label: "Home", end: true },
-  { to: "/heroes", label: "Heroes" },
+  { to: "/", label: "Beranda", end: true },
+  { to: "/guide", label: "Guide" },
+  { to: "/heroes", label: "Hero" },
   { to: "/meta", label: "Meta" },
-  { to: "/characteristics", label: "Characteristics" },
-  { to: "/saw", label: "Recommendation" },
+  { to: "/characteristics", label: "Karakteristik" },
+  { to: "/saw", label: "Rekomendasi" },
 ];
 
 function linkClass({ isActive }: { isActive: boolean }): string {
-  return `block rounded px-3 py-2 text-sm ${
+  return `block rounded-sm px-3 py-2 text-sm ${
     isActive
       ? "bg-accent-soft font-medium text-link"
       : "text-ink-soft hover:bg-surface-muted hover:text-ink"
@@ -27,6 +30,7 @@ function linkClass({ isActive }: { isActive: boolean }): string {
 export function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
+  const isHome = location.pathname === "/";
 
   useEffect(() => {
     setMenuOpen(false);
@@ -42,78 +46,80 @@ export function Layout() {
   }, [menuOpen]);
 
   return (
-    <div className="min-h-screen lg:flex">
-      <header className="flex items-center justify-between border-b border-line bg-surface px-4 py-3 lg:hidden">
-        <NavLink to="/" className="text-base font-semibold">
-          Dota 2 Data Lab
-        </NavLink>
-        <div className="flex items-center gap-2">
-          <ThemeToggle />
+    <div className="relative min-h-screen">
+      <div aria-hidden="true" className="pointer-events-none fixed inset-0 z-0">
+        <img
+          src={dotaBg1920}
+          srcSet={`${dotaBg1280} 1280w, ${dotaBg1920} 1920w`}
+          sizes="100vw"
+          alt=""
+          className="h-full w-full object-cover object-[55%_50%]"
+        />
+        <div
+          className={`absolute inset-0 ${
+            isHome ? "bg-stone-950/55" : "bg-stone-950/85"
+          }`}
+        />
+      </div>
+
+      <header className="sticky top-0 z-40 border-b border-line bg-surface">
+        <div className="flex h-16 items-center gap-4 px-4 sm:px-6">
+          <NavLink to="/" aria-label="Dota 2 Data Lab" className="flex items-center">
+            <img src={dotaLogo} alt="Dota 2 Data Lab" className="h-9 w-auto" />
+          </NavLink>
+
+          <nav aria-label="Navigasi utama" className="hidden lg:block">
+            <ul className="flex items-center gap-1">
+              {NAV_ITEMS.map((item) => (
+                <li key={item.to}>
+                  <NavLink to={item.to} end={item.end} className={linkClass}>
+                    {item.label}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </nav>
+
           <button
             type="button"
-            className="button"
+            className="button ml-auto lg:hidden"
             aria-expanded={menuOpen}
-            aria-controls="sidebar-nav"
+            aria-controls="navbar-menu"
             onClick={() => setMenuOpen((open) => !open)}
           >
-            {menuOpen ? "Close" : "Menu"}
+            {menuOpen ? "Tutup" : "Menu"}
           </button>
         </div>
+
+        {menuOpen ? (
+          <div
+            id="navbar-menu"
+            className="absolute inset-x-0 top-full z-50 border-b border-line bg-surface px-4 pb-4 pt-2 shadow-lg lg:hidden"
+          >
+            <nav aria-label="Navigasi utama mobile">
+              <ul className="space-y-1">
+                {NAV_ITEMS.map((item) => (
+                  <li key={item.to}>
+                    <NavLink to={item.to} end={item.end} className={linkClass}>
+                      {item.label}
+                    </NavLink>
+                  </li>
+                ))}
+              </ul>
+            </nav>
+          </div>
+        ) : null}
       </header>
 
-      {menuOpen ? (
-        <button
-          type="button"
-          aria-label="Close navigation"
-          className="fixed inset-0 z-30 bg-stone-900/30 lg:hidden"
-          onClick={() => setMenuOpen(false)}
-        />
-      ) : null}
-
-      <aside
-        id="sidebar-nav"
-        className={`${
-          menuOpen ? "block" : "hidden"
-        } fixed inset-y-0 left-0 z-40 w-64 overflow-y-auto border-r border-line bg-surface px-3 py-4 lg:sticky lg:top-0 lg:block lg:h-screen lg:w-60 lg:shrink-0`}
+      <main
+        className={
+          isHome
+            ? "relative z-10"
+            : "relative z-10 mx-auto w-full max-w-7xl px-4 py-6"
+        }
       >
-        <div className="hidden lg:block">
-          <NavLink to="/" className="block px-3 text-lg font-semibold">
-            Dota 2 Data Lab
-          </NavLink>
-        </div>
-        <div className="mb-4 flex items-center justify-between px-3 lg:hidden">
-          <span className="text-sm font-semibold">Navigation</span>
-          <button
-            type="button"
-            className="button small"
-            onClick={() => setMenuOpen(false)}
-          >
-            Close
-          </button>
-        </div>
-
-        <nav aria-label="Main navigation" className="mt-2">
-          <ul className="space-y-1">
-            {NAV_ITEMS.map((item) => (
-              <li key={item.to}>
-                <NavLink to={item.to} end={item.end} className={linkClass}>
-                  {item.label}
-                </NavLink>
-              </li>
-            ))}
-          </ul>
-        </nav>
-
-        <div className="mt-4 border-t border-line-soft pt-3">
-          <ThemeToggle className="w-full" />
-        </div>
-      </aside>
-
-      <div className="min-w-0 flex-1">
-        <main className="mx-auto max-w-7xl px-4 py-6">
-          <Outlet />
-        </main>
-      </div>
+        <Outlet />
+      </main>
     </div>
   );
 }
