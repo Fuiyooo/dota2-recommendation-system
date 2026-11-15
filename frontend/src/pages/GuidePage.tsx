@@ -47,7 +47,7 @@ const PAGES = [
     name: "Rekomendasi",
     image: cardRecommendation,
     description:
-      "Atur bobot empat kriteria, lalu tekan Hitung peringkat. Bobot tidak harus berjumlah 100 karena server menormalisasi totalnya. Filter posisi, complexity, dan tipe serangan tersedia di bawahnya.",
+      "Atur bobot empat kriteria, lalu tekan Calculate. Bobot tidak harus berjumlah 100 karena server menormalisasi totalnya. Daftar rekomendasi baru muncul setelah perhitungan dijalankan. Filter posisi, complexity, dan tipe serangan tersedia di bawahnya.",
   },
 ];
 

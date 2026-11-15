@@ -1,14 +1,14 @@
 import { useMemo, useState, type ReactNode } from "react";
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
-import { apiGet, apiPost } from "../api/client";
+import { apiPost } from "../api/client";
 import type {
   CharacteristicName,
   SawResponse,
 } from "../api/types";
 import { Badge } from "../components/Badge";
 import { HeroThumb } from "../components/HeroThumb";
-import { EmptyPanel, ErrorPanel, LoadingPanel } from "../components/StatePanel";
+import { EmptyPanel, LoadingPanel } from "../components/StatePanel";
 import { ScrollHint } from "../components/ScrollHint";
 import { useHeroIndex } from "../hooks/useHeroIndex";
 import {
@@ -45,23 +45,14 @@ export function SawPage() {
   const [attackType, setAttackType] = useState<"all" | "Melee" | "Ranged">(
     "all",
   );
-  const queryClient = useQueryClient();
   const heroIndex = useHeroIndex();
-
-  const query = useQuery({
-    queryKey: ["saw"],
-    queryFn: () => apiGet<SawResponse>("/saw/rankings"),
-  });
 
   const mutation = useMutation({
     mutationFn: (payload: Record<CharacteristicName, number>) =>
       apiPost<SawResponse>("/saw/calculate", payload),
-    onSuccess: (data) => {
-      queryClient.setQueryData(["saw"], data);
-    },
   });
 
-  const data = mutation.data ?? query.data;
+  const data = mutation.data;
   const results = data?.results ?? [];
   const totalWeight = CHARACTERISTICS.reduce(
     (sum, item) => sum + Math.round(weights[item.key] * 100),
@@ -91,16 +82,6 @@ export function SawPage() {
     <div>
       <h1 className="text-xl font-semibold">Rekomendasi</h1>
       <ScrollHint />
-
-      {query.isPending ? <LoadingPanel label="peringkat rekomendasi" /> : null}
-      {query.isError ? (
-        <ErrorPanel
-          message={
-            query.error instanceof Error ? query.error.message : "Error tidak dikenal"
-          }
-          onRetry={() => void query.refetch()}
-        />
-      ) : null}
 
       <section className="mt-4" aria-labelledby="weights-title">
         <div className="flex flex-wrap items-end justify-between gap-2">
@@ -153,7 +134,7 @@ export function SawPage() {
             disabled={mutation.isPending || totalWeight <= 0}
             onClick={() => mutation.mutate(weights)}
           >
-            {mutation.isPending ? "Menghitung..." : "Hitung peringkat"}
+            {mutation.isPending ? "Menghitung..." : "Calculate"}
           </button>
           <span className="muted text-sm">Total {totalWeight}</span>
         </div>
@@ -229,11 +210,16 @@ export function SawPage() {
         </div>
       </section>
 
-      {!query.isPending && results.length === 0 ? (
+      {mutation.isPending ? (
+        <div className="mt-4">
+          <LoadingPanel label="menghitung rekomendasi" />
+        </div>
+      ) : null}
+
+      {!mutation.isPending && results.length === 0 ? (
         <div className="mt-4">
           <EmptyPanel title="Belum ada peringkat rekomendasi">
-            Jalankan <span className="num">npm run calculate</span>, lalu tekan
-            Hitung peringkat.
+            Atur bobot kriteria lalu tekan Calculate.
           </EmptyPanel>
         </div>
       ) : null}
