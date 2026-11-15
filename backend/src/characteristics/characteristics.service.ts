@@ -366,7 +366,11 @@ export class CharacteristicsService {
 
     const rows = await this.prisma.characteristicScore.findMany({
       where: { runId: run.id },
-      include: {
+      select: {
+        heroId: true,
+        characteristic: true,
+        score: true,
+        status: true,
         hero: {
           select: {
             localizedName: true,
@@ -428,6 +432,14 @@ export class CharacteristicsService {
       this.prisma.characteristicScore.findMany({
         where: { runId: run.id, heroId },
         orderBy: { characteristic: "asc" },
+        select: {
+          id: true,
+          heroId: true,
+          characteristic: true,
+          score: true,
+          status: true,
+          indicators: true,
+        },
       }),
     ]);
 
@@ -441,6 +453,16 @@ export class CharacteristicsService {
     const indicators = await this.prisma.heroIndicator.findMany({
       where: { runId: run.id, heroId },
       orderBy: [{ characteristic: "asc" }, { indicator: "asc" }],
+      select: {
+        id: true,
+        heroId: true,
+        characteristic: true,
+        indicator: true,
+        rawValue: true,
+        unit: true,
+        status: true,
+        detail: true,
+      },
     });
 
     return { run, indicators };

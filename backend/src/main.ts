@@ -3,6 +3,7 @@ import { ValidationPipe } from "@nestjs/common";
 import { NestFactory } from "@nestjs/core";
 import { DocumentBuilder, SwaggerModule } from "@nestjs/swagger";
 import cookieParser from "cookie-parser";
+import type { NextFunction, Request, Response } from "express";
 import { AppModule } from "./app.module";
 import { AllExceptionsFilter } from "./common/all-exceptions.filter";
 
@@ -10,6 +11,10 @@ async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
   app.setGlobalPrefix("api");
+  app.use((_req: Request, res: Response, next: NextFunction) => {
+    res.setHeader("Cache-Control", "no-store, max-age=0");
+    next();
+  });
   app.use(cookieParser());
   app.useGlobalPipes(
     new ValidationPipe({

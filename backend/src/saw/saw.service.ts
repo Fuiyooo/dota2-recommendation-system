@@ -35,40 +35,36 @@ export class SawService {
       );
     }
 
-    const rows = await this.prisma.characteristicScore.findMany({
-      where: { runId: run.id },
-      include: {
-        hero: {
-          select: { localizedName: true, complexity: true, attackType: true },
+    const [rows, positionStats] = await Promise.all([
+      this.prisma.characteristicScore.findMany({
+        where: { runId: run.id },
+        select: {
+          heroId: true,
+          characteristic: true,
+          score: true,
+          hero: {
+            select: { localizedName: true, complexity: true, attackType: true },
+          },
         },
-      },
-    });
-    const positionStats = await this.loadPositionStats();
+      }),
+      this.loadPositionStats(),
+    ]);
 
     const weights = normalizeWeights(weightsInput ?? {});
-    const complete = rows.filter((row) => row.score !== null);
+    const complete = rows.filter(
+      (row) =>
+        row.score !== null &&
+        CHARACTERISTICS.includes(row.characteristic as CharacteristicName),
+    );
     const maxByCharacteristic = new Map<CharacteristicName, number>();
 
-    for (const characteristic of CHARACTERISTICS) {
-      const values = complete
-        .filter((row) => row.characteristic === characteristic)
-        .map((row) => row.score ?? 0);
-      maxByCharacteristic.set(characteristic, Math.max(0, ...values));
+    for (const row of complete) {
+      const characteristic = row.characteristic as CharacteristicName;
+      const current = maxByCharacteristic.get(characteristic) ?? 0;
+      if ((row.score ?? 0) > current) {
+        maxByCharacteristic.set(characteristic, row.score ?? 0);
+      }
     }
-
-    const results = complete
-      .filter((row) => CHARACTERISTICS.includes(row.characteristic as CharacteristicName))
-      .map((row) => {
-        const characteristic = row.characteristic as CharacteristicName;
-        const max = maxByCharacteristic.get(characteristic) ?? 0;
-        const normalized = max > 0 ? (row.score ?? 0) / max : 0;
-        return {
-          heroId: row.heroId,
-          heroName: row.hero.localizedName,
-          characteristic,
-          normalized,
-        };
-      });
 
     const byHero = new Map<
       number,
@@ -80,17 +76,17 @@ export class SawService {
       }
     >();
 
-    for (const row of results) {
+    for (const row of complete) {
+      const characteristic = row.characteristic as CharacteristicName;
+      const max = maxByCharacteristic.get(characteristic) ?? 0;
+      const normalized = max > 0 ? (row.score ?? 0) / max : 0;
       const entry = byHero.get(row.heroId) ?? {
-        heroName: row.heroName,
-        complexity: rows.find((item) => item.heroId === row.heroId)?.hero
-          .complexity ?? null,
-        attackType:
-          rows.find((item) => item.heroId === row.heroId)?.hero.attackType ??
-          "Unknown",
+        heroName: row.hero.localizedName,
+        complexity: row.hero.complexity,
+        attackType: row.hero.attackType,
         normalized: {},
       };
-      entry.normalized[row.characteristic] = row.normalized;
+      entry.normalized[characteristic] = normalized;
       byHero.set(row.heroId, entry);
     }
 
@@ -127,23 +123,30 @@ export class SawService {
       )
       .map((entry, index) => ({ ...entry, rank: index + 1 }));
 
-    const sawRun = await this.prisma.sawRun.create({
-      data: {
-        runId: run.id,
-        weights: toJson(weights),
-        results: {
-          create: scored.map((entry) => ({
-            heroId: entry.heroId,
-            normalizedScores: toJson(entry.normalizedScores),
-            finalScore: entry.finalScore,
-            rank: entry.rank,
-            status: "SUPPORTED",
-            mainPosition: entry.mainPosition,
-            pickRate: entry.pickRate,
-            pickCount: entry.pickCount,
-          })),
+    const sawRun = await this.prisma.$transaction(async (tx) => {
+      const created = await tx.sawRun.create({
+        data: {
+          runId: run.id,
+          weights: toJson(weights),
         },
-      },
+        select: { id: true, createdAt: true },
+      });
+
+      await tx.sawResult.createMany({
+        data: scored.map((entry) => ({
+          sawRunId: created.id,
+          heroId: entry.heroId,
+          normalizedScores: toJson(entry.normalizedScores),
+          finalScore: entry.finalScore,
+          rank: entry.rank,
+          status: "SUPPORTED",
+          mainPosition: entry.mainPosition,
+          pickRate: entry.pickRate,
+          pickCount: entry.pickCount,
+        })),
+      });
+
+      return created;
     });
 
     return {

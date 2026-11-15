@@ -219,7 +219,6 @@ export interface CharacteristicScore {
   characteristic: CharacteristicName;
   score: number | null;
   status: CalculationStatus;
-  weights: Record<string, number>;
   indicators: IndicatorScore[];
 }
 

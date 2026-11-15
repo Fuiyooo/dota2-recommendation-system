@@ -8,9 +8,10 @@ import "./index.css";
 const queryClient = new QueryClient({
   defaultOptions: {
     queries: {
-      staleTime: 60_000,
+      staleTime: 0,
       retry: 1,
-      refetchOnWindowFocus: false,
+      refetchOnMount: "always",
+      refetchOnWindowFocus: true,
     },
   },
 });
