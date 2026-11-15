@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useRef, useState, type ReactNode } from "react";
+import { useMemo, useState, type ReactNode } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { apiGet, apiPost } from "../api/client";
@@ -39,7 +39,7 @@ const COMPLEXITY_LABEL: Record<number, string> = {
 
 export function SawPage() {
   const [weights, setWeights] =
-    useState<Record<CharacteristicName, number>>(DEFAULT_WEIGHTS);
+    useState<Record<CharacteristicName, number>>({ ...DEFAULT_WEIGHTS });
   const [position, setPosition] = useState<number | "all">("all");
   const [complexity, setComplexity] = useState<number | "all">("all");
   const [attackType, setAttackType] = useState<"all" | "Melee" | "Ranged">(
@@ -60,16 +60,6 @@ export function SawPage() {
       queryClient.setQueryData(["saw"], data);
     },
   });
-
-  const hydratedWeights = useRef(false);
-
-  useEffect(() => {
-    if (hydratedWeights.current) return;
-    const stored = query.data?.sawRun?.weights;
-    if (!stored) return;
-    setWeights(stored);
-    hydratedWeights.current = true;
-  }, [query.data]);
 
   const data = mutation.data ?? query.data;
   const results = data?.results ?? [];

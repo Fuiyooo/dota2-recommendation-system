@@ -1,4 +1,4 @@
-import { Route, Routes } from "react-router-dom";
+import { Navigate, Route, Routes } from "react-router-dom";
 import { Layout } from "./components/Layout";
 import { AdminCcAbilitiesPage } from "./pages/AdminCcAbilitiesPage";
 import { AdminDamageProfilesPage } from "./pages/AdminDamageProfilesPage";
@@ -17,7 +17,8 @@ export default function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
-        <Route index element={<HomePage />} />
+        <Route index element={<Navigate to="/home" replace />} />
+        <Route path="home" element={<HomePage />} />
         <Route path="heroes" element={<HeroListPage />} />
         <Route path="heroes/:heroId" element={<HeroDetailPage />} />
         <Route path="meta" element={<MetaPage />} />

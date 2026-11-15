@@ -9,8 +9,8 @@ import guidePositions from "../assets/guide-positions.webp";
 
 const PAGES = [
   {
-    to: "/",
-    name: "Beranda",
+    to: "/home",
+    name: "Home",
     image: dotaBg1920,
     description:
       "Landing page website. Menampilkan empat button utama menuju data hero, karakteristik, guide, dan rekomendasi.",

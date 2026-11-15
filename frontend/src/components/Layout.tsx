@@ -11,7 +11,7 @@ interface NavItem {
 }
 
 const NAV_ITEMS: NavItem[] = [
-  { to: "/", label: "Beranda", end: true },
+  { to: "/home", label: "Home", end: true },
   { to: "/guide", label: "Guide" },
   { to: "/heroes", label: "Hero" },
   { to: "/meta", label: "Meta" },
@@ -31,7 +31,7 @@ function linkClass({ isActive }: { isActive: boolean }): string {
 export function Layout() {
   const [menuOpen, setMenuOpen] = useState(false);
   const location = useLocation();
-  const isHome = location.pathname === "/";
+  const isHome = location.pathname === "/home";
 
   useEffect(() => {
     setMenuOpen(false);
@@ -65,7 +65,7 @@ export function Layout() {
 
       <header className="sticky top-0 z-40 border-b border-line bg-surface">
         <div className="flex h-16 items-center gap-4 px-4 sm:px-6">
-          <NavLink to="/" aria-label="Dota 2 Data Lab" className="flex items-center">
+          <NavLink to="/home" aria-label="Dota 2 Data Lab" className="flex items-center">
             <img src={dotaLogo} alt="Dota 2 Data Lab" className="h-9 w-auto" />
           </NavLink>
 
