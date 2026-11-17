@@ -278,6 +278,7 @@ export interface SawResult {
   attackType: string;
   mainPosition: number | null;
   pickRate: number;
+  winRate: number | null;
   pickCount: number;
   rank: number;
   finalScore: number;

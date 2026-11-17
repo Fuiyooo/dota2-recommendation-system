@@ -105,6 +105,7 @@ export class SawService {
           attackType: entry.attackType,
           mainPosition: stat?.position ?? null,
           pickRate: stat?.pickRate ?? 0,
+          winRate: stat?.winRate ?? 0,
           pickCount: stat?.pickCount ?? 0,
           normalizedScores: entry.normalized,
           finalScore: CHARACTERISTICS.reduce(
@@ -142,6 +143,7 @@ export class SawService {
           status: "SUPPORTED",
           mainPosition: entry.mainPosition,
           pickRate: entry.pickRate,
+          winRate: entry.winRate,
           pickCount: entry.pickCount,
         })),
       });
@@ -165,6 +167,7 @@ export class SawService {
         attackType: entry.attackType,
         mainPosition: entry.mainPosition,
         pickRate: entry.pickRate,
+        winRate: entry.winRate,
         pickCount: entry.pickCount,
         rank: entry.rank,
         finalScore: entry.finalScore,
@@ -206,6 +209,7 @@ export class SawService {
         attackType: result.hero.attackType,
         mainPosition: result.mainPosition,
         pickRate: result.pickRate ?? 0,
+        winRate: result.winRate ?? 0,
         pickCount: result.pickCount ?? 0,
         rank: result.rank,
         finalScore: result.finalScore,
@@ -239,6 +243,7 @@ export class SawService {
       attackType: result.hero.attackType,
       mainPosition: result.mainPosition,
       pickRate: result.pickRate ?? 0,
+      winRate: result.winRate ?? 0,
       pickCount: result.pickCount ?? 0,
       rank: result.rank,
       finalScore: result.finalScore,
@@ -260,6 +265,7 @@ export class SawService {
         heroId: true,
         position: true,
         pickRate: true,
+        winRate: true,
         matchCount: true,
       },
     });

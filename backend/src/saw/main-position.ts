@@ -2,12 +2,14 @@ export interface PositionStatRow {
   heroId: number;
   position: number | null;
   pickRate: number | null;
+  winRate: number | null;
   matchCount: number;
 }
 
 export interface MainPositionStat {
   position: number | null;
   pickRate: number;
+  winRate: number;
   pickCount: number;
 }
 
@@ -32,6 +34,7 @@ export function pickMainPositionStats(
       best.set(row.heroId, {
         position: row.position,
         pickRate,
+        winRate: row.winRate ?? 0,
         pickCount: row.matchCount,
       });
     }

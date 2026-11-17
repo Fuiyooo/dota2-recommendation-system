@@ -298,6 +298,7 @@ model SawResult {
   status           String
   mainPosition     Int?
   pickRate         Float?
+  winRate          Float?
   pickCount        Int?
   createdAt        DateTime @default(now())
 

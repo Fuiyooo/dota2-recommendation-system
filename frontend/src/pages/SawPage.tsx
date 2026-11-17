@@ -78,6 +78,18 @@ export function SawPage() {
     [results, position, complexity, attackType],
   );
 
+  const topRecommendations = useMemo(
+    () =>
+      [...filtered.slice(0, 5)].sort(
+        (left, right) =>
+          right.pickRate - left.pickRate ||
+          right.finalScore - left.finalScore ||
+          (right.winRate ?? 0) - (left.winRate ?? 0) ||
+          left.heroName.localeCompare(right.heroName),
+      ),
+    [filtered],
+  );
+
   return (
     <div>
       <h1 className="text-xl font-semibold">Rekomendasi</h1>
@@ -210,6 +222,68 @@ export function SawPage() {
         </div>
       </section>
 
+      {!mutation.isPending && topRecommendations.length > 0 ? (
+        <section className="mt-5" aria-labelledby="top-pick-title">
+          <div className="flex flex-wrap items-baseline justify-between gap-2">
+            <h2 id="top-pick-title" className="text-base font-semibold">
+              Top 5 Rekomendasi
+            </h2>
+            <span className="text-xs text-muted">
+              Data meta, bukan bagian dari skor SAW
+            </span>
+          </div>
+          <p className="mt-1 text-xs text-muted">
+            Dipilih dari 5 final score tertinggi, lalu diurutkan berdasarkan
+            pick rate.
+          </p>
+          <div className="mt-2 grid gap-3 sm:grid-cols-2 xl:grid-cols-5">
+            {topRecommendations.map((result, index) => (
+              <article key={result.heroId} className="panel p-3">
+                <div className="flex items-center justify-between gap-2">
+                  <span className="num text-xs text-muted">#{index + 1}</span>
+                  <Badge tone="neutral">
+                    {result.mainPosition === null
+                      ? "-"
+                      : `Pos ${result.mainPosition}`}
+                  </Badge>
+                </div>
+                <div className="mt-2 flex min-w-0 items-center gap-2">
+                  <HeroThumb hero={heroIndex.get(result.heroId)} />
+                  <Link
+                    className="min-w-0 break-words font-medium text-link underline underline-offset-2"
+                    to={`/characteristics/${result.heroId}`}
+                  >
+                    {result.heroName}
+                  </Link>
+                </div>
+                <dl className="mt-3 grid grid-cols-2 gap-2 text-xs">
+                  <div>
+                    <dt className="text-muted">Pick rate</dt>
+                    <dd className="num font-medium">
+                      {formatPercent(result.pickRate)}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-muted">Win rate</dt>
+                    <dd className="num font-medium">
+                      {formatPercent(result.winRate)}
+                    </dd>
+                  </div>
+                  <div>
+                    <dt className="text-muted">Final score</dt>
+                    <dd className="num">{formatDecimal(result.finalScore)}</dd>
+                  </div>
+                  <div>
+                    <dt className="text-muted">Match</dt>
+                    <dd className="num">{formatNumber(result.pickCount)}</dd>
+                  </div>
+                </dl>
+              </article>
+            ))}
+          </div>
+        </section>
+      ) : null}
+
       {mutation.isPending ? (
         <div className="mt-4">
           <LoadingPanel label="menghitung rekomendasi" />
@@ -234,13 +308,14 @@ export function SawPage() {
 
       {filtered.length > 0 ? (
         <div className="scroll-x panel mt-4">
-          <table className="data-table min-w-[1100px] lg:min-w-0">
+          <table className="data-table min-w-[1200px] lg:min-w-0">
             <thead>
               <tr>
                 <th scope="col" className="w-12 px-2">Rank</th>
                 <th scope="col">Hero</th>
                 <th scope="col">Final Score</th>
                 <th scope="col">Pick rate</th>
+                <th scope="col">Win rate</th>
                 {CHARACTERISTICS.map((characteristic) => (
                   <th key={characteristic.key} scope="col" className="px-2">
                     {characteristic.label}
@@ -277,6 +352,7 @@ export function SawPage() {
                       {formatNumber(result.pickCount)} match
                     </span>
                   </td>
+                  <td className="num">{formatPercent(result.winRate)}</td>
                   {CHARACTERISTICS.map((characteristic) => (
                     <td key={characteristic.key} className="num px-2">
                       {formatDecimal(
