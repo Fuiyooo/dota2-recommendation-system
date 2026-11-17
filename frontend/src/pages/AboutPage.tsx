@@ -1,5 +1,3 @@
-import { Link } from "react-router-dom";
-
 const CRITERIA = ["Damage", "Durability", "Crowd Control", "Mobility / Escape"];
 
 export function AboutPage() {
@@ -22,8 +20,8 @@ export function AboutPage() {
               Pengguna mengatur bobot setiap kriteria di halaman Rekomendasi.
             </li>
             <li>
-              Simple Additive Weighting menghitung final score dan urutan hero
-              sesuai bobot tersebut.
+              Sistem menghitung final score dan urutan hero sesuai bobot
+              tersebut.
             </li>
           </ol>
         </section>
@@ -65,33 +63,23 @@ export function AboutPage() {
           <h2 className="text-lg font-semibold sm:text-xl">
             Cara membaca hasil
           </h2>
-          <ul className="mt-4 space-y-2 text-base leading-relaxed sm:text-lg">
+          <ul className="mt-4 list-disc pl-6 space-y-2 text-base leading-relaxed sm:text-lg">
             <li>
-              Bobot tidak harus berjumlah 100 karena server menormalisasi
+              Bobot tidak harus berjumlah 100 karena sistem akan menormalisasi
               totalnya.
             </li>
-            <li>Urutan hero mengikuti final score dari perhitungan SAW.</li>
+            <li>Urutan hero mengikuti final score dari perhitungan.</li>
             <li>
               Semakin tinggi bobot suatu kriteria, semakin besar pengaruhnya
               pada urutan.
             </li>
+            <li>
+              5 hero rekomendasi diurutkan berdasarkan pick rate dari 5 hero
+              dengan skor final tertinggi.
+            </li>
           </ul>
         </section>
       </div>
-
-      <section className="panel mt-4 flex flex-wrap items-center justify-between gap-4 p-5 sm:p-6">
-        <p className="muted text-base sm:text-lg">
-          Lihat hasil perhitungan atau penjelasan setiap halaman.
-        </p>
-        <div className="flex flex-wrap gap-2">
-          <Link className="button button-primary" to="/saw">
-            Rekomendasi
-          </Link>
-          <Link className="button" to="/guide">
-            Guide
-          </Link>
-        </div>
-      </section>
     </div>
   );
 }
