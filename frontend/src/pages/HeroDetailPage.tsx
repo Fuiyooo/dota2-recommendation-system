@@ -8,6 +8,13 @@ import { EmptyPanel, ErrorPanel, LoadingPanel } from "../components/StatePanel";
 import { ScrollHint } from "../components/ScrollHint";
 import { formatDecimal } from "../utils/format";
 import {
+  formatAbilityDescription,
+  formatSpecialValueLabel,
+  isPercentageSpecialValue,
+  stripAbilityHtml,
+  visibleSpecialValues,
+} from "../utils/abilityText";
+import {
   abilityIconUrl,
   attributeIconUrl,
   heroPortraitUrl,
@@ -168,13 +175,12 @@ export function HeroDetailPage() {
         ) : (
           <div className="mt-2 space-y-3">
                 {skills.map((ability) => {
-                  const description = ability.rawData?.desc_loc;
-                  const lore = ability.rawData?.lore_loc;
-                  const values = Array.isArray(ability.specialValues)
-                    ? ability.specialValues.filter(
-                        (value) => value.values.length > 0,
-                      )
-                    : [];
+                  const description = formatAbilityDescription(ability);
+                  const lore =
+                    typeof ability.rawData?.lore_loc === "string"
+                      ? stripAbilityHtml(ability.rawData.lore_loc)
+                      : "";
+                  const values = visibleSpecialValues(ability);
 
                   return (
                     <article key={ability.id} className="panel p-4">
@@ -204,10 +210,14 @@ export function HeroDetailPage() {
                           </div>
 
                           {description ? (
-                            <p className="muted mt-2 text-sm">{description}</p>
+                            <p className="muted mt-2 whitespace-pre-line text-sm">
+                              {description}
+                            </p>
                           ) : null}
                           {lore ? (
-                            <p className="muted mt-2 text-xs italic">{lore}</p>
+                            <p className="muted mt-2 whitespace-pre-line text-xs italic">
+                              {lore}
+                            </p>
                           ) : null}
 
                           {values.length > 0 ? (
@@ -218,10 +228,11 @@ export function HeroDetailPage() {
                                   className="flex flex-wrap items-baseline justify-between gap-2 border-b border-line-soft py-1"
                                 >
                                   <dt className="text-muted">
-                                    {value.heading || value.name}
+                                    {formatSpecialValueLabel(value)}
                                   </dt>
                                   <dd className="num text-right">
-                                    {value.values.map((item) => formatDecimal(item)).join(" / ")}{value.isPercentage ? "%" : ""}
+                                    {value.values.map((item) => formatDecimal(item)).join(" / ")}
+                                    {isPercentageSpecialValue(value) ? "%" : ""}
                                     {value.scepterValues.length > 0
                                       ? ` · Scepter ${value.scepterValues.map((item) => formatDecimal(item)).join(" / ")}`
                                       : ""}
